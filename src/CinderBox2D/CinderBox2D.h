@@ -31,37 +31,37 @@ For discussion please visit http://box2d.org/forum
 
 // These include files constitute the main Box2D API
 
-#include <CinderBox2D/Common/b2Settings.h>
-#include <CinderBox2D/Common/b2Draw.h>
-#include <CinderBox2D/Common/b2Timer.h>
+#include <CinderBox2D/Common/cb2Settings.h>
+#include <CinderBox2D/Common/cb2Draw.h>
+#include <CinderBox2D/Common/cb2Timer.h>
 
-#include <CinderBox2D/Collision/Shapes/b2CircleShape.h>
-#include <CinderBox2D/Collision/Shapes/b2EdgeShape.h>
-#include <CinderBox2D/Collision/Shapes/b2ChainShape.h>
-#include <CinderBox2D/Collision/Shapes/b2PolygonShape.h>
+#include <CinderBox2D/Collision/Shapes/cb2CircleShape.h>
+#include <CinderBox2D/Collision/Shapes/cb2EdgeShape.h>
+#include <CinderBox2D/Collision/Shapes/cb2ChainShape.h>
+#include <CinderBox2D/Collision/Shapes/cb2PolygonShape.h>
 
-#include <CinderBox2D/Collision/b2BroadPhase.h>
-#include <CinderBox2D/Collision/b2Distance.h>
-#include <CinderBox2D/Collision/b2DynamicTree.h>
-#include <CinderBox2D/Collision/b2TimeOfImpact.h>
+#include <CinderBox2D/Collision/cb2BroadPhase.h>
+#include <CinderBox2D/Collision/cb2Distance.h>
+#include <CinderBox2D/Collision/cb2DynamicTree.h>
+#include <CinderBox2D/Collision/cb2TimeOfImpact.h>
 
-#include <CinderBox2D/Dynamics/b2Body.h>
-#include <CinderBox2D/Dynamics/b2Fixture.h>
-#include <CinderBox2D/Dynamics/b2WorldCallbacks.h>
-#include <CinderBox2D/Dynamics/b2TimeStep.h>
-#include <CinderBox2D/Dynamics/b2World.h>
+#include <CinderBox2D/Dynamics/cb2Body.h>
+#include <CinderBox2D/Dynamics/cb2Fixture.h>
+#include <CinderBox2D/Dynamics/cb2WorldCallbacks.h>
+#include <CinderBox2D/Dynamics/cb2TimeStep.h>
+#include <CinderBox2D/Dynamics/cb2World.h>
 
-#include <CinderBox2D/Dynamics/Contacts/b2Contact.h>
+#include <CinderBox2D/Dynamics/Contacts/cb2Contact.h>
 
-#include <CinderBox2D/Dynamics/Joints/b2DistanceJoint.h>
-#include <CinderBox2D/Dynamics/Joints/b2FrictionJoint.h>
-#include <CinderBox2D/Dynamics/Joints/b2GearJoint.h>
-#include <CinderBox2D/Dynamics/Joints/b2WheelJoint.h>
-#include <CinderBox2D/Dynamics/Joints/b2MouseJoint.h>
-#include <CinderBox2D/Dynamics/Joints/b2PrismaticJoint.h>
-#include <CinderBox2D/Dynamics/Joints/b2PulleyJoint.h>
-#include <CinderBox2D/Dynamics/Joints/b2RevoluteJoint.h>
-#include <CinderBox2D/Dynamics/Joints/b2RopeJoint.h>
-#include <CinderBox2D/Dynamics/Joints/b2WeldJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2DistanceJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2FrictionJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2GearJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2WheelJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2MouseJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2PrismaticJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2PulleyJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2RevoluteJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2RopeJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2WeldJoint.h>
 
 #endif

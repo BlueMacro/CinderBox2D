@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <Box2D/Common/b2Math.h>
+#include <CinderBox2D/Common/cb2Math.h>
 
 /// Color for debug drawing. Each value has the range [0,1].
 struct b2Color

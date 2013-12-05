@@ -16,22 +16,22 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <Box2D/Dynamics/b2World.h>
-#include <Box2D/Dynamics/b2Body.h>
-#include <Box2D/Dynamics/b2Fixture.h>
-#include <Box2D/Dynamics/b2Island.h>
-#include <Box2D/Dynamics/Joints/b2PulleyJoint.h>
-#include <Box2D/Dynamics/Contacts/b2Contact.h>
-#include <Box2D/Dynamics/Contacts/b2ContactSolver.h>
-#include <Box2D/Collision/b2Collision.h>
-#include <Box2D/Collision/b2BroadPhase.h>
-#include <Box2D/Collision/Shapes/b2CircleShape.h>
-#include <Box2D/Collision/Shapes/b2EdgeShape.h>
-#include <Box2D/Collision/Shapes/b2ChainShape.h>
-#include <Box2D/Collision/Shapes/b2PolygonShape.h>
-#include <Box2D/Collision/b2TimeOfImpact.h>
-#include <Box2D/Common/b2Draw.h>
-#include <Box2D/Common/b2Timer.h>
+#include <CinderBox2D/Dynamics/cb2World.h>
+#include <CinderBox2D/Dynamics/cb2Body.h>
+#include <CinderBox2D/Dynamics/cb2Fixture.h>
+#include <CinderBox2D/Dynamics/cb2Island.h>
+#include <CinderBox2D/Dynamics/Joints/cb2PulleyJoint.h>
+#include <CinderBox2D/Dynamics/Contacts/cb2Contact.h>
+#include <CinderBox2D/Dynamics/Contacts/cb2ContactSolver.h>
+#include <CinderBox2D/Collision/cb2Collision.h>
+#include <CinderBox2D/Collision/cb2BroadPhase.h>
+#include <CinderBox2D/Collision/Shapes/cb2CircleShape.h>
+#include <CinderBox2D/Collision/Shapes/cb2EdgeShape.h>
+#include <CinderBox2D/Collision/Shapes/cb2ChainShape.h>
+#include <CinderBox2D/Collision/Shapes/cb2PolygonShape.h>
+#include <CinderBox2D/Collision/cb2TimeOfImpact.h>
+#include <CinderBox2D/Common/cb2Draw.h>
+#include <CinderBox2D/Common/cb2Timer.h>
 #include <new>
 
 b2World::b2World(const b2Vec2& gravity)
@@ -1185,11 +1185,11 @@ void b2World::DrawDebugData()
 		b2Color color(0.3f, 0.9f, 0.9f);
 		for (b2Contact* c = m_contactManager.m_contactList; c; c = c->GetNext())
 		{
-			//b2Fixture* fixtureA = c->GetFixtureA();
-			//b2Fixture* fixtureB = c->GetFixtureB();
+			//cb2Fixture* fixtureA = c->GetFixtureA();
+			//cb2Fixture* fixtureB = c->GetFixtureB();
 
-			//b2Vec2 cA = fixtureA->GetAABB().GetCenter();
-			//b2Vec2 cB = fixtureB->GetAABB().GetCenter();
+			//cb2Vec2 cA = fixtureA->GetAABB().GetCenter();
+			//cb2Vec2 cB = fixtureB->GetAABB().GetCenter();
 
 			//m_debugDraw->DrawSegment(cA, cB, color);
 		}

@@ -16,11 +16,11 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <Box2D/Dynamics/b2Body.h>
-#include <Box2D/Dynamics/b2Fixture.h>
-#include <Box2D/Dynamics/b2World.h>
-#include <Box2D/Dynamics/Contacts/b2Contact.h>
-#include <Box2D/Dynamics/Joints/b2Joint.h>
+#include <CinderBox2D/Dynamics/cb2Body.h>
+#include <CinderBox2D/Dynamics/cb2Fixture.h>
+#include <CinderBox2D/Dynamics/cb2World.h>
+#include <CinderBox2D/Dynamics/Contacts/cb2Contact.h>
+#include <CinderBox2D/Dynamics/Joints/cb2Joint.h>
 
 b2Body::b2Body(const b2BodyDef* bd, b2World* world)
 {

@@ -16,20 +16,20 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <Box2D/Dynamics/Joints/b2Joint.h>
-#include <Box2D/Dynamics/Joints/b2DistanceJoint.h>
-#include <Box2D/Dynamics/Joints/b2WheelJoint.h>
-#include <Box2D/Dynamics/Joints/b2MouseJoint.h>
-#include <Box2D/Dynamics/Joints/b2RevoluteJoint.h>
-#include <Box2D/Dynamics/Joints/b2PrismaticJoint.h>
-#include <Box2D/Dynamics/Joints/b2PulleyJoint.h>
-#include <Box2D/Dynamics/Joints/b2GearJoint.h>
-#include <Box2D/Dynamics/Joints/b2WeldJoint.h>
-#include <Box2D/Dynamics/Joints/b2FrictionJoint.h>
-#include <Box2D/Dynamics/Joints/b2RopeJoint.h>
-#include <Box2D/Dynamics/b2Body.h>
-#include <Box2D/Dynamics/b2World.h>
-#include <Box2D/Common/b2BlockAllocator.h>
+#include <CinderBox2D/Dynamics/Joints/cb2Joint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2DistanceJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2WheelJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2MouseJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2RevoluteJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2PrismaticJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2PulleyJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2GearJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2WeldJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2FrictionJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2RopeJoint.h>
+#include <CinderBox2D/Dynamics/cb2Body.h>
+#include <CinderBox2D/Dynamics/cb2World.h>
+#include <CinderBox2D/Common/cb2BlockAllocator.h>
 
 #include <new>
 

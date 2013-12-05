@@ -16,9 +16,9 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <Box2D/Dynamics/Joints/b2PulleyJoint.h>
-#include <Box2D/Dynamics/b2Body.h>
-#include <Box2D/Dynamics/b2TimeStep.h>
+#include <CinderBox2D/Dynamics/Joints/cb2PulleyJoint.h>
+#include <CinderBox2D/Dynamics/cb2Body.h>
+#include <CinderBox2D/Dynamics/cb2TimeStep.h>
 
 // Pulley:
 // length1 = norm(p1 - s1)

@@ -19,8 +19,8 @@
 #ifndef B2_BODY_H
 #define B2_BODY_H
 
-#include <Box2D/Common/b2Math.h>
-#include <Box2D/Collision/Shapes/b2Shape.h>
+#include <CinderBox2D/Common/cb2Math.h>
+#include <CinderBox2D/Collision/Shapes/cb2Shape.h>
 #include <memory>
 
 class b2Fixture;
@@ -43,7 +43,7 @@ enum b2BodyType
 	b2_dynamicBody
 
 	// TODO_ERIN
-	//b2_bulletBody,
+	//cb2_bulletBody,
 };
 
 /// A body definition holds all the data needed to construct a rigid body.

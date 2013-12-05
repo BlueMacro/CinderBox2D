@@ -16,12 +16,12 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <Box2D/Dynamics/Contacts/b2CircleContact.h>
-#include <Box2D/Dynamics/b2Body.h>
-#include <Box2D/Dynamics/b2Fixture.h>
-#include <Box2D/Dynamics/b2WorldCallbacks.h>
-#include <Box2D/Common/b2BlockAllocator.h>
-#include <Box2D/Collision/b2TimeOfImpact.h>
+#include <CinderBox2D/Dynamics/Contacts/cb2CircleContact.h>
+#include <CinderBox2D/Dynamics/cb2Body.h>
+#include <CinderBox2D/Dynamics/cb2Fixture.h>
+#include <CinderBox2D/Dynamics/cb2WorldCallbacks.h>
+#include <CinderBox2D/Common/cb2BlockAllocator.h>
+#include <CinderBox2D/Collision/cb2TimeOfImpact.h>
 
 #include <new>
 using namespace std;

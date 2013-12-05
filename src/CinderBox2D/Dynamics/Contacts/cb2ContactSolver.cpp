@@ -16,13 +16,13 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <Box2D/Dynamics/Contacts/b2ContactSolver.h>
+#include <CinderBox2D/Dynamics/Contacts/cb2ContactSolver.h>
 
-#include <Box2D/Dynamics/Contacts/b2Contact.h>
-#include <Box2D/Dynamics/b2Body.h>
-#include <Box2D/Dynamics/b2Fixture.h>
-#include <Box2D/Dynamics/b2World.h>
-#include <Box2D/Common/b2StackAllocator.h>
+#include <CinderBox2D/Dynamics/Contacts/cb2Contact.h>
+#include <CinderBox2D/Dynamics/cb2Body.h>
+#include <CinderBox2D/Dynamics/cb2Fixture.h>
+#include <CinderBox2D/Dynamics/cb2World.h>
+#include <CinderBox2D/Common/cb2StackAllocator.h>
 
 #define B2_DEBUG_SOLVER 0
 

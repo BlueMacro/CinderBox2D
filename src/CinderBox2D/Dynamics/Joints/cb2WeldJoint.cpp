@@ -16,9 +16,9 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <Box2D/Dynamics/Joints/b2WeldJoint.h>
-#include <Box2D/Dynamics/b2Body.h>
-#include <Box2D/Dynamics/b2TimeStep.h>
+#include <CinderBox2D/Dynamics/Joints/cb2WeldJoint.h>
+#include <CinderBox2D/Dynamics/cb2Body.h>
+#include <CinderBox2D/Dynamics/cb2TimeStep.h>
 
 // Point-to-point constraint
 // C = p2 - p1

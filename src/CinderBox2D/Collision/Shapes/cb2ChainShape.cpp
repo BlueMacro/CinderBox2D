@@ -16,8 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <Box2D/Collision/Shapes/b2ChainShape.h>
-#include <Box2D/Collision/Shapes/b2EdgeShape.h>
+#include <CinderBox2D/Collision/Shapes/cb2ChainShape.h>
+#include <CinderBox2D/Collision/Shapes/cb2EdgeShape.h>
 #include <new>
 #include <cstring>
 using namespace std;

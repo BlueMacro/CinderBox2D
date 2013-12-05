@@ -20,7 +20,7 @@
 #ifndef B2_DISTANCE_H
 #define B2_DISTANCE_H
 
-#include <Box2D/Common/b2Math.h>
+#include <CinderBox2D/Common/cb2Math.h>
 
 class b2Shape;
 

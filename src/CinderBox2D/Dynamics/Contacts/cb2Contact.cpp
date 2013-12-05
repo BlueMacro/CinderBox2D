@@ -16,23 +16,23 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <Box2D/Dynamics/Contacts/b2Contact.h>
-#include <Box2D/Dynamics/Contacts/b2CircleContact.h>
-#include <Box2D/Dynamics/Contacts/b2PolygonAndCircleContact.h>
-#include <Box2D/Dynamics/Contacts/b2PolygonContact.h>
-#include <Box2D/Dynamics/Contacts/b2EdgeAndCircleContact.h>
-#include <Box2D/Dynamics/Contacts/b2EdgeAndPolygonContact.h>
-#include <Box2D/Dynamics/Contacts/b2ChainAndCircleContact.h>
-#include <Box2D/Dynamics/Contacts/b2ChainAndPolygonContact.h>
-#include <Box2D/Dynamics/Contacts/b2ContactSolver.h>
+#include <CinderBox2D/Dynamics/Contacts/cb2Contact.h>
+#include <CinderBox2D/Dynamics/Contacts/cb2CircleContact.h>
+#include <CinderBox2D/Dynamics/Contacts/cb2PolygonAndCircleContact.h>
+#include <CinderBox2D/Dynamics/Contacts/cb2PolygonContact.h>
+#include <CinderBox2D/Dynamics/Contacts/cb2EdgeAndCircleContact.h>
+#include <CinderBox2D/Dynamics/Contacts/cb2EdgeAndPolygonContact.h>
+#include <CinderBox2D/Dynamics/Contacts/cb2ChainAndCircleContact.h>
+#include <CinderBox2D/Dynamics/Contacts/cb2ChainAndPolygonContact.h>
+#include <CinderBox2D/Dynamics/Contacts/cb2ContactSolver.h>
 
-#include <Box2D/Collision/b2Collision.h>
-#include <Box2D/Collision/b2TimeOfImpact.h>
-#include <Box2D/Collision/Shapes/b2Shape.h>
-#include <Box2D/Common/b2BlockAllocator.h>
-#include <Box2D/Dynamics/b2Body.h>
-#include <Box2D/Dynamics/b2Fixture.h>
-#include <Box2D/Dynamics/b2World.h>
+#include <CinderBox2D/Collision/cb2Collision.h>
+#include <CinderBox2D/Collision/cb2TimeOfImpact.h>
+#include <CinderBox2D/Collision/Shapes/cb2Shape.h>
+#include <CinderBox2D/Common/cb2BlockAllocator.h>
+#include <CinderBox2D/Dynamics/cb2Body.h>
+#include <CinderBox2D/Dynamics/cb2Fixture.h>
+#include <CinderBox2D/Dynamics/cb2World.h>
 
 b2ContactRegister b2Contact::s_registers[b2Shape::e_typeCount][b2Shape::e_typeCount];
 bool b2Contact::s_initialized = false;
