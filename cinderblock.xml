@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cinder>
+<block
+	name="CinderBox2D"
+	id="com.y3i12.cinderbox2d"
+	author="Yuri Ivatchkovitch"
+	summary="Box2D"
+	git="git://github.com/y3i12/CinderBox2D.git"
+	license="BSD"
+	version="2.2.1"
+	libraryUrl="http://cinderbox2d.y3i12.com/"
+	>
+	<sourcePattern>src/CinderBox2D/Collision/*.cpp</sourcePattern>
+	<headerPattern>src/CinderBox2D/Collision/*.h</headerPattern>
+	<sourcePattern>src/CinderBox2D/Collision/Shapes/*.cpp</sourcePattern>
+	<headerPattern>src/CinderBox2D/Collision/Shapes/*.h</headerPattern>
+	<sourcePattern>src/CinderBox2D/Common/*.cpp</sourcePattern>
+	<headerPattern>src/CinderBox2D/Common/*.h</headerPattern>
+	<sourcePattern>src/CinderBox2D/Dynamics/*.cpp</sourcePattern>
+	<headerPattern>src/CinderBox2D/Dynamics/*.h</headerPattern>
+	<sourcePattern>src/CinderBox2D/Dynamics/Contacts/*.cpp</sourcePattern>
+	<headerPattern>src/CinderBox2D/Dynamics/Contacts/*.h</headerPattern>
+	<sourcePattern>src/CinderBox2D/Dynamics/Joints/*.cpp</sourcePattern>
+	<headerPattern>src/CinderBox2D/Dynamics/Joints/*.h</headerPattern>
+	<sourcePattern>src/CinderBox2D/Rope/*.cpp</sourcePattern>
+	<headerPattern>src/CinderBox2D/Rope/*.h</headerPattern>
+	<header>src/CinderBox2D/CinderBox2d.h</header>
+	<includePath system="true">src</includePath>
+</block>
+<template>templates/Basic Box2D/template.xml</template>
+</cinder>
