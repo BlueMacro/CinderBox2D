@@ -30,21 +30,21 @@ struct b2RopeJointDef : public b2JointDef
 	b2RopeJointDef()
 	{
 		type = e_ropeJoint;
-		localAnchorA.Set(-1.0f, 0.0f);
-		localAnchorB.Set(1.0f, 0.0f);
+		localAnchorA.set(-1.0f, 0.0f);
+		localAnchorB.set(1.0f, 0.0f);
 		maxLength = 0.0f;
 	}
 
 	/// The local anchor point relative to bodyA's origin.
-	b2Vec2 localAnchorA;
+	ci::Vec2f localAnchorA;
 
 	/// The local anchor point relative to bodyB's origin.
-	b2Vec2 localAnchorB;
+	ci::Vec2f localAnchorB;
 
 	/// The maximum length of the rope.
 	/// Warning: this must be larger than b2_linearSlop or
 	/// the joint will have no effect.
-	float32 maxLength;
+	float maxLength;
 };
 
 /// A rope joint enforces a maximum distance between two points
@@ -58,21 +58,21 @@ struct b2RopeJointDef : public b2JointDef
 class b2RopeJoint : public b2Joint
 {
 public:
-	b2Vec2 GetAnchorA() const;
-	b2Vec2 GetAnchorB() const;
+	ci::Vec2f GetAnchorA() const;
+	ci::Vec2f GetAnchorB() const;
 
-	b2Vec2 GetReactionForce(float32 inv_dt) const;
-	float32 GetReactionTorque(float32 inv_dt) const;
+	ci::Vec2f GetReactionForce(float inv_dt) const;
+	float GetReactionTorque(float inv_dt) const;
 
 	/// The local anchor point relative to bodyA's origin.
-	const b2Vec2& GetLocalAnchorA() const { return m_localAnchorA; }
+	const ci::Vec2f& GetLocalAnchorA() const { return m_localAnchorA; }
 
 	/// The local anchor point relative to bodyB's origin.
-	const b2Vec2& GetLocalAnchorB() const  { return m_localAnchorB; }
+	const ci::Vec2f& GetLocalAnchorB() const  { return m_localAnchorB; }
 
-	/// Set/Get the maximum length of the rope.
-	void SetMaxLength(float32 length) { m_maxLength = length; }
-	float32 GetMaxLength() const;
+	/// set/Get the maximum length of the rope.
+	void SetMaxLength(float length) { m_maxLength = length; }
+	float GetMaxLength() const;
 
 	b2LimitState GetLimitState() const;
 
@@ -89,25 +89,25 @@ protected:
 	bool SolvePositionConstraints(const b2SolverData& data);
 
 	// Solver shared
-	b2Vec2 m_localAnchorA;
-	b2Vec2 m_localAnchorB;
-	float32 m_maxLength;
-	float32 m_length;
-	float32 m_impulse;
+	ci::Vec2f m_localAnchorA;
+	ci::Vec2f m_localAnchorB;
+	float m_maxLength;
+	float m_length;
+	float m_impulse;
 
 	// Solver temp
-	int32 m_indexA;
-	int32 m_indexB;
-	b2Vec2 m_u;
-	b2Vec2 m_rA;
-	b2Vec2 m_rB;
-	b2Vec2 m_localCenterA;
-	b2Vec2 m_localCenterB;
-	float32 m_invMassA;
-	float32 m_invMassB;
-	float32 m_invIA;
-	float32 m_invIB;
-	float32 m_mass;
+	int m_indexA;
+	int m_indexB;
+	ci::Vec2f m_u;
+	ci::Vec2f m_rA;
+	ci::Vec2f m_rB;
+	ci::Vec2f m_localCenterA;
+	ci::Vec2f m_localCenterB;
+	float m_invMassA;
+	float m_invMassB;
+	float m_invIA;
+	float m_invIB;
+	float m_mass;
 	b2LimitState m_state;
 };
 

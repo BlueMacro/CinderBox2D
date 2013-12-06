@@ -40,52 +40,52 @@ public:
 	/// Create a loop. This automatically adjusts connectivity.
 	/// @param vertices an array of vertices, these are copied
 	/// @param count the vertex count
-	void CreateLoop(const b2Vec2* vertices, int32 count);
+	void CreateLoop(const ci::Vec2f* vertices, int count);
 
 	/// Create a chain with isolated end vertices.
 	/// @param vertices an array of vertices, these are copied
 	/// @param count the vertex count
-	void CreateChain(const b2Vec2* vertices, int32 count);
+	void CreateChain(const ci::Vec2f* vertices, int count);
 
 	/// Establish connectivity to a vertex that precedes the first vertex.
 	/// Don't call this for loops.
-	void SetPrevVertex(const b2Vec2& prevVertex);
+	void SetPrevVertex(const ci::Vec2f& prevVertex);
 
 	/// Establish connectivity to a vertex that follows the last vertex.
 	/// Don't call this for loops.
-	void SetNextVertex(const b2Vec2& nextVertex);
+	void SetNextVertex(const ci::Vec2f& nextVertex);
 
 	/// Implement b2Shape. Vertices are cloned using b2Alloc.
 	b2Shape* Clone(b2BlockAllocator* allocator) const;
 
 	/// @see b2Shape::GetChildCount
-	int32 GetChildCount() const;
+	int GetChildCount() const;
 
 	/// Get a child edge.
-	void GetChildEdge(b2EdgeShape* edge, int32 index) const;
+	void GetChildEdge(b2EdgeShape* edge, int index) const;
 
 	/// This always return false.
 	/// @see b2Shape::TestPoint
-	bool TestPoint(const b2Transform& transform, const b2Vec2& p) const;
+	bool TestPoint(const b2Transform& transform, const ci::Vec2f& p) const;
 
 	/// Implement b2Shape.
 	bool RayCast(b2RayCastOutput* output, const b2RayCastInput& input,
-					const b2Transform& transform, int32 childIndex) const;
+					const b2Transform& transform, int childIndex) const;
 
 	/// @see b2Shape::ComputeAABB
-	void ComputeAABB(b2AABB* aabb, const b2Transform& transform, int32 childIndex) const;
+	void ComputeAABB(b2AABB* aabb, const b2Transform& transform, int childIndex) const;
 
 	/// Chains have zero mass.
 	/// @see b2Shape::ComputeMass
-	void ComputeMass(b2MassData* massData, float32 density) const;
+	void ComputeMass(b2MassData* massData, float density) const;
 
 	/// The vertices. Owned by this class.
-	b2Vec2* m_vertices;
+	ci::Vec2f* m_vertices;
 
 	/// The vertex count.
-	int32 m_count;
+	int m_count;
 
-	b2Vec2 m_prevVertex, m_nextVertex;
+	ci::Vec2f m_prevVertex, m_nextVertex;
 	bool m_hasPrevVertex, m_hasNextVertex;
 };
 

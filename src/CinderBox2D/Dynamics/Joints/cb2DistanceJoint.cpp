@@ -36,14 +36,14 @@
 //   = invMass1 + invI1 * cross(r1, u)^2 + invMass2 + invI2 * cross(r2, u)^2
 
 void b2DistanceJointDef::Initialize(b2Body* b1, b2Body* b2,
-									const b2Vec2& anchor1, const b2Vec2& anchor2)
+									const ci::Vec2f& anchor1, const ci::Vec2f& anchor2)
 {
 	bodyA = b1;
 	bodyB = b2;
 	localAnchorA = bodyA->GetLocalPoint(anchor1);
 	localAnchorB = bodyB->GetLocalPoint(anchor2);
-	b2Vec2 d = anchor2 - anchor1;
-	length = d.Length();
+	ci::Vec2f d = anchor2 - anchor1;
+	length = d.length();
 }
 
 b2DistanceJoint::b2DistanceJoint(const b2DistanceJointDef* def)
@@ -70,15 +70,15 @@ void b2DistanceJoint::InitVelocityConstraints(const b2SolverData& data)
 	m_invIA = m_bodyA->m_invI;
 	m_invIB = m_bodyB->m_invI;
 
-	b2Vec2 cA = data.positions[m_indexA].c;
-	float32 aA = data.positions[m_indexA].a;
-	b2Vec2 vA = data.velocities[m_indexA].v;
-	float32 wA = data.velocities[m_indexA].w;
+	ci::Vec2f cA = data.positions[m_indexA].c;
+	float aA = data.positions[m_indexA].a;
+	ci::Vec2f vA = data.velocities[m_indexA].v;
+	float wA = data.velocities[m_indexA].w;
 
-	b2Vec2 cB = data.positions[m_indexB].c;
-	float32 aB = data.positions[m_indexB].a;
-	b2Vec2 vB = data.velocities[m_indexB].v;
-	float32 wB = data.velocities[m_indexB].w;
+	ci::Vec2f cB = data.positions[m_indexB].c;
+	float aB = data.positions[m_indexB].a;
+	ci::Vec2f vB = data.velocities[m_indexB].v;
+	float wB = data.velocities[m_indexB].w;
 
 	b2Rot qA(aA), qB(aB);
 
@@ -87,38 +87,38 @@ void b2DistanceJoint::InitVelocityConstraints(const b2SolverData& data)
 	m_u = cB + m_rB - cA - m_rA;
 
 	// Handle singularity.
-	float32 length = m_u.Length();
+	float length = m_u.length();
 	if (length > b2_linearSlop)
 	{
 		m_u *= 1.0f / length;
 	}
 	else
 	{
-		m_u.Set(0.0f, 0.0f);
+		m_u.set(0.0f, 0.0f);
 	}
 
-	float32 crAu = b2Cross(m_rA, m_u);
-	float32 crBu = b2Cross(m_rB, m_u);
-	float32 invMass = m_invMassA + m_invIA * crAu * crAu + m_invMassB + m_invIB * crBu * crBu;
+	float crAu = b2Cross(m_rA, m_u);
+	float crBu = b2Cross(m_rB, m_u);
+	float invMass = m_invMassA + m_invIA * crAu * crAu + m_invMassB + m_invIB * crBu * crBu;
 
 	// Compute the effective mass matrix.
 	m_mass = invMass != 0.0f ? 1.0f / invMass : 0.0f;
 
 	if (m_frequencyHz > 0.0f)
 	{
-		float32 C = length - m_length;
+		float C = length - m_length;
 
 		// Frequency
-		float32 omega = 2.0f * b2_pi * m_frequencyHz;
+		float omega = 2.0f * b2_pi * m_frequencyHz;
 
 		// Damping coefficient
-		float32 d = 2.0f * m_mass * m_dampingRatio * omega;
+		float d = 2.0f * m_mass * m_dampingRatio * omega;
 
 		// Spring stiffness
-		float32 k = m_mass * omega * omega;
+		float k = m_mass * omega * omega;
 
 		// magic formulas
-		float32 h = data.step.dt;
+		float h = data.step.dt;
 		m_gamma = h * (d + h * k);
 		m_gamma = m_gamma != 0.0f ? 1.0f / m_gamma : 0.0f;
 		m_bias = C * h * k * m_gamma;
@@ -137,7 +137,7 @@ void b2DistanceJoint::InitVelocityConstraints(const b2SolverData& data)
 		// Scale the impulse to support a variable time step.
 		m_impulse *= data.step.dtRatio;
 
-		b2Vec2 P = m_impulse * m_u;
+		ci::Vec2f P = m_impulse * m_u;
 		vA -= m_invMassA * P;
 		wA -= m_invIA * b2Cross(m_rA, P);
 		vB += m_invMassB * P;
@@ -156,20 +156,20 @@ void b2DistanceJoint::InitVelocityConstraints(const b2SolverData& data)
 
 void b2DistanceJoint::SolveVelocityConstraints(const b2SolverData& data)
 {
-	b2Vec2 vA = data.velocities[m_indexA].v;
-	float32 wA = data.velocities[m_indexA].w;
-	b2Vec2 vB = data.velocities[m_indexB].v;
-	float32 wB = data.velocities[m_indexB].w;
+	ci::Vec2f vA = data.velocities[m_indexA].v;
+	float wA = data.velocities[m_indexA].w;
+	ci::Vec2f vB = data.velocities[m_indexB].v;
+	float wB = data.velocities[m_indexB].w;
 
 	// Cdot = dot(u, v + cross(w, r))
-	b2Vec2 vpA = vA + b2Cross(wA, m_rA);
-	b2Vec2 vpB = vB + b2Cross(wB, m_rB);
-	float32 Cdot = b2Dot(m_u, vpB - vpA);
+	ci::Vec2f vpA = vA + b2Cross(wA, m_rA);
+	ci::Vec2f vpB = vB + b2Cross(wB, m_rB);
+	float Cdot = b2Dot(m_u, vpB - vpA);
 
-	float32 impulse = -m_mass * (Cdot + m_bias + m_gamma * m_impulse);
+	float impulse = -m_mass * (Cdot + m_bias + m_gamma * m_impulse);
 	m_impulse += impulse;
 
-	b2Vec2 P = impulse * m_u;
+	ci::Vec2f P = impulse * m_u;
 	vA -= m_invMassA * P;
 	wA -= m_invIA * b2Cross(m_rA, P);
 	vB += m_invMassB * P;
@@ -189,23 +189,24 @@ bool b2DistanceJoint::SolvePositionConstraints(const b2SolverData& data)
 		return true;
 	}
 
-	b2Vec2 cA = data.positions[m_indexA].c;
-	float32 aA = data.positions[m_indexA].a;
-	b2Vec2 cB = data.positions[m_indexB].c;
-	float32 aB = data.positions[m_indexB].a;
+	ci::Vec2f cA = data.positions[m_indexA].c;
+	float aA = data.positions[m_indexA].a;
+	ci::Vec2f cB = data.positions[m_indexB].c;
+	float aB = data.positions[m_indexB].a;
 
 	b2Rot qA(aA), qB(aB);
 
-	b2Vec2 rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-	b2Vec2 rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
-	b2Vec2 u = cB + rB - cA - rA;
-
-	float32 length = u.Normalize();
-	float32 C = length - m_length;
+	ci::Vec2f rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
+	ci::Vec2f rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
+	ci::Vec2f u = cB + rB - cA - rA;
+  
+	float length = u.length();
+  u /= length;
+	float C = length - m_length;
 	C = b2Clamp(C, -b2_maxLinearCorrection, b2_maxLinearCorrection);
 
-	float32 impulse = -m_mass * C;
-	b2Vec2 P = impulse * u;
+	float impulse = -m_mass * C;
+	ci::Vec2f P = impulse * u;
 
 	cA -= m_invMassA * P;
 	aA -= m_invIA * b2Cross(rA, P);
@@ -220,23 +221,23 @@ bool b2DistanceJoint::SolvePositionConstraints(const b2SolverData& data)
 	return b2Abs(C) < b2_linearSlop;
 }
 
-b2Vec2 b2DistanceJoint::GetAnchorA() const
+ci::Vec2f b2DistanceJoint::GetAnchorA() const
 {
 	return m_bodyA->GetWorldPoint(m_localAnchorA);
 }
 
-b2Vec2 b2DistanceJoint::GetAnchorB() const
+ci::Vec2f b2DistanceJoint::GetAnchorB() const
 {
 	return m_bodyB->GetWorldPoint(m_localAnchorB);
 }
 
-b2Vec2 b2DistanceJoint::GetReactionForce(float32 inv_dt) const
+ci::Vec2f b2DistanceJoint::GetReactionForce(float inv_dt) const
 {
-	b2Vec2 F = (inv_dt * m_impulse) * m_u;
+	ci::Vec2f F = (inv_dt * m_impulse) * m_u;
 	return F;
 }
 
-float32 b2DistanceJoint::GetReactionTorque(float32 inv_dt) const
+float b2DistanceJoint::GetReactionTorque(float inv_dt) const
 {
 	B2_NOT_USED(inv_dt);
 	return 0.0f;
@@ -244,15 +245,15 @@ float32 b2DistanceJoint::GetReactionTorque(float32 inv_dt) const
 
 void b2DistanceJoint::Dump()
 {
-	int32 indexA = m_bodyA->m_islandIndex;
-	int32 indexB = m_bodyB->m_islandIndex;
+	int indexA = m_bodyA->m_islandIndex;
+	int indexB = m_bodyB->m_islandIndex;
 
 	b2Log("  b2DistanceJointDef jd;\n");
 	b2Log("  jd.bodyA = bodies[%d];\n", indexA);
 	b2Log("  jd.bodyB = bodies[%d];\n", indexB);
 	b2Log("  jd.collideConnected = bool(%d);\n", m_collideConnected);
-	b2Log("  jd.localAnchorA.Set(%.15lef, %.15lef);\n", m_localAnchorA.x, m_localAnchorA.y);
-	b2Log("  jd.localAnchorB.Set(%.15lef, %.15lef);\n", m_localAnchorB.x, m_localAnchorB.y);
+	b2Log("  jd.localAnchorA.set(%.15lef, %.15lef);\n", m_localAnchorA.x, m_localAnchorA.y);
+	b2Log("  jd.localAnchorB.set(%.15lef, %.15lef);\n", m_localAnchorB.x, m_localAnchorB.y);
 	b2Log("  jd.length = %.15lef;\n", m_length);
 	b2Log("  jd.frequencyHz = %.15lef;\n", m_frequencyHz);
 	b2Log("  jd.dampingRatio = %.15lef;\n", m_dampingRatio);

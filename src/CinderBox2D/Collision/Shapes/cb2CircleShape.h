@@ -31,57 +31,57 @@ public:
 	b2Shape* Clone(b2BlockAllocator* allocator) const;
 
 	/// @see b2Shape::GetChildCount
-	int32 GetChildCount() const;
+	int GetChildCount() const;
 
 	/// Implement b2Shape.
-	bool TestPoint(const b2Transform& transform, const b2Vec2& p) const;
+	bool TestPoint(const b2Transform& transform, const ci::Vec2f& p) const;
 
 	/// Implement b2Shape.
 	bool RayCast(b2RayCastOutput* output, const b2RayCastInput& input,
-				const b2Transform& transform, int32 childIndex) const;
+				const b2Transform& transform, int childIndex) const;
 
 	/// @see b2Shape::ComputeAABB
-	void ComputeAABB(b2AABB* aabb, const b2Transform& transform, int32 childIndex) const;
+	void ComputeAABB(b2AABB* aabb, const b2Transform& transform, int childIndex) const;
 
 	/// @see b2Shape::ComputeMass
-	void ComputeMass(b2MassData* massData, float32 density) const;
+	void ComputeMass(b2MassData* massData, float density) const;
 
 	/// Get the supporting vertex index in the given direction.
-	int32 GetSupport(const b2Vec2& d) const;
+	int GetSupport(const ci::Vec2f& d) const;
 
 	/// Get the supporting vertex in the given direction.
-	const b2Vec2& GetSupportVertex(const b2Vec2& d) const;
+	const ci::Vec2f& GetSupportVertex(const ci::Vec2f& d) const;
 
 	/// Get the vertex count.
-	int32 GetVertexCount() const { return 1; }
+	int GetVertexCount() const { return 1; }
 
 	/// Get a vertex by index. Used by b2Distance.
-	const b2Vec2& GetVertex(int32 index) const;
+	const ci::Vec2f& GetVertex(int index) const;
 
 	/// Position
-	b2Vec2 m_p;
+	ci::Vec2f m_p;
 };
 
 inline b2CircleShape::b2CircleShape()
 {
 	m_type = e_circle;
 	m_radius = 0.0f;
-	m_p.SetZero();
+	cb2::setZero(m_p);
 }
 
-inline int32 b2CircleShape::GetSupport(const b2Vec2 &d) const
+inline int b2CircleShape::GetSupport(const ci::Vec2f &d) const
 {
 	B2_NOT_USED(d);
 	return 0;
 }
 
-inline const b2Vec2& b2CircleShape::GetSupportVertex(const b2Vec2 &d) const
+inline const ci::Vec2f& b2CircleShape::GetSupportVertex(const ci::Vec2f &d) const
 {
 	B2_NOT_USED(d);
 	return m_p;
 }
 
-inline const b2Vec2& b2CircleShape::GetVertex(int32 index) const
+inline const ci::Vec2f& b2CircleShape::GetVertex(int index) const
 {
 	B2_NOT_USED(index);
 	b2Assert(index == 0);

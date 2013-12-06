@@ -18,18 +18,38 @@
 
 #include <CinderBox2D/Common/cb2Math.h>
 
-const b2Vec2 b2Vec2_zero(0.0f, 0.0f);
-
-/// Solve A * x = b, where b is a column vector. This is more efficient
-/// than computing the inverse in one-shot cases.
-b2Vec3 b2Mat33::Solve33(const b2Vec3& b) const
+namespace cb2
 {
-	float32 det = b2Dot(ex, b2Cross(ey, ez));
+
+ci::Vec2f solve( const ci::Matrix22f& m, const ci::Vec2f& b)
+{
+	float a11 = m.m00, a12 = m.m01, a21 = m.m10, a22 = m.m11;
+	float det = a11 * a22 - a12 * a21;
 	if (det != 0.0f)
 	{
 		det = 1.0f / det;
 	}
-	b2Vec3 x;
+	ci::Vec2f x;
+	x.x = det * (a22 * b.x - a12 * b.y);
+	x.y = det * (a11 * b.y - a21 * b.x);
+	return x;
+}
+
+/// Solve A * x = b, where b is a column vector. This is more efficient
+/// than computing the inverse in one-shot cases.
+ci::Vec3f solve( const ci::Matrix33f& A, const ci::Vec3f& b)
+{
+  // todo: optimize math here
+  ci::Vec3f ex = A.getColumn(0);
+  ci::Vec3f ey = A.getColumn(1);
+  ci::Vec3f ez = A.getColumn(2);
+
+	float det = b2Dot(ex, b2Cross(ey, ez));
+	if (det != 0.0f)
+	{
+		det = 1.0f / det;
+	}
+	ci::Vec3f x;
 	x.x = det * b2Dot(b, b2Cross(ey, ez));
 	x.y = det * b2Dot(ex, b2Cross(b, ez));
 	x.z = det * b2Dot(ex, b2Cross(ey, b));
@@ -38,57 +58,65 @@ b2Vec3 b2Mat33::Solve33(const b2Vec3& b) const
 
 /// Solve A * x = b, where b is a column vector. This is more efficient
 /// than computing the inverse in one-shot cases.
-b2Vec2 b2Mat33::Solve22(const b2Vec2& b) const
+ci::Vec2f solve22( const ci::Matrix33f& A, const ci::Vec2f& b)
 {
-	float32 a11 = ex.x, a12 = ey.x, a21 = ex.y, a22 = ey.y;
-	float32 det = a11 * a22 - a12 * a21;
+	float a11 = A.m00, a12 = A.m10, a21 = A.m01, a22 = A.m11;
+	float det = a11 * a22 - a12 * a21;
 	if (det != 0.0f)
 	{
 		det = 1.0f / det;
 	}
-	b2Vec2 x;
+	ci::Vec2f x;
 	x.x = det * (a22 * b.x - a12 * b.y);
 	x.y = det * (a11 * b.y - a21 * b.x);
 	return x;
 }
 
 ///
-void b2Mat33::GetInverse22(b2Mat33* M) const
+void getInverse22( const ci::Matrix33f& A, ci::Matrix33f* M )
 {
-	float32 a = ex.x, b = ey.x, c = ex.y, d = ey.y;
-	float32 det = a * d - b * c;
+	float a = A.m00, b = A.m10, c = A.m01, d = A.m11;
+	float det = a * d - b * c;
 	if (det != 0.0f)
 	{
 		det = 1.0f / det;
 	}
 
-	M->ex.x =  det * d;	M->ey.x = -det * b; M->ex.z = 0.0f;
-	M->ex.y = -det * c;	M->ey.y =  det * a; M->ey.z = 0.0f;
-	M->ez.x = 0.0f; M->ez.y = 0.0f; M->ez.z = 0.0f;
+	M->m00 =  det * d;	M->m10 = -det * b; M->m02 = 0.0f;
+	M->m01 = -det * c;	M->m11 =  det * a; M->m12 = 0.0f;
+	M->m10 = 0.0f;      M->m21 = 0.0f;     M->m22 = 0.0f;
 }
 
 /// Returns the zero matrix if singular.
-void b2Mat33::GetSymInverse33(b2Mat33* M) const
+void getSymInverse33( const ci::Matrix33f& A, ci::Matrix33f* M )
 {
-	float32 det = b2Dot(ex, b2Cross(ey, ez));
+  // todo: optimize math here
+  ci::Vec3f ex = A.getColumn(0);
+  ci::Vec3f ey = A.getColumn(1);
+  ci::Vec3f ez = A.getColumn(2);
+
+	float det = b2Dot(ex, b2Cross(ey, ez));
+
 	if (det != 0.0f)
 	{
 		det = 1.0f / det;
 	}
 
-	float32 a11 = ex.x, a12 = ey.x, a13 = ez.x;
-	float32 a22 = ey.y, a23 = ez.y;
-	float32 a33 = ez.z;
+	float a11 = ex.x, a12 = ey.x, a13 = ez.x;
+	float a22 = ey.y, a23 = ez.y;
+	float a33 = ez.z;
 
-	M->ex.x = det * (a22 * a33 - a23 * a23);
-	M->ex.y = det * (a13 * a23 - a12 * a33);
-	M->ex.z = det * (a12 * a23 - a13 * a22);
+	M->m00 = det * (a22 * a33 - a23 * a23);
+	M->m01 = det * (a13 * a23 - a12 * a33);
+	M->m02 = det * (a12 * a23 - a13 * a22);
 
-	M->ey.x = M->ex.y;
-	M->ey.y = det * (a11 * a33 - a13 * a13);
-	M->ey.z = det * (a13 * a12 - a11 * a23);
+	M->m10 = M->m01;
+	M->m11 = det * (a11 * a33 - a13 * a13);
+	M->m12 = det * (a13 * a12 - a11 * a23);
 
-	M->ez.x = M->ex.z;
-	M->ez.y = M->ey.z;
-	M->ez.z = det * (a11 * a22 - a12 * a12);
+	M->m20 = M->m02;
+	M->m21 = M->m12;
+	M->m22 = det * (a11 * a22 - a12 * a12);
+}
+
 }

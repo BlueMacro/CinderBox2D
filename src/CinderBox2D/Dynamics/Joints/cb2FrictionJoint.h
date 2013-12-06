@@ -27,27 +27,27 @@ struct b2FrictionJointDef : public b2JointDef
 	b2FrictionJointDef()
 	{
 		type = e_frictionJoint;
-		localAnchorA.SetZero();
-		localAnchorB.SetZero();
+		cb2::setZero(localAnchorA);
+		cb2::setZero(localAnchorB);
 		maxForce = 0.0f;
 		maxTorque = 0.0f;
 	}
 
 	/// Initialize the bodies, anchors, axis, and reference angle using the world
 	/// anchor and world axis.
-	void Initialize(b2Body* bodyA, b2Body* bodyB, const b2Vec2& anchor);
+	void Initialize(b2Body* bodyA, b2Body* bodyB, const ci::Vec2f& anchor);
 
 	/// The local anchor point relative to bodyA's origin.
-	b2Vec2 localAnchorA;
+	ci::Vec2f localAnchorA;
 
 	/// The local anchor point relative to bodyB's origin.
-	b2Vec2 localAnchorB;
+	ci::Vec2f localAnchorB;
 
 	/// The maximum friction force in N.
-	float32 maxForce;
+	float maxForce;
 
 	/// The maximum friction torque in N-m.
-	float32 maxTorque;
+	float maxTorque;
 };
 
 /// Friction joint. This is used for top-down friction.
@@ -55,29 +55,29 @@ struct b2FrictionJointDef : public b2JointDef
 class b2FrictionJoint : public b2Joint
 {
 public:
-	b2Vec2 GetAnchorA() const;
-	b2Vec2 GetAnchorB() const;
+	ci::Vec2f GetAnchorA() const;
+	ci::Vec2f GetAnchorB() const;
 
-	b2Vec2 GetReactionForce(float32 inv_dt) const;
-	float32 GetReactionTorque(float32 inv_dt) const;
+	ci::Vec2f GetReactionForce(float inv_dt) const;
+	float GetReactionTorque(float inv_dt) const;
 
 	/// The local anchor point relative to bodyA's origin.
-	const b2Vec2& GetLocalAnchorA() const { return m_localAnchorA; }
+	const ci::Vec2f& GetLocalAnchorA() const { return m_localAnchorA; }
 
 	/// The local anchor point relative to bodyB's origin.
-	const b2Vec2& GetLocalAnchorB() const  { return m_localAnchorB; }
+	const ci::Vec2f& GetLocalAnchorB() const  { return m_localAnchorB; }
 
-	/// Set the maximum friction force in N.
-	void SetMaxForce(float32 force);
+	/// set the maximum friction force in N.
+	void SetMaxForce(float force);
 
 	/// Get the maximum friction force in N.
-	float32 GetMaxForce() const;
+	float GetMaxForce() const;
 
-	/// Set the maximum friction torque in N*m.
-	void SetMaxTorque(float32 torque);
+	/// set the maximum friction torque in N*m.
+	void SetMaxTorque(float torque);
 
 	/// Get the maximum friction torque in N*m.
-	float32 GetMaxTorque() const;
+	float GetMaxTorque() const;
 
 	/// Dump joint to dmLog
 	void Dump();
@@ -92,28 +92,28 @@ protected:
 	void SolveVelocityConstraints(const b2SolverData& data);
 	bool SolvePositionConstraints(const b2SolverData& data);
 
-	b2Vec2 m_localAnchorA;
-	b2Vec2 m_localAnchorB;
+	ci::Vec2f m_localAnchorA;
+	ci::Vec2f m_localAnchorB;
 
 	// Solver shared
-	b2Vec2 m_linearImpulse;
-	float32 m_angularImpulse;
-	float32 m_maxForce;
-	float32 m_maxTorque;
+	ci::Vec2f m_linearImpulse;
+	float m_angularImpulse;
+	float m_maxForce;
+	float m_maxTorque;
 
 	// Solver temp
-	int32 m_indexA;
-	int32 m_indexB;
-	b2Vec2 m_rA;
-	b2Vec2 m_rB;
-	b2Vec2 m_localCenterA;
-	b2Vec2 m_localCenterB;
-	float32 m_invMassA;
-	float32 m_invMassB;
-	float32 m_invIA;
-	float32 m_invIB;
-	b2Mat22 m_linearMass;
-	float32 m_angularMass;
+	int m_indexA;
+	int m_indexB;
+	ci::Vec2f m_rA;
+	ci::Vec2f m_rB;
+	ci::Vec2f m_localCenterA;
+	ci::Vec2f m_localCenterB;
+	float m_invMassA;
+	float m_invMassB;
+	float m_invIA;
+	float m_invIB;
+	ci::Matrix22f m_linearMass;
+	float m_angularMass;
 };
 
 #endif

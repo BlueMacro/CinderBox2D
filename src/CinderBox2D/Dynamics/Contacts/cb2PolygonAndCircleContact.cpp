@@ -23,7 +23,7 @@
 #include <new>
 using namespace std;
 
-b2Contact* b2PolygonAndCircleContact::Create(b2Fixture* fixtureA, int32, b2Fixture* fixtureB, int32, b2BlockAllocator* allocator)
+b2Contact* b2PolygonAndCircleContact::Create(b2Fixture* fixtureA, int, b2Fixture* fixtureB, int, b2BlockAllocator* allocator)
 {
 	void* mem = allocator->Allocate(sizeof(b2PolygonAndCircleContact));
 	return new (mem) b2PolygonAndCircleContact(fixtureA, fixtureB);

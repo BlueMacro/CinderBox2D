@@ -34,20 +34,20 @@ class b2ContactListener;
 
 /// Friction mixing law. The idea is to allow either fixture to drive the restitution to zero.
 /// For example, anything slides on ice.
-inline float32 b2MixFriction(float32 friction1, float32 friction2)
+inline float b2MixFriction(float friction1, float friction2)
 {
 	return std::sqrt(friction1 * friction2);
 }
 
 /// Restitution mixing law. The idea is allow for anything to bounce off an inelastic surface.
 /// For example, a superball bounces on anything.
-inline float32 b2MixRestitution(float32 restitution1, float32 restitution2)
+inline float b2MixRestitution(float restitution1, float restitution2)
 {
 	return restitution1 > restitution2 ? restitution1 : restitution2;
 }
 
-typedef b2Contact* b2ContactCreateFcn(	b2Fixture* fixtureA, int32 indexA,
-										b2Fixture* fixtureB, int32 indexB,
+typedef b2Contact* b2ContactCreateFcn(	b2Fixture* fixtureA, int indexA,
+										b2Fixture* fixtureB, int indexB,
 										b2BlockAllocator* allocator);
 typedef void b2ContactDestroyFcn(b2Contact* contact, b2BlockAllocator* allocator);
 
@@ -106,31 +106,31 @@ public:
 	const b2Fixture* GetFixtureA() const;
 
 	/// Get the child primitive index for fixture A.
-	int32 GetChildIndexA() const;
+	int GetChildIndexA() const;
 
 	/// Get fixture B in this contact.
 	b2Fixture* GetFixtureB();
 	const b2Fixture* GetFixtureB() const;
 
 	/// Get the child primitive index for fixture B.
-	int32 GetChildIndexB() const;
+	int GetChildIndexB() const;
 
 	/// Override the default friction mixture. You can call this in b2ContactListener::PreSolve.
 	/// This value persists until set or reset.
-	void SetFriction(float32 friction);
+	void SetFriction(float friction);
 
 	/// Get the friction.
-	float32 GetFriction() const;
+	float GetFriction() const;
 
 	/// Reset the friction mixture to the default value.
 	void ResetFriction();
 
 	/// Override the default restitution mixture. You can call this in b2ContactListener::PreSolve.
 	/// The value persists until you set or reset.
-	void SetRestitution(float32 restitution);
+	void SetRestitution(float restitution);
 
 	/// Get the restitution.
-	float32 GetRestitution() const;
+	float GetRestitution() const;
 
 	/// Reset the restitution to the default value.
 	void ResetRestitution();
@@ -151,7 +151,7 @@ protected:
 		// Used when crawling contact graph when forming islands.
 		e_islandFlag		= 0x0001,
 
-        // Set when the shapes are touching.
+        // set when the shapes are touching.
 		e_touchingFlag		= 0x0002,
 
 		// This contact can be disabled (by user)
@@ -173,12 +173,12 @@ protected:
 	static void AddType(b2ContactCreateFcn* createFcn, b2ContactDestroyFcn* destroyFcn,
 						b2Shape::Type typeA, b2Shape::Type typeB);
 	static void InitializeRegisters();
-	static b2Contact* Create(b2Fixture* fixtureA, int32 indexA, b2Fixture* fixtureB, int32 indexB, b2BlockAllocator* allocator);
+	static b2Contact* Create(b2Fixture* fixtureA, int indexA, b2Fixture* fixtureB, int indexB, b2BlockAllocator* allocator);
 	static void Destroy(b2Contact* contact, b2Shape::Type typeA, b2Shape::Type typeB, b2BlockAllocator* allocator);
 	static void Destroy(b2Contact* contact, b2BlockAllocator* allocator);
 
 	b2Contact() : m_fixtureA(NULL), m_fixtureB(NULL) {}
-	b2Contact(b2Fixture* fixtureA, int32 indexA, b2Fixture* fixtureB, int32 indexB);
+	b2Contact(b2Fixture* fixtureA, int indexA, b2Fixture* fixtureB, int indexB);
 	virtual ~b2Contact() {}
 
 	void Update(b2ContactListener* listener);
@@ -186,7 +186,7 @@ protected:
 	static b2ContactRegister s_registers[b2Shape::e_typeCount][b2Shape::e_typeCount];
 	static bool s_initialized;
 
-	uint32 m_flags;
+	unsigned int m_flags;
 
 	// World pool and list pointers.
 	b2Contact* m_prev;
@@ -199,16 +199,16 @@ protected:
 	b2Fixture* m_fixtureA;
 	b2Fixture* m_fixtureB;
 
-	int32 m_indexA;
-	int32 m_indexB;
+	int m_indexA;
+	int m_indexB;
 
 	b2Manifold m_manifold;
 
-	int32 m_toiCount;
-	float32 m_toi;
+	int m_toiCount;
+	float m_toi;
 
-	float32 m_friction;
-	float32 m_restitution;
+	float m_friction;
+	float m_restitution;
 };
 
 inline b2Manifold* b2Contact::GetManifold()
@@ -278,7 +278,7 @@ inline b2Fixture* b2Contact::GetFixtureB()
 	return m_fixtureB;
 }
 
-inline int32 b2Contact::GetChildIndexA() const
+inline int b2Contact::GetChildIndexA() const
 {
 	return m_indexA;
 }
@@ -288,7 +288,7 @@ inline const b2Fixture* b2Contact::GetFixtureB() const
 	return m_fixtureB;
 }
 
-inline int32 b2Contact::GetChildIndexB() const
+inline int b2Contact::GetChildIndexB() const
 {
 	return m_indexB;
 }
@@ -298,12 +298,12 @@ inline void b2Contact::FlagForFiltering()
 	m_flags |= e_filterFlag;
 }
 
-inline void b2Contact::SetFriction(float32 friction)
+inline void b2Contact::SetFriction(float friction)
 {
 	m_friction = friction;
 }
 
-inline float32 b2Contact::GetFriction() const
+inline float b2Contact::GetFriction() const
 {
 	return m_friction;
 }
@@ -313,12 +313,12 @@ inline void b2Contact::ResetFriction()
 	m_friction = b2MixFriction(m_fixtureA->m_friction, m_fixtureB->m_friction);
 }
 
-inline void b2Contact::SetRestitution(float32 restitution)
+inline void b2Contact::SetRestitution(float restitution)
 {
 	m_restitution = restitution;
 }
 
-inline float32 b2Contact::GetRestitution() const
+inline float b2Contact::GetRestitution() const
 {
 	return m_restitution;
 }

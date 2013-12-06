@@ -29,33 +29,33 @@ class b2EdgeShape : public b2Shape
 public:
 	b2EdgeShape();
 
-	/// Set this as an isolated edge.
-	void Set(const b2Vec2& v1, const b2Vec2& v2);
+	/// set this as an isolated edge.
+	void set(const ci::Vec2f& v1, const ci::Vec2f& v2);
 
 	/// Implement b2Shape.
 	b2Shape* Clone(b2BlockAllocator* allocator) const;
 
 	/// @see b2Shape::GetChildCount
-	int32 GetChildCount() const;
+	int GetChildCount() const;
 
 	/// @see b2Shape::TestPoint
-	bool TestPoint(const b2Transform& transform, const b2Vec2& p) const;
+	bool TestPoint(const b2Transform& transform, const ci::Vec2f& p) const;
 
 	/// Implement b2Shape.
 	bool RayCast(b2RayCastOutput* output, const b2RayCastInput& input,
-				const b2Transform& transform, int32 childIndex) const;
+				const b2Transform& transform, int childIndex) const;
 
 	/// @see b2Shape::ComputeAABB
-	void ComputeAABB(b2AABB* aabb, const b2Transform& transform, int32 childIndex) const;
+	void ComputeAABB(b2AABB* aabb, const b2Transform& transform, int childIndex) const;
 
 	/// @see b2Shape::ComputeMass
-	void ComputeMass(b2MassData* massData, float32 density) const;
+	void ComputeMass(b2MassData* massData, float density) const;
 	
 	/// These are the edge vertices
-	b2Vec2 m_vertex1, m_vertex2;
+	ci::Vec2f m_vertex1, m_vertex2;
 
 	/// Optional adjacent vertices. These are used for smooth collision.
-	b2Vec2 m_vertex0, m_vertex3;
+	ci::Vec2f m_vertex0, m_vertex3;
 	bool m_hasVertex0, m_hasVertex3;
 };
 

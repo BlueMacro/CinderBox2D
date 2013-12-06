@@ -21,7 +21,7 @@
 
 #include <CinderBox2D/Dynamics/Joints/cb2Joint.h>
 
-const float32 b2_minPulleyLength = 2.0f;
+const float b2_minPulleyLength = 2.0f;
 
 /// Pulley joint definition. This requires two ground anchors,
 /// two dynamic body anchor points, and a pulley ratio.
@@ -30,10 +30,10 @@ struct b2PulleyJointDef : public b2JointDef
 	b2PulleyJointDef()
 	{
 		type = e_pulleyJoint;
-		groundAnchorA.Set(-1.0f, 1.0f);
-		groundAnchorB.Set(1.0f, 1.0f);
-		localAnchorA.Set(-1.0f, 0.0f);
-		localAnchorB.Set(1.0f, 0.0f);
+		groundAnchorA.set(-1.0f, 1.0f);
+		groundAnchorB.set(1.0f, 1.0f);
+		localAnchorA.set(-1.0f, 0.0f);
+		localAnchorB.set(1.0f, 0.0f);
 		lengthA = 0.0f;
 		lengthB = 0.0f;
 		ratio = 1.0f;
@@ -42,30 +42,30 @@ struct b2PulleyJointDef : public b2JointDef
 
 	/// Initialize the bodies, anchors, lengths, max lengths, and ratio using the world anchors.
 	void Initialize(b2Body* bodyA, b2Body* bodyB,
-					const b2Vec2& groundAnchorA, const b2Vec2& groundAnchorB,
-					const b2Vec2& anchorA, const b2Vec2& anchorB,
-					float32 ratio);
+					const ci::Vec2f& groundAnchorA, const ci::Vec2f& groundAnchorB,
+					const ci::Vec2f& anchorA, const ci::Vec2f& anchorB,
+					float ratio);
 
 	/// The first ground anchor in world coordinates. This point never moves.
-	b2Vec2 groundAnchorA;
+	ci::Vec2f groundAnchorA;
 
 	/// The second ground anchor in world coordinates. This point never moves.
-	b2Vec2 groundAnchorB;
+	ci::Vec2f groundAnchorB;
 
 	/// The local anchor point relative to bodyA's origin.
-	b2Vec2 localAnchorA;
+	ci::Vec2f localAnchorA;
 
 	/// The local anchor point relative to bodyB's origin.
-	b2Vec2 localAnchorB;
+	ci::Vec2f localAnchorB;
 
 	/// The a reference length for the segment attached to bodyA.
-	float32 lengthA;
+	float lengthA;
 
 	/// The a reference length for the segment attached to bodyB.
-	float32 lengthB;
+	float lengthB;
 
 	/// The pulley ratio, used to simulate a block-and-tackle.
-	float32 ratio;
+	float ratio;
 };
 
 /// The pulley joint is connected to two bodies and two fixed ground points.
@@ -79,26 +79,26 @@ struct b2PulleyJointDef : public b2JointDef
 class b2PulleyJoint : public b2Joint
 {
 public:
-	b2Vec2 GetAnchorA() const;
-	b2Vec2 GetAnchorB() const;
+	ci::Vec2f GetAnchorA() const;
+	ci::Vec2f GetAnchorB() const;
 
-	b2Vec2 GetReactionForce(float32 inv_dt) const;
-	float32 GetReactionTorque(float32 inv_dt) const;
+	ci::Vec2f GetReactionForce(float inv_dt) const;
+	float GetReactionTorque(float inv_dt) const;
 
 	/// Get the first ground anchor.
-	b2Vec2 GetGroundAnchorA() const;
+	ci::Vec2f GetGroundAnchorA() const;
 
 	/// Get the second ground anchor.
-	b2Vec2 GetGroundAnchorB() const;
+	ci::Vec2f GetGroundAnchorB() const;
 
 	/// Get the current length of the segment attached to bodyA.
-	float32 GetLengthA() const;
+	float GetLengthA() const;
 
 	/// Get the current length of the segment attached to bodyB.
-	float32 GetLengthB() const;
+	float GetLengthB() const;
 
 	/// Get the pulley ratio.
-	float32 GetRatio() const;
+	float GetRatio() const;
 
 	/// Dump joint to dmLog
 	void Dump();
@@ -112,32 +112,32 @@ protected:
 	void SolveVelocityConstraints(const b2SolverData& data);
 	bool SolvePositionConstraints(const b2SolverData& data);
 
-	b2Vec2 m_groundAnchorA;
-	b2Vec2 m_groundAnchorB;
-	float32 m_lengthA;
-	float32 m_lengthB;
+	ci::Vec2f m_groundAnchorA;
+	ci::Vec2f m_groundAnchorB;
+	float m_lengthA;
+	float m_lengthB;
 	
 	// Solver shared
-	b2Vec2 m_localAnchorA;
-	b2Vec2 m_localAnchorB;
-	float32 m_constant;
-	float32 m_ratio;
-	float32 m_impulse;
+	ci::Vec2f m_localAnchorA;
+	ci::Vec2f m_localAnchorB;
+	float m_constant;
+	float m_ratio;
+	float m_impulse;
 
 	// Solver temp
-	int32 m_indexA;
-	int32 m_indexB;
-	b2Vec2 m_uA;
-	b2Vec2 m_uB;
-	b2Vec2 m_rA;
-	b2Vec2 m_rB;
-	b2Vec2 m_localCenterA;
-	b2Vec2 m_localCenterB;
-	float32 m_invMassA;
-	float32 m_invMassB;
-	float32 m_invIA;
-	float32 m_invIB;
-	float32 m_mass;
+	int m_indexA;
+	int m_indexB;
+	ci::Vec2f m_uA;
+	ci::Vec2f m_uB;
+	ci::Vec2f m_rA;
+	ci::Vec2f m_rB;
+	ci::Vec2f m_localCenterA;
+	ci::Vec2f m_localCenterB;
+	float m_invMassA;
+	float m_invMassB;
+	float m_invIA;
+	float m_invIB;
+	float m_mass;
 };
 
 #endif

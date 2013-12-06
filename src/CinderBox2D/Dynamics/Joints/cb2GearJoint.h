@@ -41,7 +41,7 @@ struct b2GearJointDef : public b2JointDef
 
 	/// The gear ratio.
 	/// @see b2GearJoint for explanation.
-	float32 ratio;
+	float ratio;
 };
 
 /// A gear joint is used to connect two joints together. Either joint
@@ -56,11 +56,11 @@ struct b2GearJointDef : public b2JointDef
 class b2GearJoint : public b2Joint
 {
 public:
-	b2Vec2 GetAnchorA() const;
-	b2Vec2 GetAnchorB() const;
+	ci::Vec2f GetAnchorA() const;
+	ci::Vec2f GetAnchorB() const;
 
-	b2Vec2 GetReactionForce(float32 inv_dt) const;
-	float32 GetReactionTorque(float32 inv_dt) const;
+	ci::Vec2f GetReactionForce(float inv_dt) const;
+	float GetReactionTorque(float inv_dt) const;
 
 	/// Get the first joint.
 	b2Joint* GetJoint1() { return m_joint1; }
@@ -68,9 +68,9 @@ public:
 	/// Get the second joint.
 	b2Joint* GetJoint2() { return m_joint2; }
 
-	/// Set/Get the gear ratio.
-	void SetRatio(float32 ratio);
-	float32 GetRatio() const;
+	/// set/Get the gear ratio.
+	void SetRatio(float ratio);
+	float GetRatio() const;
 
 	/// Dump joint to dmLog
 	void Dump();
@@ -96,30 +96,30 @@ protected:
 	b2Body* m_bodyD;
 
 	// Solver shared
-	b2Vec2 m_localAnchorA;
-	b2Vec2 m_localAnchorB;
-	b2Vec2 m_localAnchorC;
-	b2Vec2 m_localAnchorD;
+	ci::Vec2f m_localAnchorA;
+	ci::Vec2f m_localAnchorB;
+	ci::Vec2f m_localAnchorC;
+	ci::Vec2f m_localAnchorD;
 
-	b2Vec2 m_localAxisC;
-	b2Vec2 m_localAxisD;
+	ci::Vec2f m_localAxisC;
+	ci::Vec2f m_localAxisD;
 
-	float32 m_referenceAngleA;
-	float32 m_referenceAngleB;
+	float m_referenceAngleA;
+	float m_referenceAngleB;
 
-	float32 m_constant;
-	float32 m_ratio;
+	float m_constant;
+	float m_ratio;
 
-	float32 m_impulse;
+	float m_impulse;
 
 	// Solver temp
-	int32 m_indexA, m_indexB, m_indexC, m_indexD;
-	b2Vec2 m_lcA, m_lcB, m_lcC, m_lcD;
-	float32 m_mA, m_mB, m_mC, m_mD;
-	float32 m_iA, m_iB, m_iC, m_iD;
-	b2Vec2 m_JvAC, m_JvBD;
-	float32 m_JwA, m_JwB, m_JwC, m_JwD;
-	float32 m_mass;
+	int m_indexA, m_indexB, m_indexC, m_indexD;
+	ci::Vec2f m_lcA, m_lcB, m_lcC, m_lcD;
+	float m_mA, m_mB, m_mC, m_mD;
+	float m_iA, m_iB, m_iC, m_iD;
+	ci::Vec2f m_JvAC, m_JvBD;
+	float m_JwA, m_JwB, m_JwC, m_JwD;
+	float m_mass;
 };
 
 #endif

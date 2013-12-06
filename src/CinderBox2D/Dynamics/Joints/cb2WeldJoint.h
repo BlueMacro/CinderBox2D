@@ -29,8 +29,8 @@ struct b2WeldJointDef : public b2JointDef
 	b2WeldJointDef()
 	{
 		type = e_weldJoint;
-		localAnchorA.Set(0.0f, 0.0f);
-		localAnchorB.Set(0.0f, 0.0f);
+		localAnchorA.set(0.0f, 0.0f);
+		localAnchorB.set(0.0f, 0.0f);
 		referenceAngle = 0.0f;
 		frequencyHz = 0.0f;
 		dampingRatio = 0.0f;
@@ -38,23 +38,23 @@ struct b2WeldJointDef : public b2JointDef
 
 	/// Initialize the bodies, anchors, and reference angle using a world
 	/// anchor point.
-	void Initialize(b2Body* bodyA, b2Body* bodyB, const b2Vec2& anchor);
+	void Initialize(b2Body* bodyA, b2Body* bodyB, const ci::Vec2f& anchor);
 
 	/// The local anchor point relative to bodyA's origin.
-	b2Vec2 localAnchorA;
+	ci::Vec2f localAnchorA;
 
 	/// The local anchor point relative to bodyB's origin.
-	b2Vec2 localAnchorB;
+	ci::Vec2f localAnchorB;
 
 	/// The bodyB angle minus bodyA angle in the reference state (radians).
-	float32 referenceAngle;
+	float referenceAngle;
 	
 	/// The mass-spring-damper frequency in Hertz. Rotation only.
 	/// Disable softness with a value of 0.
-	float32 frequencyHz;
+	float frequencyHz;
 
 	/// The damping ratio. 0 = no damping, 1 = critical damping.
-	float32 dampingRatio;
+	float dampingRatio;
 };
 
 /// A weld joint essentially glues two bodies together. A weld joint may
@@ -62,28 +62,28 @@ struct b2WeldJointDef : public b2JointDef
 class b2WeldJoint : public b2Joint
 {
 public:
-	b2Vec2 GetAnchorA() const;
-	b2Vec2 GetAnchorB() const;
+	ci::Vec2f GetAnchorA() const;
+	ci::Vec2f GetAnchorB() const;
 
-	b2Vec2 GetReactionForce(float32 inv_dt) const;
-	float32 GetReactionTorque(float32 inv_dt) const;
+	ci::Vec2f GetReactionForce(float inv_dt) const;
+	float GetReactionTorque(float inv_dt) const;
 
 	/// The local anchor point relative to bodyA's origin.
-	const b2Vec2& GetLocalAnchorA() const { return m_localAnchorA; }
+	const ci::Vec2f& GetLocalAnchorA() const { return m_localAnchorA; }
 
 	/// The local anchor point relative to bodyB's origin.
-	const b2Vec2& GetLocalAnchorB() const  { return m_localAnchorB; }
+	const ci::Vec2f& GetLocalAnchorB() const  { return m_localAnchorB; }
 
 	/// Get the reference angle.
-	float32 GetReferenceAngle() const { return m_referenceAngle; }
+	float GetReferenceAngle() const { return m_referenceAngle; }
 
-	/// Set/get frequency in Hz.
-	void SetFrequency(float32 hz) { m_frequencyHz = hz; }
-	float32 GetFrequency() const { return m_frequencyHz; }
+	/// set/get frequency in Hz.
+	void SetFrequency(float hz) { m_frequencyHz = hz; }
+	float GetFrequency() const { return m_frequencyHz; }
 
-	/// Set/get damping ratio.
-	void SetDampingRatio(float32 ratio) { m_dampingRatio = ratio; }
-	float32 GetDampingRatio() const { return m_dampingRatio; }
+	/// set/get damping ratio.
+	void SetDampingRatio(float ratio) { m_dampingRatio = ratio; }
+	float GetDampingRatio() const { return m_dampingRatio; }
 
 	/// Dump to b2Log
 	void Dump();
@@ -98,29 +98,29 @@ protected:
 	void SolveVelocityConstraints(const b2SolverData& data);
 	bool SolvePositionConstraints(const b2SolverData& data);
 
-	float32 m_frequencyHz;
-	float32 m_dampingRatio;
-	float32 m_bias;
+	float m_frequencyHz;
+	float m_dampingRatio;
+	float m_bias;
 
 	// Solver shared
-	b2Vec2 m_localAnchorA;
-	b2Vec2 m_localAnchorB;
-	float32 m_referenceAngle;
-	float32 m_gamma;
-	b2Vec3 m_impulse;
+	ci::Vec2f m_localAnchorA;
+	ci::Vec2f m_localAnchorB;
+	float m_referenceAngle;
+	float m_gamma;
+	ci::Vec3f m_impulse;
 
 	// Solver temp
-	int32 m_indexA;
-	int32 m_indexB;
-	b2Vec2 m_rA;
-	b2Vec2 m_rB;
-	b2Vec2 m_localCenterA;
-	b2Vec2 m_localCenterB;
-	float32 m_invMassA;
-	float32 m_invMassB;
-	float32 m_invIA;
-	float32 m_invIB;
-	b2Mat33 m_mass;
+	int m_indexA;
+	int m_indexB;
+	ci::Vec2f m_rA;
+	ci::Vec2f m_rB;
+	ci::Vec2f m_localCenterA;
+	ci::Vec2f m_localCenterB;
+	float m_invMassA;
+	float m_invMassB;
+	float m_invIA;
+	float m_invIB;
+	ci::Matrix33f m_mass;
 };
 
 #endif

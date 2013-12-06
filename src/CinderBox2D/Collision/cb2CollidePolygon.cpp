@@ -20,28 +20,28 @@
 #include <CinderBox2D/Collision/Shapes/cb2PolygonShape.h>
 
 // Find the separation between poly1 and poly2 for a give edge normal on poly1.
-static float32 b2EdgeSeparation(const b2PolygonShape* poly1, const b2Transform& xf1, int32 edge1,
+static float b2EdgeSeparation(const b2PolygonShape* poly1, const b2Transform& xf1, int edge1,
 							  const b2PolygonShape* poly2, const b2Transform& xf2)
 {
-	const b2Vec2* vertices1 = poly1->m_vertices;
-	const b2Vec2* normals1 = poly1->m_normals;
+	const ci::Vec2f* vertices1 = poly1->m_vertices;
+	const ci::Vec2f* normals1 = poly1->m_normals;
 
-	int32 count2 = poly2->m_vertexCount;
-	const b2Vec2* vertices2 = poly2->m_vertices;
+	int count2 = poly2->m_vertexCount;
+	const ci::Vec2f* vertices2 = poly2->m_vertices;
 
 	b2Assert(0 <= edge1 && edge1 < poly1->m_vertexCount);
 
 	// Convert normal from poly1's frame into poly2's frame.
-	b2Vec2 normal1World = b2Mul(xf1.q, normals1[edge1]);
-	b2Vec2 normal1 = b2MulT(xf2.q, normal1World);
+	ci::Vec2f normal1World = b2Mul(xf1.q, normals1[edge1]);
+	ci::Vec2f normal1 = b2MulT(xf2.q, normal1World);
 
 	// Find support vertex on poly2 for -normal.
-	int32 index = 0;
-	float32 minDot = b2_maxFloat;
+	int index = 0;
+	float minDot = b2_maxFloat;
 
-	for (int32 i = 0; i < count2; ++i)
+	for (int i = 0; i < count2; ++i)
 	{
-		float32 dot = b2Dot(vertices2[i], normal1);
+		float dot = b2Dot(vertices2[i], normal1);
 		if (dot < minDot)
 		{
 			minDot = dot;
@@ -49,30 +49,30 @@ static float32 b2EdgeSeparation(const b2PolygonShape* poly1, const b2Transform& 
 		}
 	}
 
-	b2Vec2 v1 = b2Mul(xf1, vertices1[edge1]);
-	b2Vec2 v2 = b2Mul(xf2, vertices2[index]);
-	float32 separation = b2Dot(v2 - v1, normal1World);
+	ci::Vec2f v1 = b2Mul(xf1, vertices1[edge1]);
+	ci::Vec2f v2 = b2Mul(xf2, vertices2[index]);
+	float separation = b2Dot(v2 - v1, normal1World);
 	return separation;
 }
 
 // Find the max separation between poly1 and poly2 using edge normals from poly1.
-static float32 b2FindMaxSeparation(int32* edgeIndex,
+static float b2FindMaxSeparation(int* edgeIndex,
 								 const b2PolygonShape* poly1, const b2Transform& xf1,
 								 const b2PolygonShape* poly2, const b2Transform& xf2)
 {
-	int32 count1 = poly1->m_vertexCount;
-	const b2Vec2* normals1 = poly1->m_normals;
+	int count1 = poly1->m_vertexCount;
+	const ci::Vec2f* normals1 = poly1->m_normals;
 
 	// Vector pointing from the centroid of poly1 to the centroid of poly2.
-	b2Vec2 d = b2Mul(xf2, poly2->m_centroid) - b2Mul(xf1, poly1->m_centroid);
-	b2Vec2 dLocal1 = b2MulT(xf1.q, d);
+	ci::Vec2f d = b2Mul(xf2, poly2->m_centroid) - b2Mul(xf1, poly1->m_centroid);
+	ci::Vec2f dLocal1 = b2MulT(xf1.q, d);
 
 	// Find edge normal on poly1 that has the largest projection onto d.
-	int32 edge = 0;
-	float32 maxDot = -b2_maxFloat;
-	for (int32 i = 0; i < count1; ++i)
+	int edge = 0;
+	float maxDot = -b2_maxFloat;
+	for (int i = 0; i < count1; ++i)
 	{
-		float32 dot = b2Dot(normals1[i], dLocal1);
+		float dot = b2Dot(normals1[i], dLocal1);
 		if (dot > maxDot)
 		{
 			maxDot = dot;
@@ -81,20 +81,20 @@ static float32 b2FindMaxSeparation(int32* edgeIndex,
 	}
 
 	// Get the separation for the edge normal.
-	float32 s = b2EdgeSeparation(poly1, xf1, edge, poly2, xf2);
+	float s = b2EdgeSeparation(poly1, xf1, edge, poly2, xf2);
 
 	// Check the separation for the previous edge normal.
-	int32 prevEdge = edge - 1 >= 0 ? edge - 1 : count1 - 1;
-	float32 sPrev = b2EdgeSeparation(poly1, xf1, prevEdge, poly2, xf2);
+	int prevEdge = edge - 1 >= 0 ? edge - 1 : count1 - 1;
+	float sPrev = b2EdgeSeparation(poly1, xf1, prevEdge, poly2, xf2);
 
 	// Check the separation for the next edge normal.
-	int32 nextEdge = edge + 1 < count1 ? edge + 1 : 0;
-	float32 sNext = b2EdgeSeparation(poly1, xf1, nextEdge, poly2, xf2);
+	int nextEdge = edge + 1 < count1 ? edge + 1 : 0;
+	float sNext = b2EdgeSeparation(poly1, xf1, nextEdge, poly2, xf2);
 
 	// Find the best edge and the search direction.
-	int32 bestEdge;
-	float32 bestSeparation;
-	int32 increment;
+	int bestEdge;
+	float bestSeparation;
+	int increment;
 	if (sPrev > s && sPrev > sNext)
 	{
 		increment = -1;
@@ -139,26 +139,26 @@ static float32 b2FindMaxSeparation(int32* edgeIndex,
 }
 
 static void b2FindIncidentEdge(b2ClipVertex c[2],
-							 const b2PolygonShape* poly1, const b2Transform& xf1, int32 edge1,
+							 const b2PolygonShape* poly1, const b2Transform& xf1, int edge1,
 							 const b2PolygonShape* poly2, const b2Transform& xf2)
 {
-	const b2Vec2* normals1 = poly1->m_normals;
+	const ci::Vec2f* normals1 = poly1->m_normals;
 
-	int32 count2 = poly2->m_vertexCount;
-	const b2Vec2* vertices2 = poly2->m_vertices;
-	const b2Vec2* normals2 = poly2->m_normals;
+	int count2 = poly2->m_vertexCount;
+	const ci::Vec2f* vertices2 = poly2->m_vertices;
+	const ci::Vec2f* normals2 = poly2->m_normals;
 
 	b2Assert(0 <= edge1 && edge1 < poly1->m_vertexCount);
 
 	// Get the normal of the reference edge in poly2's frame.
-	b2Vec2 normal1 = b2MulT(xf2.q, b2Mul(xf1.q, normals1[edge1]));
+	ci::Vec2f normal1 = b2MulT(xf2.q, b2Mul(xf1.q, normals1[edge1]));
 
 	// Find the incident edge on poly2.
-	int32 index = 0;
-	float32 minDot = b2_maxFloat;
-	for (int32 i = 0; i < count2; ++i)
+	int index = 0;
+	float minDot = b2_maxFloat;
+	for (int i = 0; i < count2; ++i)
 	{
-		float32 dot = b2Dot(normal1, normals2[i]);
+		float dot = b2Dot(normal1, normals2[i]);
 		if (dot < minDot)
 		{
 			minDot = dot;
@@ -167,18 +167,18 @@ static void b2FindIncidentEdge(b2ClipVertex c[2],
 	}
 
 	// Build the clip vertices for the incident edge.
-	int32 i1 = index;
-	int32 i2 = i1 + 1 < count2 ? i1 + 1 : 0;
+	int i1 = index;
+	int i2 = i1 + 1 < count2 ? i1 + 1 : 0;
 
 	c[0].v = b2Mul(xf2, vertices2[i1]);
-	c[0].id.cf.indexA = (uint8)edge1;
-	c[0].id.cf.indexB = (uint8)i1;
+	c[0].id.cf.indexA = (unsigned char)edge1;
+	c[0].id.cf.indexB = (unsigned char)i1;
 	c[0].id.cf.typeA = b2ContactFeature::e_face;
 	c[0].id.cf.typeB = b2ContactFeature::e_vertex;
 
 	c[1].v = b2Mul(xf2, vertices2[i2]);
-	c[1].id.cf.indexA = (uint8)edge1;
-	c[1].id.cf.indexB = (uint8)i2;
+	c[1].id.cf.indexA = (unsigned char)edge1;
+	c[1].id.cf.indexB = (unsigned char)i2;
 	c[1].id.cf.typeA = b2ContactFeature::e_face;
 	c[1].id.cf.typeB = b2ContactFeature::e_vertex;
 }
@@ -195,25 +195,25 @@ void b2CollidePolygons(b2Manifold* manifold,
 					  const b2PolygonShape* polyB, const b2Transform& xfB)
 {
 	manifold->pointCount = 0;
-	float32 totalRadius = polyA->m_radius + polyB->m_radius;
+	float totalRadius = polyA->m_radius + polyB->m_radius;
 
-	int32 edgeA = 0;
-	float32 separationA = b2FindMaxSeparation(&edgeA, polyA, xfA, polyB, xfB);
+	int edgeA = 0;
+	float separationA = b2FindMaxSeparation(&edgeA, polyA, xfA, polyB, xfB);
 	if (separationA > totalRadius)
 		return;
 
-	int32 edgeB = 0;
-	float32 separationB = b2FindMaxSeparation(&edgeB, polyB, xfB, polyA, xfA);
+	int edgeB = 0;
+	float separationB = b2FindMaxSeparation(&edgeB, polyB, xfB, polyA, xfA);
 	if (separationB > totalRadius)
 		return;
 
 	const b2PolygonShape* poly1;	// reference polygon
 	const b2PolygonShape* poly2;	// incident polygon
 	b2Transform xf1, xf2;
-	int32 edge1;		// reference edge
-	uint8 flip;
-	const float32 k_relativeTol = 0.98f;
-	const float32 k_absoluteTol = 0.001f;
+	int edge1;		// reference edge
+	unsigned char flip;
+	const float k_relativeTol = 0.98f;
+	const float k_absoluteTol = 0.001f;
 
 	if (separationB > k_relativeTol * separationA + k_absoluteTol)
 	{
@@ -239,33 +239,33 @@ void b2CollidePolygons(b2Manifold* manifold,
 	b2ClipVertex incidentEdge[2];
 	b2FindIncidentEdge(incidentEdge, poly1, xf1, edge1, poly2, xf2);
 
-	int32 count1 = poly1->m_vertexCount;
-	const b2Vec2* vertices1 = poly1->m_vertices;
+	int count1 = poly1->m_vertexCount;
+	const ci::Vec2f* vertices1 = poly1->m_vertices;
 
-	int32 iv1 = edge1;
-	int32 iv2 = edge1 + 1 < count1 ? edge1 + 1 : 0;
+	int iv1 = edge1;
+	int iv2 = edge1 + 1 < count1 ? edge1 + 1 : 0;
 
-	b2Vec2 v11 = vertices1[iv1];
-	b2Vec2 v12 = vertices1[iv2];
+	ci::Vec2f v11 = vertices1[iv1];
+	ci::Vec2f v12 = vertices1[iv2];
 
-	b2Vec2 localTangent = v12 - v11;
-	localTangent.Normalize();
+	ci::Vec2f localTangent = v12 - v11;
+	localTangent.normalize();
 	
-	b2Vec2 localNormal = b2Cross(localTangent, 1.0f);
-	b2Vec2 planePoint = 0.5f * (v11 + v12);
+	ci::Vec2f localNormal = b2Cross(localTangent, 1.0f);
+	ci::Vec2f planePoint = 0.5f * (v11 + v12);
 
-	b2Vec2 tangent = b2Mul(xf1.q, localTangent);
-	b2Vec2 normal = b2Cross(tangent, 1.0f);
+	ci::Vec2f tangent = b2Mul(xf1.q, localTangent);
+	ci::Vec2f normal = b2Cross(tangent, 1.0f);
 	
 	v11 = b2Mul(xf1, v11);
 	v12 = b2Mul(xf1, v12);
 
 	// Face offset.
-	float32 frontOffset = b2Dot(normal, v11);
+	float frontOffset = b2Dot(normal, v11);
 
 	// Side offsets, extended by polytope skin thickness.
-	float32 sideOffset1 = -b2Dot(tangent, v11) + totalRadius;
-	float32 sideOffset2 = b2Dot(tangent, v12) + totalRadius;
+	float sideOffset1 = -b2Dot(tangent, v11) + totalRadius;
+	float sideOffset2 = b2Dot(tangent, v12) + totalRadius;
 
 	// Clip incident edge against extruded edge1 side edges.
 	b2ClipVertex clipPoints1[2];
@@ -290,10 +290,10 @@ void b2CollidePolygons(b2Manifold* manifold,
 	manifold->localNormal = localNormal;
 	manifold->localPoint = planePoint;
 
-	int32 pointCount = 0;
-	for (int32 i = 0; i < b2_maxManifoldPoints; ++i)
+	int pointCount = 0;
+	for (int i = 0; i < b2_maxManifoldPoints; ++i)
 	{
-		float32 separation = b2Dot(normal, clipPoints2[i].v) - frontOffset;
+		float separation = b2Dot(normal, clipPoints2[i].v) - frontOffset;
 
 		if (separation <= totalRadius)
 		{

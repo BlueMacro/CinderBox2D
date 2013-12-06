@@ -43,7 +43,7 @@ class b2World
 public:
 	/// Construct a world object.
 	/// @param gravity the world gravity vector.
-	b2World(const b2Vec2& gravity);
+	b2World(const ci::Vec2f& gravity);
 
 	/// Destruct the world. All physics entities are destroyed and all heap memory is released.
 	~b2World();
@@ -91,9 +91,9 @@ public:
 	/// @param timeStep the amount of time to simulate, this should not vary.
 	/// @param velocityIterations for the velocity constraint solver.
 	/// @param positionIterations for the position constraint solver.
-	void Step(	float32 timeStep,
-				int32 velocityIterations,
-				int32 positionIterations);
+	void Step(	float timeStep,
+				int velocityIterations,
+				int positionIterations);
 
 	/// Manually clear the force buffer on all bodies. By default, forces are cleared automatically
 	/// after each call to Step. The default behavior is modified by calling SetAutoClearForces.
@@ -119,7 +119,7 @@ public:
 	/// @param callback a user implemented callback class.
 	/// @param point1 the ray starting point
 	/// @param point2 the ray ending point
-	void RayCast(b2RayCastCallback* callback, const b2Vec2& point1, const b2Vec2& point2) const;
+	void RayCast(b2RayCastCallback* callback, const ci::Vec2f& point1, const ci::Vec2f& point2) const;
 
 	/// Get the world body list. With the returned body, use b2Body::GetNext to get
 	/// the next body in the world list. A NULL body indicates the end of the list.
@@ -158,37 +158,37 @@ public:
 	bool GetSubStepping() const { return m_subStepping; }
 
 	/// Get the number of broad-phase proxies.
-	int32 GetProxyCount() const;
+	int GetProxyCount() const;
 
 	/// Get the number of bodies.
-	int32 GetBodyCount() const;
+	int GetBodyCount() const;
 
 	/// Get the number of joints.
-	int32 GetJointCount() const;
+	int GetJointCount() const;
 
 	/// Get the number of contacts (each may have 0 or more contact points).
-	int32 GetContactCount() const;
+	int GetContactCount() const;
 
 	/// Get the height of the dynamic tree.
-	int32 GetTreeHeight() const;
+	int GetTreeHeight() const;
 
 	/// Get the balance of the dynamic tree.
-	int32 GetTreeBalance() const;
+	int GetTreeBalance() const;
 
 	/// Get the quality metric of the dynamic tree. The smaller the better.
 	/// The minimum is 1.
-	float32 GetTreeQuality() const;
+	float GetTreeQuality() const;
 
 	/// Change the global gravity vector.
-	void SetGravity(const b2Vec2& gravity);
+	void SetGravity(const ci::Vec2f& gravity);
 	
 	/// Get the global gravity vector.
-	b2Vec2 GetGravity() const;
+	ci::Vec2f GetGravity() const;
 
 	/// Is the world locked (in the middle of a time step).
 	bool IsLocked() const;
 
-	/// Set flag to control automatic clearing of forces after each time step.
+	/// set flag to control automatic clearing of forces after each time step.
 	void SetAutoClearForces(bool flag);
 
 	/// Get the flag that controls automatic clearing of forces after each time step.
@@ -228,17 +228,17 @@ private:
 	b2BlockAllocator m_blockAllocator;
 	b2StackAllocator m_stackAllocator;
 
-	int32 m_flags;
+	int m_flags;
 
 	b2ContactManager m_contactManager;
 
 	b2Body* m_bodyList;
 	b2Joint* m_jointList;
 
-	int32 m_bodyCount;
-	int32 m_jointCount;
+	int m_bodyCount;
+	int m_jointCount;
 
-	b2Vec2 m_gravity;
+	ci::Vec2f m_gravity;
 	bool m_allowSleep;
 
 	b2DestructionListener* m_destructionListener;
@@ -246,7 +246,7 @@ private:
 
 	// This is used to compute the time step ratio to
 	// support a variable time step.
-	float32 m_inv_dt0;
+	float m_inv_dt0;
 
 	// These are for debugging the solver.
 	bool m_warmStarting;
@@ -288,27 +288,27 @@ inline const b2Contact* b2World::GetContactList() const
 	return m_contactManager.m_contactList;
 }
 
-inline int32 b2World::GetBodyCount() const
+inline int b2World::GetBodyCount() const
 {
 	return m_bodyCount;
 }
 
-inline int32 b2World::GetJointCount() const
+inline int b2World::GetJointCount() const
 {
 	return m_jointCount;
 }
 
-inline int32 b2World::GetContactCount() const
+inline int b2World::GetContactCount() const
 {
 	return m_contactManager.m_contactCount;
 }
 
-inline void b2World::SetGravity(const b2Vec2& gravity)
+inline void b2World::SetGravity(const ci::Vec2f& gravity)
 {
 	m_gravity = gravity;
 }
 
-inline b2Vec2 b2World::GetGravity() const
+inline ci::Vec2f b2World::GetGravity() const
 {
 	return m_gravity;
 }

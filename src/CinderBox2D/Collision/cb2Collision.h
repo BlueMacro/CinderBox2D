@@ -31,7 +31,7 @@ class b2CircleShape;
 class b2EdgeShape;
 class b2PolygonShape;
 
-const uint8 b2_nullFeature = UCHAR_MAX;
+const unsigned char b2_nullFeature = UCHAR_MAX;
 
 /// The features that intersect to form the contact point
 /// This must be 4 bytes or less.
@@ -43,17 +43,17 @@ struct b2ContactFeature
 		e_face = 1
 	};
 
-	uint8 indexA;		///< Feature index on shapeA
-	uint8 indexB;		///< Feature index on shapeB
-	uint8 typeA;		///< The feature type on shapeA
-	uint8 typeB;		///< The feature type on shapeB
+	unsigned char indexA;		///< Feature index on shapeA
+	unsigned char indexB;		///< Feature index on shapeB
+	unsigned char typeA;		///< The feature type on shapeA
+	unsigned char typeB;		///< The feature type on shapeB
 };
 
 /// Contact ids to facilitate warm starting.
 union b2ContactID
 {
 	b2ContactFeature cf;
-	uint32 key;					///< Used to quickly compare contact ids.
+	unsigned int key;					///< Used to quickly compare contact ids.
 };
 
 /// A manifold point is a contact point belonging to a contact
@@ -68,9 +68,9 @@ union b2ContactID
 /// provide reliable contact forces, especially for high speed collisions.
 struct b2ManifoldPoint
 {
-	b2Vec2 localPoint;		///< usage depends on manifold type
-	float32 normalImpulse;	///< the non-penetration impulse
-	float32 tangentImpulse;	///< the friction impulse
+	ci::Vec2f localPoint;		///< usage depends on manifold type
+	float normalImpulse;	///< the non-penetration impulse
+	float tangentImpulse;	///< the friction impulse
 	b2ContactID id;			///< uniquely identifies a contact point between two shapes
 };
 
@@ -100,10 +100,10 @@ struct b2Manifold
 	};
 
 	b2ManifoldPoint points[b2_maxManifoldPoints];	///< the points of contact
-	b2Vec2 localNormal;								///< not use for Type::e_points
-	b2Vec2 localPoint;								///< usage depends on manifold type
+	ci::Vec2f localNormal;								///< not use for Type::e_points
+	ci::Vec2f localPoint;								///< usage depends on manifold type
 	Type type;
-	int32 pointCount;								///< the number of manifold points
+	int pointCount;								///< the number of manifold points
 };
 
 /// This is used to compute the current state of a contact manifold.
@@ -114,11 +114,11 @@ struct b2WorldManifold
 	/// point count, impulses, etc. The radii must come from the shapes
 	/// that generated the manifold.
 	void Initialize(const b2Manifold* manifold,
-					const b2Transform& xfA, float32 radiusA,
-					const b2Transform& xfB, float32 radiusB);
+					const b2Transform& xfA, float radiusA,
+					const b2Transform& xfB, float radiusB);
 
-	b2Vec2 normal;							///< world vector pointing from A to B
-	b2Vec2 points[b2_maxManifoldPoints];	///< world contact point (point of intersection)
+	ci::Vec2f normal;							///< world vector pointing from A to B
+	ci::Vec2f points[b2_maxManifoldPoints];	///< world contact point (point of intersection)
 };
 
 /// This is used for determining the state of contact points.
@@ -138,23 +138,23 @@ void b2GetPointStates(b2PointState state1[b2_maxManifoldPoints], b2PointState st
 /// Used for computing contact manifolds.
 struct b2ClipVertex
 {
-	b2Vec2 v;
+	ci::Vec2f v;
 	b2ContactID id;
 };
 
 /// Ray-cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1).
 struct b2RayCastInput
 {
-	b2Vec2 p1, p2;
-	float32 maxFraction;
+	ci::Vec2f p1, p2;
+	float maxFraction;
 };
 
 /// Ray-cast output data. The ray hits at p1 + fraction * (p2 - p1), where p1 and p2
 /// come from b2RayCastInput.
 struct b2RayCastOutput
 {
-	b2Vec2 normal;
-	float32 fraction;
+	ci::Vec2f normal;
+	float fraction;
 };
 
 /// An axis aligned bounding box.
@@ -164,22 +164,22 @@ struct b2AABB
 	bool IsValid() const;
 
 	/// Get the center of the AABB.
-	b2Vec2 GetCenter() const
+	ci::Vec2f GetCenter() const
 	{
 		return 0.5f * (lowerBound + upperBound);
 	}
 
 	/// Get the extents of the AABB (half-widths).
-	b2Vec2 GetExtents() const
+	ci::Vec2f GetExtents() const
 	{
 		return 0.5f * (upperBound - lowerBound);
 	}
 
 	/// Get the perimeter length
-	float32 GetPerimeter() const
+	float GetPerimeter() const
 	{
-		float32 wx = upperBound.x - lowerBound.x;
-		float32 wy = upperBound.y - lowerBound.y;
+		float wx = upperBound.x - lowerBound.x;
+		float wy = upperBound.y - lowerBound.y;
 		return 2.0f * (wx + wy);
 	}
 
@@ -210,8 +210,8 @@ struct b2AABB
 
 	bool RayCast(b2RayCastOutput* output, const b2RayCastInput& input) const;
 
-	b2Vec2 lowerBound;	///< the lower vertex
-	b2Vec2 upperBound;	///< the upper vertex
+	ci::Vec2f lowerBound;	///< the lower vertex
+	ci::Vec2f upperBound;	///< the upper vertex
 };
 
 /// Compute the collision manifold between two circles.
@@ -240,27 +240,27 @@ void b2CollideEdgeAndPolygon(b2Manifold* manifold,
 							   const b2PolygonShape* circleB, const b2Transform& xfB);
 
 /// Clipping for contact manifolds.
-int32 b2ClipSegmentToLine(b2ClipVertex vOut[2], const b2ClipVertex vIn[2],
-							const b2Vec2& normal, float32 offset, int32 vertexIndexA);
+int b2ClipSegmentToLine(b2ClipVertex vOut[2], const b2ClipVertex vIn[2],
+							const ci::Vec2f& normal, float offset, int vertexIndexA);
 
 /// Determine if two generic shapes overlap.
-bool b2TestOverlap(	const b2Shape* shapeA, int32 indexA,
-					const b2Shape* shapeB, int32 indexB,
+bool b2TestOverlap(	const b2Shape* shapeA, int indexA,
+					const b2Shape* shapeB, int indexB,
 					const b2Transform& xfA, const b2Transform& xfB);
 
 // ---------------- Inline Functions ------------------------------------------
 
 inline bool b2AABB::IsValid() const
 {
-	b2Vec2 d = upperBound - lowerBound;
+	ci::Vec2f d = upperBound - lowerBound;
 	bool valid = d.x >= 0.0f && d.y >= 0.0f;
-	valid = valid && lowerBound.IsValid() && upperBound.IsValid();
+	valid = valid && cb2::isValid(lowerBound) && cb2::isValid(upperBound);
 	return valid;
 }
 
 inline bool b2TestOverlap(const b2AABB& a, const b2AABB& b)
 {
-	b2Vec2 d1, d2;
+	ci::Vec2f d1, d2;
 	d1 = b.lowerBound - a.upperBound;
 	d2 = a.lowerBound - b.upperBound;
 
