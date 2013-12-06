@@ -72,7 +72,6 @@ b2GearJoint::b2GearJoint(const b2GearJointDef* def)
 		m_localAnchorC = revolute->m_localAnchorA;
 		m_localAnchorA = revolute->m_localAnchorB;
 		m_referenceAngleA = revolute->m_referenceAngle;
-		cb2::setZero(m_localAxisC);
 
 		coordinateA = aA - aC - m_referenceAngleA;
 	}
@@ -104,7 +103,6 @@ b2GearJoint::b2GearJoint(const b2GearJointDef* def)
 		m_localAnchorD = revolute->m_localAnchorA;
 		m_localAnchorB = revolute->m_localAnchorB;
 		m_referenceAngleB = revolute->m_referenceAngle;
-		cb2::setZero(m_localAxisD);
 
 		coordinateB = aB - aD - m_referenceAngleB;
 	}
@@ -147,22 +145,18 @@ void b2GearJoint::InitVelocityConstraints(const b2SolverData& data)
 	m_iC = m_bodyC->m_invI;
 	m_iD = m_bodyD->m_invI;
 
-	ci::Vec2f cA = data.positions[m_indexA].c;
 	float aA = data.positions[m_indexA].a;
 	ci::Vec2f vA = data.velocities[m_indexA].v;
 	float wA = data.velocities[m_indexA].w;
 
-	ci::Vec2f cB = data.positions[m_indexB].c;
 	float aB = data.positions[m_indexB].a;
 	ci::Vec2f vB = data.velocities[m_indexB].v;
 	float wB = data.velocities[m_indexB].w;
 
-	ci::Vec2f cC = data.positions[m_indexC].c;
 	float aC = data.positions[m_indexC].a;
 	ci::Vec2f vC = data.velocities[m_indexC].v;
 	float wC = data.velocities[m_indexC].w;
 
-	ci::Vec2f cD = data.positions[m_indexD].c;
 	float aD = data.positions[m_indexD].a;
 	ci::Vec2f vD = data.velocities[m_indexD].v;
 	float wD = data.velocities[m_indexD].w;

@@ -20,8 +20,9 @@
 #define B2_SETTINGS_H
 
 #include <cinder/Cinder.h>
-#include <cassert>
-#include <cmath>
+#include <stddef.h>
+#include <assert.h>
+#include <float.h>
 
 #define B2_NOT_USED(x) ((void)(x))
 #define b2Assert(A) assert(A)

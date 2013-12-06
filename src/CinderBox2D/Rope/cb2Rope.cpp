@@ -28,7 +28,6 @@ b2Rope::b2Rope()
 	m_ims = NULL;
 	m_Ls = NULL;
 	m_as = NULL;
-	cb2::setZero(m_gravity);
 	m_k2 = 1.0f;
 	m_k3 = 0.1f;
 }

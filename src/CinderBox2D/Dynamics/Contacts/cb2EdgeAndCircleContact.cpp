@@ -21,7 +21,6 @@
 #include <CinderBox2D/Dynamics/cb2Fixture.h>
 
 #include <new>
-using namespace std;
 
 b2Contact* b2EdgeAndCircleContact::Create(b2Fixture* fixtureA, int, b2Fixture* fixtureB, int, b2BlockAllocator* allocator)
 {

@@ -29,8 +29,8 @@ class b2EdgeShape : public b2Shape
 public:
 	b2EdgeShape();
 
-	/// set this as an isolated edge.
-	void set(const ci::Vec2f& v1, const ci::Vec2f& v2);
+	/// Set this as an isolated edge.
+	void Set(const ci::Vec2f& v1, const ci::Vec2f& v2);
 
 	/// Implement b2Shape.
 	b2Shape* Clone(b2BlockAllocator* allocator) const;

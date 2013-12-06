@@ -56,12 +56,13 @@ For discussion please visit http://box2d.org/forum
 #include <CinderBox2D/Dynamics/Joints/cb2DistanceJoint.h>
 #include <CinderBox2D/Dynamics/Joints/cb2FrictionJoint.h>
 #include <CinderBox2D/Dynamics/Joints/cb2GearJoint.h>
-#include <CinderBox2D/Dynamics/Joints/cb2WheelJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2MotorJoint.h>
 #include <CinderBox2D/Dynamics/Joints/cb2MouseJoint.h>
 #include <CinderBox2D/Dynamics/Joints/cb2PrismaticJoint.h>
 #include <CinderBox2D/Dynamics/Joints/cb2PulleyJoint.h>
 #include <CinderBox2D/Dynamics/Joints/cb2RevoluteJoint.h>
 #include <CinderBox2D/Dynamics/Joints/cb2RopeJoint.h>
 #include <CinderBox2D/Dynamics/Joints/cb2WeldJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2WheelJoint.h>
 
 #endif

@@ -66,12 +66,10 @@ void b2WeldJoint::InitVelocityConstraints(const b2SolverData& data)
 	m_invIA = m_bodyA->m_invI;
 	m_invIB = m_bodyB->m_invI;
 
-	ci::Vec2f cA = data.positions[m_indexA].c;
 	float aA = data.positions[m_indexA].a;
 	ci::Vec2f vA = data.velocities[m_indexA].v;
 	float wA = data.velocities[m_indexA].w;
 
-	ci::Vec2f cB = data.positions[m_indexB].c;
 	float aB = data.positions[m_indexB].a;
 	ci::Vec2f vB = data.velocities[m_indexB].v;
 	float wB = data.velocities[m_indexB].w;
@@ -95,9 +93,9 @@ void b2WeldJoint::InitVelocityConstraints(const b2SolverData& data)
 
 	ci::Matrix33f K;
 	K.m00 = mA + mB + m_rA.y * m_rA.y * iA + m_rB.y * m_rB.y * iB;
-	K.m01 = -m_rA.y * m_rA.x * iA - m_rB.y * m_rB.x * iB;
+	K.m10 = -m_rA.y * m_rA.x * iA - m_rB.y * m_rB.x * iB;
 	K.m20 = -m_rA.y * iA - m_rB.y * iB;
-	K.m10 = K.m01;
+	K.m01 = K.m10;
 	K.m11 = mA + mB + m_rA.x * m_rA.x * iA + m_rB.x * m_rB.x * iB;
 	K.m21 = m_rA.x * iA + m_rB.x * iB;
 	K.m02 = K.m20;
@@ -239,9 +237,9 @@ bool b2WeldJoint::SolvePositionConstraints(const b2SolverData& data)
 
 	ci::Matrix33f K;
 	K.m00 = mA + mB + rA.y * rA.y * iA + rB.y * rB.y * iB;
-	K.m01 = -rA.y * rA.x * iA - rB.y * rB.x * iB;
+	K.m10 = -rA.y * rA.x * iA - rB.y * rB.x * iB;
 	K.m20 = -rA.y * iA - rB.y * iB;
-	K.m10 = K.m01;
+	K.m01 = K.m10;
 	K.m11 = mA + mB + rA.x * rA.x * iA + rB.x * rB.x * iB;
 	K.m21 = rA.x * iA + rB.x * iB;
 	K.m02 = K.m20;

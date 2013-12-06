@@ -17,11 +17,9 @@
 */
 
 #include <CinderBox2D/Common/cb2BlockAllocator.h>
-#include <cstdlib>
-#include <climits>
-#include <cstring>
-#include <memory>
-using namespace std;
+#include <limits.h>
+#include <memory.h>
+#include <stddef.h>
 
 int b2BlockAllocator::s_blockSizes[b2_blockSizes] = 
 {

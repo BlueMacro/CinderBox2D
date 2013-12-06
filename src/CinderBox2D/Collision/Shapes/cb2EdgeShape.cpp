@@ -18,9 +18,8 @@
 
 #include <CinderBox2D/Collision/Shapes/cb2EdgeShape.h>
 #include <new>
-using namespace std;
 
-void b2EdgeShape::set(const ci::Vec2f& v1, const ci::Vec2f& v2)
+void b2EdgeShape::Set(const ci::Vec2f& v1, const ci::Vec2f& v2)
 {
 	m_vertex1 = v1;
 	m_vertex2 = v2;
@@ -105,11 +104,11 @@ bool b2EdgeShape::RayCast(b2RayCastOutput* output, const b2RayCastInput& input,
 	output->fraction = t;
 	if (numerator > 0.0f)
 	{
-		output->normal = -normal;
+		output->normal = -b2Mul(xf.q, normal);
 	}
 	else
 	{
-		output->normal = normal;
+		output->normal = b2Mul(xf.q, normal);
 	}
 	return true;
 }

@@ -18,15 +18,11 @@
 
 #ifndef B2_MATH_H
 #define B2_MATH_H
-#include <cmath>
-#include <cfloat>
-#include <cstddef>
-#include <limits>
-
 #include <cinder/Vector.h>
 #include <cinder/Matrix22.h>
 #include <cinder/Matrix33.h>
 #include <CinderBox2D/Common/cb2Settings.h>
+#include <math.h>
 
 namespace cb2
 {
@@ -80,10 +76,8 @@ void getInverse22( const ci::Matrix33f& A, ci::Matrix33f* M);
 void getSymInverse33( const ci::Matrix33f& A, ci::Matrix33f* M );
 }
 
-#define	b2Sqrt(x)	std::sqrt(x)
-#define	b2Atan2(y, x)	std::atan2(y, x)
-
-
+#define	b2Sqrt(x)	sqrtf(x)
+#define	b2Atan2(y, x)	atan2f(y, x)
 
 
 /// Rotation
@@ -240,11 +234,6 @@ inline float b2DistanceSquared(const ci::Vec2f& a, const ci::Vec2f& b)
 {
 	ci::Vec2f c = a - b;
 	return b2Dot(c, c);
-}
-
-inline ci::Vec3f operator * (float s, const ci::Vec3f& a)
-{
-	return ci::Vec3f(s * a.x, s * a.y, s * a.z);
 }
 
 /// Perform the dot product on two vectors.
@@ -450,8 +439,8 @@ inline void b2Sweep::Advance(float alpha)
 {
 	b2Assert(alpha0 < 1.0f);
 	float beta = (alpha - alpha0) / (1.0f - alpha0);
-	c0 = (1.0f - beta) * c0 + beta * c;
-	a0 = (1.0f - beta) * a0 + beta * a;
+	c0 += beta * (c - c0);
+	a0 += beta * (a - a0);
 	alpha0 = alpha;
 }
 

@@ -36,12 +36,14 @@ public:
 	/// @see b2Shape::GetChildCount
 	int GetChildCount() const;
 
-	/// Copy vertices. This assumes the vertices define a convex polygon.
-	/// It is assumed that the exterior is the the right of each edge.
+	/// Create a convex hull from the given array of local points.
 	/// The count must be in the range [3, b2_maxPolygonVertices].
-	void set(const ci::Vec2f* vertices, int vertexCount);
+	/// @warning the points may be re-ordered, even if they form a convex polygon
+	/// @warning collinear points are handled but not removed. Collinear points
+	/// may lead to poor stacking behavior.
+	void set(const ci::Vec2f* points, int count);
 
-	/// Build vertices to represent an axis-aligned box.
+	/// Build vertices to represent an axis-aligned box centered on the local origin.
 	/// @param hx the half-width.
 	/// @param hy the half-height.
 	void SetAsBox(float hx, float hy);
@@ -67,28 +69,31 @@ public:
 	void ComputeMass(b2MassData* massData, float density) const;
 
 	/// Get the vertex count.
-	int GetVertexCount() const { return m_vertexCount; }
+	int GetVertexCount() const { return m_count; }
 
 	/// Get a vertex by index.
 	const ci::Vec2f& GetVertex(int index) const;
 
+	/// Validate convexity. This is a very time consuming operation.
+	/// @returns true if valid
+	bool Validate() const;
+
 	ci::Vec2f m_centroid;
 	ci::Vec2f m_vertices[b2_maxPolygonVertices];
 	ci::Vec2f m_normals[b2_maxPolygonVertices];
-	int m_vertexCount;
+	int m_count;
 };
 
 inline b2PolygonShape::b2PolygonShape()
 {
 	m_type = e_polygon;
 	m_radius = b2_polygonRadius;
-	m_vertexCount = 0;
-	cb2::setZero(m_centroid);
+	m_count = 0;
 }
 
 inline const ci::Vec2f& b2PolygonShape::GetVertex(int index) const
 {
-	b2Assert(0 <= index && index < m_vertexCount);
+	b2Assert(0 <= index && index < m_count);
 	return m_vertices[index];
 }
 

@@ -117,14 +117,14 @@ public:
 	b2Shape* GetShape();
 	const b2Shape* GetShape() const;
 
-	/// set if this fixture is a sensor.
+	/// Set if this fixture is a sensor.
 	void SetSensor(bool sensor);
 
 	/// Is this fixture a sensor (non-solid)?
 	/// @return the true if the shape is a sensor.
 	bool IsSensor() const;
 
-	/// set the contact filtering data. This will not update contacts until the next time
+	/// Set the contact filtering data. This will not update contacts until the next time
 	/// step when either parent body is active and awake.
 	/// This automatically calls Refilter.
 	void SetFilterData(const b2Filter& filter);
@@ -149,7 +149,7 @@ public:
 	/// store your application specific data.
 	void* GetUserData() const;
 
-	/// set the user data. Use this to store your application specific data.
+	/// Set the user data. Use this to store your application specific data.
 	void SetUserData(void* data);
 
 	/// Test a point for containment in this fixture.
@@ -166,7 +166,7 @@ public:
 	/// may be expensive.
 	void GetMassData(b2MassData* massData) const;
 
-	/// set the density of this fixture. This will _not_ automatically adjust the mass
+	/// Set the density of this fixture. This will _not_ automatically adjust the mass
 	/// of the body. You must call b2Body::ResetMassData to update the body's mass.
 	void SetDensity(float density);
 
@@ -176,14 +176,14 @@ public:
 	/// Get the coefficient of friction.
 	float GetFriction() const;
 
-	/// set the coefficient of friction. This will _not_ change the friction of
+	/// Set the coefficient of friction. This will _not_ change the friction of
 	/// existing contacts.
 	void SetFriction(float friction);
 
 	/// Get the coefficient of restitution.
 	float GetRestitution() const;
 
-	/// set the coefficient of restitution. This will _not_ change the restitution of
+	/// Set the coefficient of restitution. This will _not_ change the restitution of
 	/// existing contacts.
 	void SetRestitution(float restitution);
 

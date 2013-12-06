@@ -19,8 +19,7 @@
 #include <CinderBox2D/Collision/Shapes/cb2ChainShape.h>
 #include <CinderBox2D/Collision/Shapes/cb2EdgeShape.h>
 #include <new>
-#include <cstring>
-using namespace std;
+#include <memory.h>
 
 b2ChainShape::~b2ChainShape()
 {
@@ -33,6 +32,14 @@ void b2ChainShape::CreateLoop(const ci::Vec2f* vertices, int count)
 {
 	b2Assert(m_vertices == NULL && m_count == 0);
 	b2Assert(count >= 3);
+	for (int i = 1; i < count; ++i)
+	{
+		ci::Vec2f v1 = vertices[i-1];
+		ci::Vec2f v2 = vertices[i];
+		// If the code crashes here, it means your vertices are too close together.
+		b2Assert(b2DistanceSquared(v1, v2) > b2_linearSlop * b2_linearSlop);
+	}
+
 	m_count = count + 1;
 	m_vertices = (ci::Vec2f*)b2Alloc(m_count * sizeof(ci::Vec2f));
 	memcpy(m_vertices, vertices, count * sizeof(ci::Vec2f));
@@ -47,11 +54,23 @@ void b2ChainShape::CreateChain(const ci::Vec2f* vertices, int count)
 {
 	b2Assert(m_vertices == NULL && m_count == 0);
 	b2Assert(count >= 2);
+	for (int i = 1; i < count; ++i)
+	{
+		ci::Vec2f v1 = vertices[i-1];
+		ci::Vec2f v2 = vertices[i];
+		// If the code crashes here, it means your vertices are too close together.
+		b2Assert(b2DistanceSquared(v1, v2) > b2_linearSlop * b2_linearSlop);
+	}
+
 	m_count = count;
 	m_vertices = (ci::Vec2f*)b2Alloc(count * sizeof(ci::Vec2f));
 	memcpy(m_vertices, vertices, m_count * sizeof(ci::Vec2f));
+
 	m_hasPrevVertex = false;
 	m_hasNextVertex = false;
+
+	cb2::setZero(m_prevVertex);
+	cb2::setZero(m_nextVertex);
 }
 
 void b2ChainShape::SetPrevVertex(const ci::Vec2f& prevVertex)

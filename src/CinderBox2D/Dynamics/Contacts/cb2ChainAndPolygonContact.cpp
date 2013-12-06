@@ -23,7 +23,6 @@
 #include <CinderBox2D/Collision/Shapes/cb2EdgeShape.h>
 
 #include <new>
-using namespace std;
 
 b2Contact* b2ChainAndPolygonContact::Create(b2Fixture* fixtureA, int indexA, b2Fixture* fixtureB, int indexB, b2BlockAllocator* allocator)
 {

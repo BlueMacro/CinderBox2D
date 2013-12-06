@@ -21,13 +21,15 @@
 #include <CinderBox2D/Collision/cb2TimeOfImpact.h>
 #include <CinderBox2D/Collision/Shapes/cb2CircleShape.h>
 #include <CinderBox2D/Collision/Shapes/cb2PolygonShape.h>
+#include <CinderBox2D/Common/cb2Timer.h>
 
-#include <cstdio>
-using namespace std;
+#include <stdio.h>
 
+float b2_toiTime, b2_toiMaxTime;
 int b2_toiCalls, b2_toiIters, b2_toiMaxIters;
 int b2_toiRootIters, b2_toiMaxRootIters;
 
+//
 struct b2SeparationFunction
 {
 	enum Type
@@ -120,6 +122,7 @@ struct b2SeparationFunction
 		}
 	}
 
+	//
 	float FindMinSeparation(int* indexA, int* indexB, float t) const
 	{
 		b2Transform xfA, xfB;
@@ -188,6 +191,7 @@ struct b2SeparationFunction
 		}
 	}
 
+	//
 	float Evaluate(int indexA, int indexB, float t) const
 	{
 		b2Transform xfA, xfB;
@@ -198,9 +202,6 @@ struct b2SeparationFunction
 		{
 		case e_points:
 			{
-				ci::Vec2f axisA = b2MulT(xfA.q,  m_axis);
-				ci::Vec2f axisB = b2MulT(xfB.q, -m_axis);
-
 				ci::Vec2f localPointA = m_proxyA->GetVertex(indexA);
 				ci::Vec2f localPointB = m_proxyB->GetVertex(indexB);
 
@@ -216,8 +217,6 @@ struct b2SeparationFunction
 				ci::Vec2f normal = b2Mul(xfA.q, m_axis);
 				ci::Vec2f pointA = b2Mul(xfA, m_localPoint);
 
-				ci::Vec2f axisB = b2MulT(xfB.q, -normal);
-
 				ci::Vec2f localPointB = m_proxyB->GetVertex(indexB);
 				ci::Vec2f pointB = b2Mul(xfB, localPointB);
 
@@ -229,8 +228,6 @@ struct b2SeparationFunction
 			{
 				ci::Vec2f normal = b2Mul(xfB.q, m_axis);
 				ci::Vec2f pointB = b2Mul(xfB, m_localPoint);
-
-				ci::Vec2f axisA = b2MulT(xfA.q, -normal);
 
 				ci::Vec2f localPointA = m_proxyA->GetVertex(indexA);
 				ci::Vec2f pointA = b2Mul(xfA, localPointA);
@@ -257,6 +254,8 @@ struct b2SeparationFunction
 // by computing the largest time at which separation is maintained.
 void b2TimeOfImpact(b2TOIOutput* output, const b2TOIInput* input)
 {
+	b2Timer timer;
+
 	++b2_toiCalls;
 
 	output->state = b2TOIOutput::e_unknown;
@@ -423,6 +422,9 @@ void b2TimeOfImpact(b2TOIOutput* output, const b2TOIInput* input)
 					t = 0.5f * (a1 + a2);
 				}
 
+				++rootIterCount;
+				++b2_toiRootIters;
+
 				float s = fcn.Evaluate(indexA, indexB, t);
 
 				if (b2Abs(s - target) < tolerance)
@@ -443,9 +445,6 @@ void b2TimeOfImpact(b2TOIOutput* output, const b2TOIInput* input)
 					a2 = t;
 					s2 = s;
 				}
-
-				++rootIterCount;
-				++b2_toiRootIters;
 
 				if (rootIterCount == 50)
 				{
@@ -481,4 +480,8 @@ void b2TimeOfImpact(b2TOIOutput* output, const b2TOIInput* input)
 	}
 
 	b2_toiMaxIters = b2Max(b2_toiMaxIters, iter);
+
+	float time = timer.GetMilliseconds();
+	b2_toiMaxTime = b2Max(b2_toiMaxTime, time);
+	b2_toiTime += time;
 }

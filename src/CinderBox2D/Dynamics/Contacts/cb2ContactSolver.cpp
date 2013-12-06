@@ -73,6 +73,7 @@ b2ContactSolver::b2ContactSolver(b2ContactSolverDef* def)
 		b2ContactVelocityConstraint* vc = m_velocityConstraints + i;
 		vc->friction = contact->m_friction;
 		vc->restitution = contact->m_restitution;
+		vc->tangentSpeed = contact->m_tangentSpeed;
 		vc->indexA = bodyA->m_islandIndex;
 		vc->indexB = bodyB->m_islandIndex;
 		vc->invMassA = bodyA->m_invMass;
@@ -320,7 +321,7 @@ void b2ContactSolver::SolveVelocityConstraints()
 			ci::Vec2f dv = vB + b2Cross(wB, vcp->rB) - vA - b2Cross(wA, vcp->rA);
 
 			// Compute tangent force
-			float vt = b2Dot(dv, tangent);
+			float vt = b2Dot(dv, tangent) - vc->tangentSpeed;
 			float lambda = vcp->tangentMass * (-vt);
 
 			// b2Clamp the accumulated force
@@ -763,8 +764,8 @@ bool b2ContactSolver::SolveTOIPositionConstraints(int toiIndexA, int toiIndexB)
 			iA = pc->invIA;
 		}
 
-		float mB = pc->invMassB;
-		float iB = pc->invIB;
+		float mB = 0.0f;
+		float iB = 0.;
 		if (indexB == toiIndexA || indexB == toiIndexB)
 		{
 			mB = pc->invMassB;

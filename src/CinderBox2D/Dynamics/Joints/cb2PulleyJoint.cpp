@@ -293,23 +293,33 @@ ci::Vec2f b2PulleyJoint::GetGroundAnchorB() const
 
 float b2PulleyJoint::GetLengthA() const
 {
+	return m_lengthA;
+}
+
+float b2PulleyJoint::GetLengthB() const
+{
+  return m_lengthB;
+}
+
+float b2PulleyJoint::GetRatio() const
+{
+	return m_ratio;
+}
+
+float b2PulleyJoint::GetCurrentLengthA() const
+{
 	ci::Vec2f p = m_bodyA->GetWorldPoint(m_localAnchorA);
 	ci::Vec2f s = m_groundAnchorA;
 	ci::Vec2f d = p - s;
 	return d.length();
 }
 
-float b2PulleyJoint::GetLengthB() const
+float b2PulleyJoint::GetCurrentLengthB() const
 {
 	ci::Vec2f p = m_bodyB->GetWorldPoint(m_localAnchorB);
 	ci::Vec2f s = m_groundAnchorB;
 	ci::Vec2f d = p - s;
 	return d.length();
-}
-
-float b2PulleyJoint::GetRatio() const
-{
-	return m_ratio;
 }
 
 void b2PulleyJoint::Dump()
@@ -329,4 +339,10 @@ void b2PulleyJoint::Dump()
 	b2Log("  jd.lengthB = %.15lef;\n", m_lengthB);
 	b2Log("  jd.ratio = %.15lef;\n", m_ratio);
 	b2Log("  joints[%d] = m_world->CreateJoint(&jd);\n", m_index);
+}
+
+void b2PulleyJoint::ShiftOrigin(const ci::Vec2f& newOrigin)
+{
+	m_groundAnchorA -= newOrigin;
+	m_groundAnchorB -= newOrigin;
 }

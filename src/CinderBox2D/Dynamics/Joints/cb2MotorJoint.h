@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2007 Erin Catto http://www.box2d.org
+* Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
 *
 * This software is provided 'as-is', without any express or implied
 * warranty.  In no event will the authors be held liable for any damages
@@ -16,41 +16,46 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_FRICTION_JOINT_H
-#define B2_FRICTION_JOINT_H
+#ifndef B2_MOTOR_JOINT_H
+#define B2_MOTOR_JOINT_H
 
 #include <CinderBox2D/Dynamics/Joints/cb2Joint.h>
 
-/// Friction joint definition.
-struct b2FrictionJointDef : public b2JointDef
+/// Motor joint definition.
+struct b2MotorJointDef : public b2JointDef
 {
-	b2FrictionJointDef()
+	b2MotorJointDef()
 	{
-		type = e_frictionJoint;
-		maxForce = 0.0f;
-		maxTorque = 0.0f;
+		type = e_motorJoint;
+		angularOffset = 0.0f;
+		maxForce = 1.0f;
+		maxTorque = 1.0f;
+		correctionFactor = 0.3f;
 	}
 
-	/// Initialize the bodies, anchors, axis, and reference angle using the world
-	/// anchor and world axis.
-	void Initialize(b2Body* bodyA, b2Body* bodyB, const ci::Vec2f& anchor);
+	/// Initialize the bodies and offsets using the current transforms.
+	void Initialize(b2Body* bodyA, b2Body* bodyB);
 
-	/// The local anchor point relative to bodyA's origin.
-	ci::Vec2f localAnchorA;
+	/// Position of bodyB minus the position of bodyA, in bodyA's frame, in meters.
+	ci::Vec2f linearOffset;
 
-	/// The local anchor point relative to bodyB's origin.
-	ci::Vec2f localAnchorB;
-
-	/// The maximum friction force in N.
+	/// The bodyB angle minus bodyA angle in radians.
+	float angularOffset;
+	
+	/// The maximum motor force in N.
 	float maxForce;
 
-	/// The maximum friction torque in N-m.
+	/// The maximum motor torque in N-m.
 	float maxTorque;
+
+	/// Position correction factor in the range [0,1].
+	float correctionFactor;
 };
 
-/// Friction joint. This is used for top-down friction.
-/// It provides 2D translational friction and angular friction.
-class b2FrictionJoint : public b2Joint
+/// A motor joint is used to control the relative motion
+/// between two bodies. A typical usage is to control the movement
+/// of a dynamic body with respect to the ground.
+class b2MotorJoint : public b2Joint
 {
 public:
 	ci::Vec2f GetAnchorA() const;
@@ -59,45 +64,53 @@ public:
 	ci::Vec2f GetReactionForce(float inv_dt) const;
 	float GetReactionTorque(float inv_dt) const;
 
-	/// The local anchor point relative to bodyA's origin.
-	const ci::Vec2f& GetLocalAnchorA() const { return m_localAnchorA; }
+	/// Set/get the target linear offset, in frame A, in meters.
+	void SetLinearOffset(const ci::Vec2f& linearOffset);
+	const ci::Vec2f& GetLinearOffset() const;
 
-	/// The local anchor point relative to bodyB's origin.
-	const ci::Vec2f& GetLocalAnchorB() const  { return m_localAnchorB; }
+	/// Set/get the target angular offset, in radians.
+	void SetAngularOffset(float angularOffset);
+	float GetAngularOffset() const;
 
-	/// set the maximum friction force in N.
+	/// Set the maximum friction force in N.
 	void SetMaxForce(float force);
 
 	/// Get the maximum friction force in N.
 	float GetMaxForce() const;
 
-	/// set the maximum friction torque in N*m.
+	/// Set the maximum friction torque in N*m.
 	void SetMaxTorque(float torque);
 
 	/// Get the maximum friction torque in N*m.
 	float GetMaxTorque() const;
 
-	/// Dump joint to dmLog
+	/// Set the position correction factor in the range [0,1].
+	void SetCorrectionFactor(float factor);
+
+	/// Get the position correction factor in the range [0,1].
+	float GetCorrectionFactor() const;
+
+	/// Dump to b2Log
 	void Dump();
 
 protected:
 
 	friend class b2Joint;
 
-	b2FrictionJoint(const b2FrictionJointDef* def);
+	b2MotorJoint(const b2MotorJointDef* def);
 
 	void InitVelocityConstraints(const b2SolverData& data);
 	void SolveVelocityConstraints(const b2SolverData& data);
 	bool SolvePositionConstraints(const b2SolverData& data);
 
-	ci::Vec2f m_localAnchorA;
-	ci::Vec2f m_localAnchorB;
-
 	// Solver shared
+	ci::Vec2f m_linearOffset;
+	float m_angularOffset;
 	ci::Vec2f m_linearImpulse;
 	float m_angularImpulse;
 	float m_maxForce;
 	float m_maxTorque;
+	float m_correctionFactor;
 
 	// Solver temp
 	int m_indexA;
@@ -106,11 +119,13 @@ protected:
 	ci::Vec2f m_rB;
 	ci::Vec2f m_localCenterA;
 	ci::Vec2f m_localCenterB;
+	ci::Vec2f m_linearError;
+	float m_angularError;
 	float m_invMassA;
 	float m_invMassB;
 	float m_invIA;
 	float m_invIB;
-	ci::Matrix22f m_linearMass;
+  ci::Matrix22f m_linearMass;
 	float m_angularMass;
 };
 

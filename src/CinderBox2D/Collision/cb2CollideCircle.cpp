@@ -63,7 +63,7 @@ void b2CollidePolygonAndCircle(
 	int normalIndex = 0;
 	float separation = -b2_maxFloat;
 	float radius = polygonA->m_radius + circleB->m_radius;
-	int vertexCount = polygonA->m_vertexCount;
+	int vertexCount = polygonA->m_count;
 	const ci::Vec2f* vertices = polygonA->m_vertices;
 	const ci::Vec2f* normals = polygonA->m_normals;
 

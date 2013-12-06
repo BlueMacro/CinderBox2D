@@ -267,11 +267,11 @@ void b2Fixture::Dump(int bodyIndex)
 			b2PolygonShape* s = (b2PolygonShape*)m_shape;
 			b2Log("    b2PolygonShape shape;\n");
 			b2Log("    ci::Vec2f vs[%d];\n", b2_maxPolygonVertices);
-			for (int i = 0; i < s->m_vertexCount; ++i)
+			for (int i = 0; i < s->m_count; ++i)
 			{
 				b2Log("    vs[%d].set(%.15lef, %.15lef);\n", i, s->m_vertices[i].x, s->m_vertices[i].y);
 			}
-			b2Log("    shape.set(vs, %d);\n", s->m_vertexCount);
+			b2Log("    shape.set(vs, %d);\n", s->m_count);
 		}
 		break;
 

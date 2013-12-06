@@ -138,8 +138,8 @@ void b2MouseJoint::InitVelocityConstraints(const b2SolverData& data)
 	//        [    0     1/m1+1/m2]           [-r1.x*r1.y r1.x*r1.x]           [-r1.x*r1.y r1.x*r1.x]
 	ci::Matrix22f K;
 	K.m00 = m_invMassB + m_invIB * m_rB.y * m_rB.y + m_gamma;
-	K.m10 = -m_invIB * m_rB.x * m_rB.y;
-	K.m01 = K.m10;
+	K.m01 = -m_invIB * m_rB.x * m_rB.y;
+	K.m10 = K.m01;
 	K.m11 = m_invMassB + m_invIB * m_rB.x * m_rB.x + m_gamma;
 
 	m_mass = K.inverted();
@@ -214,4 +214,9 @@ ci::Vec2f b2MouseJoint::GetReactionForce(float inv_dt) const
 float b2MouseJoint::GetReactionTorque(float inv_dt) const
 {
 	return inv_dt * 0.0f;
+}
+
+void b2MouseJoint::ShiftOrigin(const ci::Vec2f& newOrigin)
+{
+	m_targetA -= newOrigin;
 }

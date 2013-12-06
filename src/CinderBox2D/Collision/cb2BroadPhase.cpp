@@ -17,8 +17,6 @@
 */
 
 #include <CinderBox2D/Collision/cb2BroadPhase.h>
-#include <cstring>
-using namespace std;
 
 b2BroadPhase::b2BroadPhase()
 {
@@ -90,7 +88,6 @@ void b2BroadPhase::UnBufferMove(int proxyId)
 		if (m_moveBuffer[i] == proxyId)
 		{
 			m_moveBuffer[i] = e_nullProxy;
-			return;
 		}
 	}
 }

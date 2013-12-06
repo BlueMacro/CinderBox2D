@@ -17,10 +17,7 @@
 */
 
 #include <CinderBox2D/Collision/cb2DynamicTree.h>
-#include <cstring>
-#include <cfloat>
-using namespace std;
-
+#include <memory.h>
 
 b2DynamicTree::b2DynamicTree()
 {
@@ -768,4 +765,14 @@ void b2DynamicTree::RebuildBottomUp()
 	b2Free(nodes);
 
 	Validate();
+}
+
+void b2DynamicTree::ShiftOrigin(const ci::Vec2f& newOrigin)
+{
+	// Build array of leaves. Free the rest.
+	for (int i = 0; i < m_nodeCapacity; ++i)
+	{
+		m_nodes[i].aabb.lowerBound -= newOrigin;
+		m_nodes[i].aabb.upperBound -= newOrigin;
+	}
 }

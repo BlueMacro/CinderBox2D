@@ -24,7 +24,6 @@
 #include <CinderBox2D/Collision/cb2TimeOfImpact.h>
 
 #include <new>
-using namespace std;
 
 b2Contact* b2CircleContact::Create(b2Fixture* fixtureA, int, b2Fixture* fixtureB, int, b2BlockAllocator* allocator)
 {

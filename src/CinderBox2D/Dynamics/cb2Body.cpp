@@ -59,7 +59,6 @@ b2Body::b2Body(const b2BodyDef* bd, b2World* world)
 	m_xf.p = bd->position;
 	m_xf.q.set(bd->angle);
 
-	cb2::setZero(m_sweep.localCenter);
 	m_sweep.c0 = m_xf.p;
 	m_sweep.c = m_xf.p;
 	m_sweep.a0 = bd->angle;
@@ -78,7 +77,6 @@ b2Body::b2Body(const b2BodyDef* bd, b2World* world)
 	m_angularDamping = bd->angularDamping;
 	m_gravityScale = bd->gravityScale;
 
-	cb2::setZero(m_force);
 	m_torque = 0.0f;
 
 	m_sleepTime = 0.0f;
@@ -141,10 +139,25 @@ void b2Body::SetType(b2BodyType type)
 	cb2::setZero(m_force);
 	m_torque = 0.0f;
 
-	// Since the body type changed, we need to flag contacts for filtering.
+	// Delete the attached contacts.
+	b2ContactEdge* ce = m_contactList;
+	while (ce)
+	{
+		b2ContactEdge* ce0 = ce;
+		ce = ce->next;
+		m_world->m_contactManager.Destroy(ce0->contact);
+	}
+	m_contactList = NULL;
+
+	// Touch the proxies so that new contacts will be created (when appropriate)
+	b2BroadPhase* broadPhase = &m_world->m_contactManager.m_broadPhase;
 	for (b2Fixture* f = m_fixtureList; f; f = f->m_next)
 	{
-		f->Refilter();
+		int proxyCount = f->m_proxyCount;
+		for (int i = 0; i < proxyCount; ++i)
+		{
+			broadPhase->TouchProxy(f->m_proxies[i].proxyId);
+		}
 	}
 }
 
@@ -421,8 +434,6 @@ void b2Body::SetTransform(const ci::Vec2f& position, float angle)
 	{
 		f->Synchronize(broadPhase, m_xf, m_xf);
 	}
-
-	m_world->m_contactManager.FindNewContacts();
 }
 
 void b2Body::SynchronizeFixtures()
@@ -481,6 +492,28 @@ void b2Body::SetActive(bool flag)
 		}
 		m_contactList = NULL;
 	}
+}
+
+void b2Body::SetFixedRotation(bool flag)
+{
+	bool status = (m_flags & e_fixedRotationFlag) == e_fixedRotationFlag;
+	if (status == flag)
+	{
+		return;
+	}
+
+	if (flag)
+	{
+		m_flags |= e_fixedRotationFlag;
+	}
+	else
+	{
+		m_flags &= ~e_fixedRotationFlag;
+	}
+
+	m_angularVelocity = 0.0f;
+
+	ResetMassData();
 }
 
 void b2Body::Dump()

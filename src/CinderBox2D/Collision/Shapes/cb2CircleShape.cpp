@@ -18,7 +18,6 @@
 
 #include <CinderBox2D/Collision/Shapes/cb2CircleShape.h>
 #include <new>
-using namespace std;
 
 b2Shape* b2CircleShape::Clone(b2BlockAllocator* allocator) const
 {

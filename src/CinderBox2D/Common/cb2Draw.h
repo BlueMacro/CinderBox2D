@@ -16,6 +16,9 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+#ifndef B2_DRAW_H
+#define B2_DRAW_H
+
 #include <CinderBox2D/Common/cb2Math.h>
 
 /// Color for debug drawing. Each value has the range [0,1].
@@ -79,3 +82,5 @@ public:
 protected:
 	unsigned int m_drawFlags;
 };
+
+#endif

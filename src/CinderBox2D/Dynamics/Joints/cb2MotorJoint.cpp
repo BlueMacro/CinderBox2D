@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
+* Copyright (c) 2006-2012 Erin Catto http://www.box2d.org
 *
 * This software is provided 'as-is', without any express or implied
 * warranty.  In no event will the authors be held liable for any damages
@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <CinderBox2D/Dynamics/Joints/cb2FrictionJoint.h>
+#include <CinderBox2D/Dynamics/Joints/cb2MotorJoint.h>
 #include <CinderBox2D/Dynamics/cb2Body.h>
 #include <CinderBox2D/Dynamics/cb2TimeStep.h>
 
@@ -32,28 +32,32 @@
 // J = [0 0 -1 0 0 1]
 // K = invI1 + invI2
 
-void b2FrictionJointDef::Initialize(b2Body* bA, b2Body* bB, const ci::Vec2f& anchor)
+void b2MotorJointDef::Initialize(b2Body* bA, b2Body* bB)
 {
 	bodyA = bA;
 	bodyB = bB;
-	localAnchorA = bodyA->GetLocalPoint(anchor);
-	localAnchorB = bodyB->GetLocalPoint(anchor);
+	ci::Vec2f xB = bodyB->GetPosition();
+	linearOffset = bodyA->GetLocalPoint(xB);
+
+	float angleA = bodyA->GetAngle();
+	float angleB = bodyB->GetAngle();
+	angularOffset = angleB - angleA;
 }
 
-b2FrictionJoint::b2FrictionJoint(const b2FrictionJointDef* def)
+b2MotorJoint::b2MotorJoint(const b2MotorJointDef* def)
 : b2Joint(def)
 {
-	m_localAnchorA = def->localAnchorA;
-	m_localAnchorB = def->localAnchorB;
+	m_linearOffset = def->linearOffset;
+	m_angularOffset = def->angularOffset;
 
-	cb2::setZero(m_linearImpulse);
 	m_angularImpulse = 0.0f;
 
 	m_maxForce = def->maxForce;
 	m_maxTorque = def->maxTorque;
+	m_correctionFactor = def->correctionFactor;
 }
 
-void b2FrictionJoint::InitVelocityConstraints(const b2SolverData& data)
+void b2MotorJoint::InitVelocityConstraints(const b2SolverData& data)
 {
 	m_indexA = m_bodyA->m_islandIndex;
 	m_indexB = m_bodyB->m_islandIndex;
@@ -64,10 +68,12 @@ void b2FrictionJoint::InitVelocityConstraints(const b2SolverData& data)
 	m_invIA = m_bodyA->m_invI;
 	m_invIB = m_bodyB->m_invI;
 
+	ci::Vec2f cA = data.positions[m_indexA].c;
 	float aA = data.positions[m_indexA].a;
 	ci::Vec2f vA = data.velocities[m_indexA].v;
 	float wA = data.velocities[m_indexA].w;
 
+	ci::Vec2f cB = data.positions[m_indexB].c;
 	float aB = data.positions[m_indexB].a;
 	ci::Vec2f vB = data.velocities[m_indexB].v;
 	float wB = data.velocities[m_indexB].w;
@@ -75,8 +81,8 @@ void b2FrictionJoint::InitVelocityConstraints(const b2SolverData& data)
 	b2Rot qA(aA), qB(aB);
 
 	// Compute the effective mass matrix.
-	m_rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-	m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
+	m_rA = b2Mul(qA, -m_localCenterA);
+	m_rB = b2Mul(qB, -m_localCenterB);
 
 	// J = [-I -r1_skew I r2_skew]
 	//     [ 0       -1 0       1]
@@ -104,6 +110,9 @@ void b2FrictionJoint::InitVelocityConstraints(const b2SolverData& data)
 		m_angularMass = 1.0f / m_angularMass;
 	}
 
+	m_linearError = cB + m_rB - cA - m_rA - b2Mul(qA, m_linearOffset);
+	m_angularError = aB - aA - m_angularOffset;
+
 	if (data.step.warmStarting)
 	{
 		// Scale impulses to support a variable time step.
@@ -118,7 +127,7 @@ void b2FrictionJoint::InitVelocityConstraints(const b2SolverData& data)
 	}
 	else
 	{
-		cb2::setZero(m_linearImpulse);
+		cb2::setZero( m_linearImpulse );
 		m_angularImpulse = 0.0f;
 	}
 
@@ -128,7 +137,7 @@ void b2FrictionJoint::InitVelocityConstraints(const b2SolverData& data)
 	data.velocities[m_indexB].w = wB;
 }
 
-void b2FrictionJoint::SolveVelocityConstraints(const b2SolverData& data)
+void b2MotorJoint::SolveVelocityConstraints(const b2SolverData& data)
 {
 	ci::Vec2f vA = data.velocities[m_indexA].v;
 	float wA = data.velocities[m_indexA].w;
@@ -139,10 +148,11 @@ void b2FrictionJoint::SolveVelocityConstraints(const b2SolverData& data)
 	float iA = m_invIA, iB = m_invIB;
 
 	float h = data.step.dt;
+	float inv_h = data.step.inv_dt;
 
 	// Solve angular friction
 	{
-		float Cdot = wB - wA;
+		float Cdot = wB - wA + inv_h * m_correctionFactor * m_angularError;
 		float impulse = -m_angularMass * Cdot;
 
 		float oldImpulse = m_angularImpulse;
@@ -156,7 +166,7 @@ void b2FrictionJoint::SolveVelocityConstraints(const b2SolverData& data)
 
 	// Solve linear friction
 	{
-		ci::Vec2f Cdot = vB + b2Cross(wB, m_rB) - vA - b2Cross(wA, m_rA);
+		ci::Vec2f Cdot = vB + b2Cross(wB, m_rB) - vA - b2Cross(wA, m_rA) + inv_h * m_correctionFactor * m_linearError;
 
 		ci::Vec2f impulse = -b2Mul(m_linearMass, Cdot);
 		ci::Vec2f oldImpulse = m_linearImpulse;
@@ -185,67 +195,109 @@ void b2FrictionJoint::SolveVelocityConstraints(const b2SolverData& data)
 	data.velocities[m_indexB].w = wB;
 }
 
-bool b2FrictionJoint::SolvePositionConstraints(const b2SolverData& data)
+bool b2MotorJoint::SolvePositionConstraints(const b2SolverData& data)
 {
 	B2_NOT_USED(data);
 
 	return true;
 }
 
-ci::Vec2f b2FrictionJoint::GetAnchorA() const
+ci::Vec2f b2MotorJoint::GetAnchorA() const
 {
-	return m_bodyA->GetWorldPoint(m_localAnchorA);
+	return m_bodyA->GetPosition();
 }
 
-ci::Vec2f b2FrictionJoint::GetAnchorB() const
+ci::Vec2f b2MotorJoint::GetAnchorB() const
 {
-	return m_bodyB->GetWorldPoint(m_localAnchorB);
+	return m_bodyB->GetPosition();
 }
 
-ci::Vec2f b2FrictionJoint::GetReactionForce(float inv_dt) const
+ci::Vec2f b2MotorJoint::GetReactionForce(float inv_dt) const
 {
 	return inv_dt * m_linearImpulse;
 }
 
-float b2FrictionJoint::GetReactionTorque(float inv_dt) const
+float b2MotorJoint::GetReactionTorque(float inv_dt) const
 {
 	return inv_dt * m_angularImpulse;
 }
 
-void b2FrictionJoint::SetMaxForce(float force)
+void b2MotorJoint::SetMaxForce(float force)
 {
 	b2Assert(cb2::isValid(force) && force >= 0.0f);
 	m_maxForce = force;
 }
 
-float b2FrictionJoint::GetMaxForce() const
+float b2MotorJoint::GetMaxForce() const
 {
 	return m_maxForce;
 }
 
-void b2FrictionJoint::SetMaxTorque(float torque)
+void b2MotorJoint::SetMaxTorque(float torque)
 {
 	b2Assert(cb2::isValid(torque) && torque >= 0.0f);
 	m_maxTorque = torque;
 }
 
-float b2FrictionJoint::GetMaxTorque() const
+float b2MotorJoint::GetMaxTorque() const
 {
 	return m_maxTorque;
 }
 
-void b2FrictionJoint::Dump()
+void b2MotorJoint::SetCorrectionFactor(float factor)
+{
+	b2Assert(cb2::isValid(factor) && 0.0f <= factor && factor <= 1.0f);
+	m_correctionFactor = factor;
+}
+
+float b2MotorJoint::GetCorrectionFactor() const
+{
+	return m_correctionFactor;
+}
+
+void b2MotorJoint::SetLinearOffset(const ci::Vec2f& linearOffset)
+{
+	if (linearOffset.x != m_linearOffset.x || linearOffset.y != m_linearOffset.y)
+	{
+		m_bodyA->SetAwake(true);
+		m_bodyB->SetAwake(true);
+		m_linearOffset = linearOffset;
+	}
+}
+
+const ci::Vec2f& b2MotorJoint::GetLinearOffset() const
+{
+	return m_linearOffset;
+}
+
+void b2MotorJoint::SetAngularOffset(float angularOffset)
+{
+	if (angularOffset != m_angularOffset)
+	{
+		m_bodyA->SetAwake(true);
+		m_bodyB->SetAwake(true);
+		m_angularOffset = angularOffset;
+	}
+}
+
+float b2MotorJoint::GetAngularOffset() const
+{
+	return m_angularOffset;
+}
+
+void b2MotorJoint::Dump()
 {
 	int indexA = m_bodyA->m_islandIndex;
 	int indexB = m_bodyB->m_islandIndex;
 
-	b2Log("  b2FrictionJointDef jd;\n");
+	b2Log("  b2MotorJointDef jd;\n");
 	b2Log("  jd.bodyA = bodies[%d];\n", indexA);
 	b2Log("  jd.bodyB = bodies[%d];\n", indexB);
 	b2Log("  jd.collideConnected = bool(%d);\n", m_collideConnected);
-	b2Log("  jd.localAnchorA.set(%.15lef, %.15lef);\n", m_localAnchorA.x, m_localAnchorA.y);
-	b2Log("  jd.localAnchorB.set(%.15lef, %.15lef);\n", m_localAnchorB.x, m_localAnchorB.y);
+	b2Log("  jd.linearOffset.Set(%.15lef, %.15lef);\n", m_linearOffset.x, m_linearOffset.y);
+	b2Log("  jd.angularOffset = %.15lef;\n", m_angularOffset);
 	b2Log("  jd.maxForce = %.15lef;\n", m_maxForce);
 	b2Log("  jd.maxTorque = %.15lef;\n", m_maxTorque);
+	b2Log("  jd.correctionFactor = %.15lef;\n", m_correctionFactor);
 	b2Log("  joints[%d] = m_world->CreateJoint(&jd);\n", m_index);
 }

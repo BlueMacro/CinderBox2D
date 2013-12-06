@@ -100,6 +100,11 @@ public:
 	/// Get the quality metric of the embedded tree.
 	float GetTreeQuality() const;
 
+	/// Shift the world origin. Useful for large worlds.
+	/// The shift formula is: position -= newOrigin
+	/// @param newOrigin the new origin with respect to the old origin
+	void ShiftOrigin(const ci::Vec2f& newOrigin);
+
 private:
 
 	friend class b2DynamicTree;
@@ -243,6 +248,11 @@ template <typename T>
 inline void b2BroadPhase::RayCast(T* callback, const b2RayCastInput& input) const
 {
 	m_tree.RayCast(callback, input);
+}
+
+inline void b2BroadPhase::ShiftOrigin(const ci::Vec2f& newOrigin)
+{
+	m_tree.ShiftOrigin(newOrigin);
 }
 
 #endif

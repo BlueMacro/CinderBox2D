@@ -107,7 +107,6 @@ b2PrismaticJoint::b2PrismaticJoint(const b2PrismaticJointDef* def)
 	m_localYAxisA = b2Cross(1.0f, m_localXAxisA);
 	m_referenceAngle = def->referenceAngle;
 
-	cb2::setZero(m_impulse);
 	m_motorMass = 0.0;
 	m_motorImpulse = 0.0f;
 
@@ -118,9 +117,6 @@ b2PrismaticJoint::b2PrismaticJoint(const b2PrismaticJointDef* def)
 	m_enableLimit = def->enableLimit;
 	m_enableMotor = def->enableMotor;
 	m_limitState = e_inactiveLimit;
-
-	cb2::setZero(m_axis);
-	cb2::setZero(m_perp);
 }
 
 void b2PrismaticJoint::InitVelocityConstraints(const b2SolverData& data)
@@ -349,17 +345,6 @@ void b2PrismaticJoint::SolveVelocityConstraints(const b2SolverData& data)
 
 		vB += mB * P;
 		wB += iB * LB;
-
-		ci::Vec2f Cdot10 = Cdot1;
-
-		Cdot1.x = b2Dot(m_perp, vB - vA) + m_s2 * wB - m_s1 * wA;
-		Cdot1.y = wB - wA;
-
-		if (b2Abs(Cdot1.x) > 0.01f || b2Abs(Cdot1.y) > 0.01f)
-		{
-			ci::Vec2f test = b2Mul22(m_K, df);
-			Cdot1.x += 0.0f;
-		}
 	}
 
 	data.velocities[m_indexA].v = vA;

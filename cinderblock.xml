@@ -7,7 +7,7 @@
 	summary="Box2D"
 	git="git://github.com/y3i12/CinderBox2D.git"
 	license="BSD"
-	version="2.2.1"
+	version="2.3.1"
 	libraryUrl="http://cinderbox2d.y3i12.com/"
 	>
 	<sourcePattern>src/CinderBox2D/Collision/*.cpp</sourcePattern>

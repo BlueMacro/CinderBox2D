@@ -119,6 +119,7 @@ struct b2WorldManifold
 
 	ci::Vec2f normal;							///< world vector pointing from A to B
 	ci::Vec2f points[b2_maxManifoldPoints];	///< world contact point (point of intersection)
+	float separations[b2_maxManifoldPoints];	///< a negative value indicates overlap, in meters
 };
 
 /// This is used for determining the state of contact points.

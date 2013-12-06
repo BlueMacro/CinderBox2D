@@ -79,8 +79,6 @@ struct b2WheelJointDef : public b2JointDef
 class b2WheelJoint : public b2Joint
 {
 public:
-	void GetDefinition(b2WheelJointDef* def) const;
-
 	ci::Vec2f GetAnchorA() const;
 	ci::Vec2f GetAnchorB() const;
 

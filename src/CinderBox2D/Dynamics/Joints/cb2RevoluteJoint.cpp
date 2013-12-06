@@ -49,7 +49,6 @@ b2RevoluteJoint::b2RevoluteJoint(const b2RevoluteJointDef* def)
 	m_localAnchorB = def->localAnchorB;
 	m_referenceAngle = def->referenceAngle;
 
-	cb2::setZero(m_impulse);
 	m_motorImpulse = 0.0f;
 
 	m_lowerAngle = def->lowerAngle;
@@ -102,12 +101,12 @@ void b2RevoluteJoint::InitVelocityConstraints(const b2SolverData& data)
 	bool fixedRotation = (iA + iB == 0.0f);
 
 	m_mass.m00 = mA + mB + m_rA.y * m_rA.y * iA + m_rB.y * m_rB.y * iB;
-	m_mass.m01 = -m_rA.y * m_rA.x * iA - m_rB.y * m_rB.x * iB;
+	m_mass.m10 = -m_rA.y * m_rA.x * iA - m_rB.y * m_rB.x * iB;
 	m_mass.m20 = -m_rA.y * iA - m_rB.y * iB;
-	m_mass.m10 = m_mass.m01;
+	m_mass.m01 = m_mass.m10;
 	m_mass.m11 = mA + mB + m_rA.x * m_rA.x * iA + m_rB.x * m_rB.x * iB;
 	m_mass.m21 = m_rA.x * iA + m_rB.x * iB;
-	m_mass.m02 = m_mass.m20;
+	m_mass.m20 = m_mass.m20;
 	m_mass.m12 = m_mass.m21;
 	m_mass.m22 = iA + iB;
 
@@ -355,8 +354,8 @@ bool b2RevoluteJoint::SolvePositionConstraints(const b2SolverData& data)
 
 		ci::Matrix22f K;
 		K.m00 = mA + mB + iA * rA.y * rA.y + iB * rB.y * rB.y;
-		K.m10 = -iA * rA.x * rA.y - iB * rB.x * rB.y;
-		K.m01 = K.m10;
+		K.m01 = -iA * rA.x * rA.y - iB * rB.x * rB.y;
+		K.m10 = K.m01;
 		K.m11 = mA + mB + iA * rA.x * rA.x + iB * rB.x * rB.x;
 
 		ci::Vec2f impulse = -cb2::solve(K, C);

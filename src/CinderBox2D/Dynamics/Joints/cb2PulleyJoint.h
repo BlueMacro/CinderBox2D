@@ -100,8 +100,17 @@ public:
 	/// Get the pulley ratio.
 	float GetRatio() const;
 
+	/// Get the current length of the segment attached to bodyA.
+	float GetCurrentLengthA() const;
+
+	/// Get the current length of the segment attached to bodyB.
+	float GetCurrentLengthB() const;
+
 	/// Dump joint to dmLog
 	void Dump();
+
+	/// Implement b2Joint::ShiftOrigin
+	void ShiftOrigin(const ci::Vec2f& newOrigin);
 
 protected:
 
