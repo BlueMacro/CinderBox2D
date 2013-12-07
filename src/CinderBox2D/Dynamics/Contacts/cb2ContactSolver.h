@@ -16,19 +16,19 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_CONTACT_SOLVER_H
-#define B2_CONTACT_SOLVER_H
+#ifndef CB2_CONTACT_SOLVER_H
+#define CB2_CONTACT_SOLVER_H
 
 #include <CinderBox2D/Common/cb2Math.h>
 #include <CinderBox2D/Collision/cb2Collision.h>
 #include <CinderBox2D/Dynamics/cb2TimeStep.h>
 
-class b2Contact;
-class b2Body;
-class b2StackAllocator;
-struct b2ContactPositionConstraint;
+class cb2Contact;
+class cb2Body;
+class cb2StackAllocator;
+struct cb2ContactPositionConstraint;
 
-struct b2VelocityConstraintPoint
+struct cb2VelocityConstraintPoint
 {
 	ci::Vec2f rA;
 	ci::Vec2f rB;
@@ -39,9 +39,9 @@ struct b2VelocityConstraintPoint
 	float velocityBias;
 };
 
-struct b2ContactVelocityConstraint
+struct cb2ContactVelocityConstraint
 {
-	b2VelocityConstraintPoint points[b2_maxManifoldPoints];
+	cb2VelocityConstraintPoint points[cb2_maxManifoldPoints];
 	ci::Vec2f normal;
 	ci::Matrix22f normalMass;
 	ci::Matrix22f K;
@@ -56,21 +56,21 @@ struct b2ContactVelocityConstraint
 	int contactIndex;
 };
 
-struct b2ContactSolverDef
+struct cb2ContactSolverDef
 {
-	b2TimeStep step;
-	b2Contact** contacts;
+	cb2TimeStep step;
+	cb2Contact** contacts;
 	int count;
-	b2Position* positions;
-	b2Velocity* velocities;
-	b2StackAllocator* allocator;
+	cb2Position* positions;
+	cb2Velocity* velocities;
+	cb2StackAllocator* allocator;
 };
 
-class b2ContactSolver
+class cb2ContactSolver
 {
 public:
-	b2ContactSolver(b2ContactSolverDef* def);
-	~b2ContactSolver();
+	cb2ContactSolver(cb2ContactSolverDef* def);
+	~cb2ContactSolver();
 
 	void InitializeVelocityConstraints();
 
@@ -81,13 +81,13 @@ public:
 	bool SolvePositionConstraints();
 	bool SolveTOIPositionConstraints(int toiIndexA, int toiIndexB);
 
-	b2TimeStep m_step;
-	b2Position* m_positions;
-	b2Velocity* m_velocities;
-	b2StackAllocator* m_allocator;
-	b2ContactPositionConstraint* m_positionConstraints;
-	b2ContactVelocityConstraint* m_velocityConstraints;
-	b2Contact** m_contacts;
+	cb2TimeStep m_step;
+	cb2Position* m_positions;
+	cb2Velocity* m_velocities;
+	cb2StackAllocator* m_allocator;
+	cb2ContactPositionConstraint* m_positionConstraints;
+	cb2ContactVelocityConstraint* m_velocityConstraints;
+	cb2Contact** m_contacts;
 	int m_count;
 };
 

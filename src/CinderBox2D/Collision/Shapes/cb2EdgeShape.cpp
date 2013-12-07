@@ -19,7 +19,7 @@
 #include <CinderBox2D/Collision/Shapes/cb2EdgeShape.h>
 #include <new>
 
-void b2EdgeShape::Set(const ci::Vec2f& v1, const ci::Vec2f& v2)
+void cb2EdgeShape::Set(const ci::Vec2f& v1, const ci::Vec2f& v2)
 {
 	m_vertex1 = v1;
 	m_vertex2 = v2;
@@ -27,23 +27,23 @@ void b2EdgeShape::Set(const ci::Vec2f& v1, const ci::Vec2f& v2)
 	m_hasVertex3 = false;
 }
 
-b2Shape* b2EdgeShape::Clone(b2BlockAllocator* allocator) const
+cb2Shape* cb2EdgeShape::Clone(cb2BlockAllocator* allocator) const
 {
-	void* mem = allocator->Allocate(sizeof(b2EdgeShape));
-	b2EdgeShape* clone = new (mem) b2EdgeShape;
+	void* mem = allocator->Allocate(sizeof(cb2EdgeShape));
+	cb2EdgeShape* clone = new (mem) cb2EdgeShape;
 	*clone = *this;
 	return clone;
 }
 
-int b2EdgeShape::GetChildCount() const
+int cb2EdgeShape::GetChildCount() const
 {
 	return 1;
 }
 
-bool b2EdgeShape::TestPoint(const b2Transform& xf, const ci::Vec2f& p) const
+bool cb2EdgeShape::TestPoint(const cb2Transform& xf, const ci::Vec2f& p) const
 {
-	B2_NOT_USED(xf);
-	B2_NOT_USED(p);
+	CB2_NOT_USED(xf);
+	CB2_NOT_USED(p);
 	return false;
 }
 
@@ -51,14 +51,14 @@ bool b2EdgeShape::TestPoint(const b2Transform& xf, const ci::Vec2f& p) const
 // v = v1 + s * e
 // p1 + t * d = v1 + s * e
 // s * e - t * d = p1 - v1
-bool b2EdgeShape::RayCast(b2RayCastOutput* output, const b2RayCastInput& input,
-							const b2Transform& xf, int childIndex) const
+bool cb2EdgeShape::RayCast(cb2RayCastOutput* output, const cb2RayCastInput& input,
+							const cb2Transform& xf, int childIndex) const
 {
-	B2_NOT_USED(childIndex);
+	CB2_NOT_USED(childIndex);
 
 	// Put the ray into the edge's frame of reference.
-	ci::Vec2f p1 = b2MulT(xf.q, input.p1 - xf.p);
-	ci::Vec2f p2 = b2MulT(xf.q, input.p2 - xf.p);
+	ci::Vec2f p1 = cb2MulT(xf.q, input.p1 - xf.p);
+	ci::Vec2f p2 = cb2MulT(xf.q, input.p2 - xf.p);
 	ci::Vec2f d = p2 - p1;
 
 	ci::Vec2f v1 = m_vertex1;
@@ -70,8 +70,8 @@ bool b2EdgeShape::RayCast(b2RayCastOutput* output, const b2RayCastInput& input,
 	// q = p1 + t * d
 	// dot(normal, q - v1) = 0
 	// dot(normal, p1 - v1) + t * dot(normal, d) = 0
-	float numerator = b2Dot(normal, v1 - p1);
-	float denominator = b2Dot(normal, d);
+	float numerator = cb2Dot(normal, v1 - p1);
+	float denominator = cb2Dot(normal, d);
 
 	if (denominator == 0.0f)
 	{
@@ -89,13 +89,13 @@ bool b2EdgeShape::RayCast(b2RayCastOutput* output, const b2RayCastInput& input,
 	// q = v1 + s * r
 	// s = dot(q - v1, r) / dot(r, r)
 	ci::Vec2f r = v2 - v1;
-	float rr = b2Dot(r, r);
+	float rr = cb2Dot(r, r);
 	if (rr == 0.0f)
 	{
 		return false;
 	}
 
-	float s = b2Dot(q - v1, r) / rr;
+	float s = cb2Dot(q - v1, r) / rr;
 	if (s < 0.0f || 1.0f < s)
 	{
 		return false;
@@ -104,33 +104,33 @@ bool b2EdgeShape::RayCast(b2RayCastOutput* output, const b2RayCastInput& input,
 	output->fraction = t;
 	if (numerator > 0.0f)
 	{
-		output->normal = -b2Mul(xf.q, normal);
+		output->normal = -cb2Mul(xf.q, normal);
 	}
 	else
 	{
-		output->normal = b2Mul(xf.q, normal);
+		output->normal = cb2Mul(xf.q, normal);
 	}
 	return true;
 }
 
-void b2EdgeShape::ComputeAABB(b2AABB* aabb, const b2Transform& xf, int childIndex) const
+void cb2EdgeShape::ComputeAABB(cb2AABB* aabb, const cb2Transform& xf, int childIndex) const
 {
-	B2_NOT_USED(childIndex);
+	CB2_NOT_USED(childIndex);
 
-	ci::Vec2f v1 = b2Mul(xf, m_vertex1);
-	ci::Vec2f v2 = b2Mul(xf, m_vertex2);
+	ci::Vec2f v1 = cb2Mul(xf, m_vertex1);
+	ci::Vec2f v2 = cb2Mul(xf, m_vertex2);
 
-	ci::Vec2f lower = b2Min(v1, v2);
-	ci::Vec2f upper = b2Max(v1, v2);
+	ci::Vec2f lower = cb2Min(v1, v2);
+	ci::Vec2f upper = cb2Max(v1, v2);
 
 	ci::Vec2f r(m_radius, m_radius);
 	aabb->lowerBound = lower - r;
 	aabb->upperBound = upper + r;
 }
 
-void b2EdgeShape::ComputeMass(b2MassData* massData, float density) const
+void cb2EdgeShape::ComputeMass(cb2MassData* massData, float density) const
 {
-	B2_NOT_USED(density);
+	CB2_NOT_USED(density);
 
 	massData->mass = 0.0f;
 	massData->center = 0.5f * (m_vertex1 + m_vertex2);

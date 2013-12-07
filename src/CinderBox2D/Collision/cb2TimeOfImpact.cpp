@@ -25,12 +25,12 @@
 
 #include <stdio.h>
 
-float b2_toiTime, b2_toiMaxTime;
-int b2_toiCalls, b2_toiIters, b2_toiMaxIters;
-int b2_toiRootIters, b2_toiMaxRootIters;
+float cb2_toiTime, cb2_toiMaxTime;
+int cb2_toiCalls, cb2_toiIters, cb2_toiMaxIters;
+int cb2_toiRootIters, cb2_toiMaxRootIters;
 
 //
-struct b2SeparationFunction
+struct cb2SeparationFunction
 {
 	enum Type
 	{
@@ -41,20 +41,20 @@ struct b2SeparationFunction
 
 	// TODO_ERIN might not need to return the separation
 
-	float Initialize(const b2SimplexCache* cache,
-		const b2DistanceProxy* proxyA, const b2Sweep& sweepA,
-		const b2DistanceProxy* proxyB, const b2Sweep& sweepB,
+	float Initialize(const cb2SimplexCache* cache,
+		const cb2DistanceProxy* proxyA, const cb2Sweep& sweepA,
+		const cb2DistanceProxy* proxyB, const cb2Sweep& sweepB,
 		float t1)
 	{
 		m_proxyA = proxyA;
 		m_proxyB = proxyB;
 		int count = cache->count;
-		b2Assert(0 < count && count < 3);
+		cb2Assert(0 < count && count < 3);
 
 		m_sweepA = sweepA;
 		m_sweepB = sweepB;
 
-		b2Transform xfA, xfB;
+		cb2Transform xfA, xfB;
 		m_sweepA.GetTransform(&xfA, t1);
 		m_sweepB.GetTransform(&xfB, t1);
 
@@ -63,8 +63,8 @@ struct b2SeparationFunction
 			m_type = e_points;
 			ci::Vec2f localPointA = m_proxyA->GetVertex(cache->indexA[0]);
 			ci::Vec2f localPointB = m_proxyB->GetVertex(cache->indexB[0]);
-			ci::Vec2f pointA = b2Mul(xfA, localPointA);
-			ci::Vec2f pointB = b2Mul(xfB, localPointB);
+			ci::Vec2f pointA = cb2Mul(xfA, localPointA);
+			ci::Vec2f pointB = cb2Mul(xfB, localPointB);
 			m_axis = pointB - pointA;
 			float s = m_axis.length();
       m_axis /= s;
@@ -77,17 +77,17 @@ struct b2SeparationFunction
 			ci::Vec2f localPointB1 = proxyB->GetVertex(cache->indexB[0]);
 			ci::Vec2f localPointB2 = proxyB->GetVertex(cache->indexB[1]);
 
-			m_axis = b2Cross(localPointB2 - localPointB1, 1.0f);
+			m_axis = cb2Cross(localPointB2 - localPointB1, 1.0f);
 			m_axis.normalize();
-			ci::Vec2f normal = b2Mul(xfB.q, m_axis);
+			ci::Vec2f normal = cb2Mul(xfB.q, m_axis);
 
 			m_localPoint = 0.5f * (localPointB1 + localPointB2);
-			ci::Vec2f pointB = b2Mul(xfB, m_localPoint);
+			ci::Vec2f pointB = cb2Mul(xfB, m_localPoint);
 
 			ci::Vec2f localPointA = proxyA->GetVertex(cache->indexA[0]);
-			ci::Vec2f pointA = b2Mul(xfA, localPointA);
+			ci::Vec2f pointA = cb2Mul(xfA, localPointA);
 
-			float s = b2Dot(pointA - pointB, normal);
+			float s = cb2Dot(pointA - pointB, normal);
 			if (s < 0.0f)
 			{
 				m_axis = -m_axis;
@@ -102,17 +102,17 @@ struct b2SeparationFunction
 			ci::Vec2f localPointA1 = m_proxyA->GetVertex(cache->indexA[0]);
 			ci::Vec2f localPointA2 = m_proxyA->GetVertex(cache->indexA[1]);
 			
-			m_axis = b2Cross(localPointA2 - localPointA1, 1.0f);
+			m_axis = cb2Cross(localPointA2 - localPointA1, 1.0f);
 			m_axis.normalize();
-			ci::Vec2f normal = b2Mul(xfA.q, m_axis);
+			ci::Vec2f normal = cb2Mul(xfA.q, m_axis);
 
 			m_localPoint = 0.5f * (localPointA1 + localPointA2);
-			ci::Vec2f pointA = b2Mul(xfA, m_localPoint);
+			ci::Vec2f pointA = cb2Mul(xfA, m_localPoint);
 
 			ci::Vec2f localPointB = m_proxyB->GetVertex(cache->indexB[0]);
-			ci::Vec2f pointB = b2Mul(xfB, localPointB);
+			ci::Vec2f pointB = cb2Mul(xfB, localPointB);
 
-			float s = b2Dot(pointB - pointA, normal);
+			float s = cb2Dot(pointB - pointA, normal);
 			if (s < 0.0f)
 			{
 				m_axis = -m_axis;
@@ -125,7 +125,7 @@ struct b2SeparationFunction
 	//
 	float FindMinSeparation(int* indexA, int* indexB, float t) const
 	{
-		b2Transform xfA, xfB;
+		cb2Transform xfA, xfB;
 		m_sweepA.GetTransform(&xfA, t);
 		m_sweepB.GetTransform(&xfB, t);
 
@@ -133,8 +133,8 @@ struct b2SeparationFunction
 		{
 		case e_points:
 			{
-				ci::Vec2f axisA = b2MulT(xfA.q,  m_axis);
-				ci::Vec2f axisB = b2MulT(xfB.q, -m_axis);
+				ci::Vec2f axisA = cb2MulT(xfA.q,  m_axis);
+				ci::Vec2f axisB = cb2MulT(xfB.q, -m_axis);
 
 				*indexA = m_proxyA->GetSupport(axisA);
 				*indexB = m_proxyB->GetSupport(axisB);
@@ -142,49 +142,49 @@ struct b2SeparationFunction
 				ci::Vec2f localPointA = m_proxyA->GetVertex(*indexA);
 				ci::Vec2f localPointB = m_proxyB->GetVertex(*indexB);
 				
-				ci::Vec2f pointA = b2Mul(xfA, localPointA);
-				ci::Vec2f pointB = b2Mul(xfB, localPointB);
+				ci::Vec2f pointA = cb2Mul(xfA, localPointA);
+				ci::Vec2f pointB = cb2Mul(xfB, localPointB);
 
-				float separation = b2Dot(pointB - pointA, m_axis);
+				float separation = cb2Dot(pointB - pointA, m_axis);
 				return separation;
 			}
 
 		case e_faceA:
 			{
-				ci::Vec2f normal = b2Mul(xfA.q, m_axis);
-				ci::Vec2f pointA = b2Mul(xfA, m_localPoint);
+				ci::Vec2f normal = cb2Mul(xfA.q, m_axis);
+				ci::Vec2f pointA = cb2Mul(xfA, m_localPoint);
 
-				ci::Vec2f axisB = b2MulT(xfB.q, -normal);
+				ci::Vec2f axisB = cb2MulT(xfB.q, -normal);
 				
 				*indexA = -1;
 				*indexB = m_proxyB->GetSupport(axisB);
 
 				ci::Vec2f localPointB = m_proxyB->GetVertex(*indexB);
-				ci::Vec2f pointB = b2Mul(xfB, localPointB);
+				ci::Vec2f pointB = cb2Mul(xfB, localPointB);
 
-				float separation = b2Dot(pointB - pointA, normal);
+				float separation = cb2Dot(pointB - pointA, normal);
 				return separation;
 			}
 
 		case e_faceB:
 			{
-				ci::Vec2f normal = b2Mul(xfB.q, m_axis);
-				ci::Vec2f pointB = b2Mul(xfB, m_localPoint);
+				ci::Vec2f normal = cb2Mul(xfB.q, m_axis);
+				ci::Vec2f pointB = cb2Mul(xfB, m_localPoint);
 
-				ci::Vec2f axisA = b2MulT(xfA.q, -normal);
+				ci::Vec2f axisA = cb2MulT(xfA.q, -normal);
 
 				*indexB = -1;
 				*indexA = m_proxyA->GetSupport(axisA);
 
 				ci::Vec2f localPointA = m_proxyA->GetVertex(*indexA);
-				ci::Vec2f pointA = b2Mul(xfA, localPointA);
+				ci::Vec2f pointA = cb2Mul(xfA, localPointA);
 
-				float separation = b2Dot(pointA - pointB, normal);
+				float separation = cb2Dot(pointA - pointB, normal);
 				return separation;
 			}
 
 		default:
-			b2Assert(false);
+			cb2Assert(false);
 			*indexA = -1;
 			*indexB = -1;
 			return 0.0f;
@@ -194,7 +194,7 @@ struct b2SeparationFunction
 	//
 	float Evaluate(int indexA, int indexB, float t) const
 	{
-		b2Transform xfA, xfB;
+		cb2Transform xfA, xfB;
 		m_sweepA.GetTransform(&xfA, t);
 		m_sweepB.GetTransform(&xfB, t);
 
@@ -205,46 +205,46 @@ struct b2SeparationFunction
 				ci::Vec2f localPointA = m_proxyA->GetVertex(indexA);
 				ci::Vec2f localPointB = m_proxyB->GetVertex(indexB);
 
-				ci::Vec2f pointA = b2Mul(xfA, localPointA);
-				ci::Vec2f pointB = b2Mul(xfB, localPointB);
-				float separation = b2Dot(pointB - pointA, m_axis);
+				ci::Vec2f pointA = cb2Mul(xfA, localPointA);
+				ci::Vec2f pointB = cb2Mul(xfB, localPointB);
+				float separation = cb2Dot(pointB - pointA, m_axis);
 
 				return separation;
 			}
 
 		case e_faceA:
 			{
-				ci::Vec2f normal = b2Mul(xfA.q, m_axis);
-				ci::Vec2f pointA = b2Mul(xfA, m_localPoint);
+				ci::Vec2f normal = cb2Mul(xfA.q, m_axis);
+				ci::Vec2f pointA = cb2Mul(xfA, m_localPoint);
 
 				ci::Vec2f localPointB = m_proxyB->GetVertex(indexB);
-				ci::Vec2f pointB = b2Mul(xfB, localPointB);
+				ci::Vec2f pointB = cb2Mul(xfB, localPointB);
 
-				float separation = b2Dot(pointB - pointA, normal);
+				float separation = cb2Dot(pointB - pointA, normal);
 				return separation;
 			}
 
 		case e_faceB:
 			{
-				ci::Vec2f normal = b2Mul(xfB.q, m_axis);
-				ci::Vec2f pointB = b2Mul(xfB, m_localPoint);
+				ci::Vec2f normal = cb2Mul(xfB.q, m_axis);
+				ci::Vec2f pointB = cb2Mul(xfB, m_localPoint);
 
 				ci::Vec2f localPointA = m_proxyA->GetVertex(indexA);
-				ci::Vec2f pointA = b2Mul(xfA, localPointA);
+				ci::Vec2f pointA = cb2Mul(xfA, localPointA);
 
-				float separation = b2Dot(pointA - pointB, normal);
+				float separation = cb2Dot(pointA - pointB, normal);
 				return separation;
 			}
 
 		default:
-			b2Assert(false);
+			cb2Assert(false);
 			return 0.0f;
 		}
 	}
 
-	const b2DistanceProxy* m_proxyA;
-	const b2DistanceProxy* m_proxyB;
-	b2Sweep m_sweepA, m_sweepB;
+	const cb2DistanceProxy* m_proxyA;
+	const cb2DistanceProxy* m_proxyB;
+	cb2Sweep m_sweepA, m_sweepB;
 	Type m_type;
 	ci::Vec2f m_localPoint;
 	ci::Vec2f m_axis;
@@ -252,20 +252,20 @@ struct b2SeparationFunction
 
 // CCD via the local separating axis method. This seeks progression
 // by computing the largest time at which separation is maintained.
-void b2TimeOfImpact(b2TOIOutput* output, const b2TOIInput* input)
+void cb2TimeOfImpact(cb2TOIOutput* output, const cb2TOIInput* input)
 {
-	b2Timer timer;
+	cb2Timer timer;
 
-	++b2_toiCalls;
+	++cb2_toiCalls;
 
-	output->state = b2TOIOutput::e_unknown;
+	output->state = cb2TOIOutput::e_unknown;
 	output->t = input->tMax;
 
-	const b2DistanceProxy* proxyA = &input->proxyA;
-	const b2DistanceProxy* proxyB = &input->proxyB;
+	const cb2DistanceProxy* proxyA = &input->proxyA;
+	const cb2DistanceProxy* proxyB = &input->proxyB;
 
-	b2Sweep sweepA = input->sweepA;
-	b2Sweep sweepB = input->sweepB;
+	cb2Sweep sweepA = input->sweepA;
+	cb2Sweep sweepB = input->sweepB;
 
 	// Large rotations can make the root finder fail, so we normalize the
 	// sweep angles.
@@ -275,18 +275,18 @@ void b2TimeOfImpact(b2TOIOutput* output, const b2TOIInput* input)
 	float tMax = input->tMax;
 
 	float totalRadius = proxyA->m_radius + proxyB->m_radius;
-	float target = b2Max(b2_linearSlop, totalRadius - 3.0f * b2_linearSlop);
-	float tolerance = 0.25f * b2_linearSlop;
-	b2Assert(target > tolerance);
+	float target = cb2Max(cb2_linearSlop, totalRadius - 3.0f * cb2_linearSlop);
+	float tolerance = 0.25f * cb2_linearSlop;
+	cb2Assert(target > tolerance);
 
 	float t1 = 0.0f;
-	const int k_maxIterations = 20;	// TODO_ERIN b2Settings
+	const int k_maxIterations = 20;	// TODO_ERIN cb2Settings
 	int iter = 0;
 
 	// Prepare input for distance query.
-	b2SimplexCache cache;
+	cb2SimplexCache cache;
 	cache.count = 0;
-	b2DistanceInput distanceInput;
+	cb2DistanceInput distanceInput;
 	distanceInput.proxyA = input->proxyA;
 	distanceInput.proxyB = input->proxyB;
 	distanceInput.useRadii = false;
@@ -295,7 +295,7 @@ void b2TimeOfImpact(b2TOIOutput* output, const b2TOIInput* input)
 	// This loop terminates when an axis is repeated (no progress is made).
 	for(;;)
 	{
-		b2Transform xfA, xfB;
+		cb2Transform xfA, xfB;
 		sweepA.GetTransform(&xfA, t1);
 		sweepB.GetTransform(&xfB, t1);
 
@@ -303,14 +303,14 @@ void b2TimeOfImpact(b2TOIOutput* output, const b2TOIInput* input)
 		// to get a separating axis.
 		distanceInput.transformA = xfA;
 		distanceInput.transformB = xfB;
-		b2DistanceOutput distanceOutput;
-		b2Distance(&distanceOutput, &cache, &distanceInput);
+		cb2DistanceOutput distanceOutput;
+		cb2Distance(&distanceOutput, &cache, &distanceInput);
 
 		// If the shapes are overlapped, we give up on continuous collision.
 		if (distanceOutput.distance <= 0.0f)
 		{
 			// Failure!
-			output->state = b2TOIOutput::e_overlapped;
+			output->state = cb2TOIOutput::e_overlapped;
 			output->t = 0.0f;
 			break;
 		}
@@ -318,13 +318,13 @@ void b2TimeOfImpact(b2TOIOutput* output, const b2TOIInput* input)
 		if (distanceOutput.distance < target + tolerance)
 		{
 			// Victory!
-			output->state = b2TOIOutput::e_touching;
+			output->state = cb2TOIOutput::e_touching;
 			output->t = t1;
 			break;
 		}
 
 		// Initialize the separating axis.
-		b2SeparationFunction fcn;
+		cb2SeparationFunction fcn;
 		fcn.Initialize(&cache, proxyA, sweepA, proxyB, sweepB, t1);
 #if 0
 		// Dump the curve seen by the root finder
@@ -367,7 +367,7 @@ void b2TimeOfImpact(b2TOIOutput* output, const b2TOIInput* input)
 			if (s2 > target + tolerance)
 			{
 				// Victory!
-				output->state = b2TOIOutput::e_separated;
+				output->state = cb2TOIOutput::e_separated;
 				output->t = tMax;
 				done = true;
 				break;
@@ -388,7 +388,7 @@ void b2TimeOfImpact(b2TOIOutput* output, const b2TOIInput* input)
 			// runs out of iterations.
 			if (s1 < target - tolerance)
 			{
-				output->state = b2TOIOutput::e_failed;
+				output->state = cb2TOIOutput::e_failed;
 				output->t = t1;
 				done = true;
 				break;
@@ -398,7 +398,7 @@ void b2TimeOfImpact(b2TOIOutput* output, const b2TOIInput* input)
 			if (s1 <= target + tolerance)
 			{
 				// Victory! t1 should hold the TOI (could be 0.0).
-				output->state = b2TOIOutput::e_touching;
+				output->state = cb2TOIOutput::e_touching;
 				output->t = t1;
 				done = true;
 				break;
@@ -423,11 +423,11 @@ void b2TimeOfImpact(b2TOIOutput* output, const b2TOIInput* input)
 				}
 
 				++rootIterCount;
-				++b2_toiRootIters;
+				++cb2_toiRootIters;
 
 				float s = fcn.Evaluate(indexA, indexB, t);
 
-				if (b2Abs(s - target) < tolerance)
+				if (cb2Abs(s - target) < tolerance)
 				{
 					// t2 holds a tentative value for t1
 					t2 = t;
@@ -452,18 +452,18 @@ void b2TimeOfImpact(b2TOIOutput* output, const b2TOIInput* input)
 				}
 			}
 
-			b2_toiMaxRootIters = b2Max(b2_toiMaxRootIters, rootIterCount);
+			cb2_toiMaxRootIters = cb2Max(cb2_toiMaxRootIters, rootIterCount);
 
 			++pushBackIter;
 
-			if (pushBackIter == b2_maxPolygonVertices)
+			if (pushBackIter == cb2_maxPolygonVertices)
 			{
 				break;
 			}
 		}
 
 		++iter;
-		++b2_toiIters;
+		++cb2_toiIters;
 
 		if (done)
 		{
@@ -473,15 +473,15 @@ void b2TimeOfImpact(b2TOIOutput* output, const b2TOIInput* input)
 		if (iter == k_maxIterations)
 		{
 			// Root finder got stuck. Semi-victory.
-			output->state = b2TOIOutput::e_failed;
+			output->state = cb2TOIOutput::e_failed;
 			output->t = t1;
 			break;
 		}
 	}
 
-	b2_toiMaxIters = b2Max(b2_toiMaxIters, iter);
+	cb2_toiMaxIters = cb2Max(cb2_toiMaxIters, iter);
 
 	float time = timer.GetMilliseconds();
-	b2_toiMaxTime = b2Max(b2_toiMaxTime, time);
-	b2_toiTime += time;
+	cb2_toiMaxTime = cb2Max(cb2_toiMaxTime, time);
+	cb2_toiTime += time;
 }

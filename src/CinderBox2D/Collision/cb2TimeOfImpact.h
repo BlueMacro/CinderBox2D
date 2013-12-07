@@ -16,24 +16,24 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_TIME_OF_IMPACT_H
-#define B2_TIME_OF_IMPACT_H
+#ifndef CB2_TIME_OF_IMPACT_H
+#define CB2_TIME_OF_IMPACT_H
 
 #include <CinderBox2D/Common/cb2Math.h>
 #include <CinderBox2D/Collision/cb2Distance.h>
 
-/// Input parameters for b2TimeOfImpact
-struct b2TOIInput
+/// Input parameters for cb2TimeOfImpact
+struct cb2TOIInput
 {
-	b2DistanceProxy proxyA;
-	b2DistanceProxy proxyB;
-	b2Sweep sweepA;
-	b2Sweep sweepB;
+	cb2DistanceProxy proxyA;
+	cb2DistanceProxy proxyB;
+	cb2Sweep sweepA;
+	cb2Sweep sweepB;
 	float tMax;		// defines sweep interval [0, tMax]
 };
 
-// Output parameters for b2TimeOfImpact.
-struct b2TOIOutput
+// Output parameters for cb2TimeOfImpact.
+struct cb2TOIOutput
 {
 	enum State
 	{
@@ -52,7 +52,7 @@ struct b2TOIOutput
 /// a fraction between [0,tMax]. This uses a swept separating axis and may miss some intermediate,
 /// non-tunneling collision. If you change the time interval, you should call this function
 /// again.
-/// Note: use b2Distance to compute the contact point and normal at the time of impact.
-void b2TimeOfImpact(b2TOIOutput* output, const b2TOIInput* input);
+/// Note: use cb2Distance to compute the contact point and normal at the time of impact.
+void cb2TimeOfImpact(cb2TOIOutput* output, const cb2TOIInput* input);
 
 #endif

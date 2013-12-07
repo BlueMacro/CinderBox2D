@@ -16,15 +16,15 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_MOTOR_JOINT_H
-#define B2_MOTOR_JOINT_H
+#ifndef CB2_MOTOR_JOINT_H
+#define CB2_MOTOR_JOINT_H
 
 #include <CinderBox2D/Dynamics/Joints/cb2Joint.h>
 
 /// Motor joint definition.
-struct b2MotorJointDef : public b2JointDef
+struct cb2MotorJointDef : public cb2JointDef
 {
-	b2MotorJointDef()
+	cb2MotorJointDef()
 	{
 		type = e_motorJoint;
 		angularOffset = 0.0f;
@@ -34,7 +34,7 @@ struct b2MotorJointDef : public b2JointDef
 	}
 
 	/// Initialize the bodies and offsets using the current transforms.
-	void Initialize(b2Body* bodyA, b2Body* bodyB);
+	void Initialize(cb2Body* bodyA, cb2Body* bodyB);
 
 	/// Position of bodyB minus the position of bodyA, in bodyA's frame, in meters.
 	ci::Vec2f linearOffset;
@@ -55,7 +55,7 @@ struct b2MotorJointDef : public b2JointDef
 /// A motor joint is used to control the relative motion
 /// between two bodies. A typical usage is to control the movement
 /// of a dynamic body with respect to the ground.
-class b2MotorJoint : public b2Joint
+class cb2MotorJoint : public cb2Joint
 {
 public:
 	ci::Vec2f GetAnchorA() const;
@@ -90,18 +90,18 @@ public:
 	/// Get the position correction factor in the range [0,1].
 	float GetCorrectionFactor() const;
 
-	/// Dump to b2Log
+	/// Dump to cb2Log
 	void Dump();
 
 protected:
 
-	friend class b2Joint;
+	friend class cb2Joint;
 
-	b2MotorJoint(const b2MotorJointDef* def);
+	cb2MotorJoint(const cb2MotorJointDef* def);
 
-	void InitVelocityConstraints(const b2SolverData& data);
-	void SolveVelocityConstraints(const b2SolverData& data);
-	bool SolvePositionConstraints(const b2SolverData& data);
+	void InitVelocityConstraints(const cb2SolverData& data);
+	void SolveVelocityConstraints(const cb2SolverData& data);
+	bool SolvePositionConstraints(const cb2SolverData& data);
 
 	// Solver shared
 	ci::Vec2f m_linearOffset;

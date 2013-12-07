@@ -32,7 +32,7 @@
 // J = [0 0 -1 0 0 1]
 // K = invI1 + invI2
 
-void b2FrictionJointDef::Initialize(b2Body* bA, b2Body* bB, const ci::Vec2f& anchor)
+void cb2FrictionJointDef::Initialize(cb2Body* bA, cb2Body* bB, const ci::Vec2f& anchor)
 {
 	bodyA = bA;
 	bodyB = bB;
@@ -40,8 +40,8 @@ void b2FrictionJointDef::Initialize(b2Body* bA, b2Body* bB, const ci::Vec2f& anc
 	localAnchorB = bodyB->GetLocalPoint(anchor);
 }
 
-b2FrictionJoint::b2FrictionJoint(const b2FrictionJointDef* def)
-: b2Joint(def)
+cb2FrictionJoint::cb2FrictionJoint(const cb2FrictionJointDef* def)
+: cb2Joint(def)
 {
 	m_localAnchorA = def->localAnchorA;
 	m_localAnchorB = def->localAnchorB;
@@ -53,7 +53,7 @@ b2FrictionJoint::b2FrictionJoint(const b2FrictionJointDef* def)
 	m_maxTorque = def->maxTorque;
 }
 
-void b2FrictionJoint::InitVelocityConstraints(const b2SolverData& data)
+void cb2FrictionJoint::InitVelocityConstraints(const cb2SolverData& data)
 {
 	m_indexA = m_bodyA->m_islandIndex;
 	m_indexB = m_bodyB->m_islandIndex;
@@ -72,11 +72,11 @@ void b2FrictionJoint::InitVelocityConstraints(const b2SolverData& data)
 	ci::Vec2f vB = data.velocities[m_indexB].v;
 	float wB = data.velocities[m_indexB].w;
 
-	b2Rot qA(aA), qB(aB);
+	cb2Rot qA(aA), qB(aB);
 
 	// Compute the effective mass matrix.
-	m_rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-	m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
+	m_rA = cb2Mul(qA, m_localAnchorA - m_localCenterA);
+	m_rB = cb2Mul(qB, m_localAnchorB - m_localCenterB);
 
 	// J = [-I -r1_skew I r2_skew]
 	//     [ 0       -1 0       1]
@@ -112,9 +112,9 @@ void b2FrictionJoint::InitVelocityConstraints(const b2SolverData& data)
 
 		ci::Vec2f P(m_linearImpulse.x, m_linearImpulse.y);
 		vA -= mA * P;
-		wA -= iA * (b2Cross(m_rA, P) + m_angularImpulse);
+		wA -= iA * (cb2Cross(m_rA, P) + m_angularImpulse);
 		vB += mB * P;
-		wB += iB * (b2Cross(m_rB, P) + m_angularImpulse);
+		wB += iB * (cb2Cross(m_rB, P) + m_angularImpulse);
 	}
 	else
 	{
@@ -128,7 +128,7 @@ void b2FrictionJoint::InitVelocityConstraints(const b2SolverData& data)
 	data.velocities[m_indexB].w = wB;
 }
 
-void b2FrictionJoint::SolveVelocityConstraints(const b2SolverData& data)
+void cb2FrictionJoint::SolveVelocityConstraints(const cb2SolverData& data)
 {
 	ci::Vec2f vA = data.velocities[m_indexA].v;
 	float wA = data.velocities[m_indexA].w;
@@ -147,7 +147,7 @@ void b2FrictionJoint::SolveVelocityConstraints(const b2SolverData& data)
 
 		float oldImpulse = m_angularImpulse;
 		float maxImpulse = h * m_maxTorque;
-		m_angularImpulse = b2Clamp(m_angularImpulse + impulse, -maxImpulse, maxImpulse);
+		m_angularImpulse = cb2Clamp(m_angularImpulse + impulse, -maxImpulse, maxImpulse);
 		impulse = m_angularImpulse - oldImpulse;
 
 		wA -= iA * impulse;
@@ -156,9 +156,9 @@ void b2FrictionJoint::SolveVelocityConstraints(const b2SolverData& data)
 
 	// Solve linear friction
 	{
-		ci::Vec2f Cdot = vB + b2Cross(wB, m_rB) - vA - b2Cross(wA, m_rA);
+		ci::Vec2f Cdot = vB + cb2Cross(wB, m_rB) - vA - cb2Cross(wA, m_rA);
 
-		ci::Vec2f impulse = -b2Mul(m_linearMass, Cdot);
+		ci::Vec2f impulse = -cb2Mul(m_linearMass, Cdot);
 		ci::Vec2f oldImpulse = m_linearImpulse;
 		m_linearImpulse += impulse;
 
@@ -173,10 +173,10 @@ void b2FrictionJoint::SolveVelocityConstraints(const b2SolverData& data)
 		impulse = m_linearImpulse - oldImpulse;
 
 		vA -= mA * impulse;
-		wA -= iA * b2Cross(m_rA, impulse);
+		wA -= iA * cb2Cross(m_rA, impulse);
 
 		vB += mB * impulse;
-		wB += iB * b2Cross(m_rB, impulse);
+		wB += iB * cb2Cross(m_rB, impulse);
 	}
 
 	data.velocities[m_indexA].v = vA;
@@ -185,67 +185,67 @@ void b2FrictionJoint::SolveVelocityConstraints(const b2SolverData& data)
 	data.velocities[m_indexB].w = wB;
 }
 
-bool b2FrictionJoint::SolvePositionConstraints(const b2SolverData& data)
+bool cb2FrictionJoint::SolvePositionConstraints(const cb2SolverData& data)
 {
-	B2_NOT_USED(data);
+	CB2_NOT_USED(data);
 
 	return true;
 }
 
-ci::Vec2f b2FrictionJoint::GetAnchorA() const
+ci::Vec2f cb2FrictionJoint::GetAnchorA() const
 {
 	return m_bodyA->GetWorldPoint(m_localAnchorA);
 }
 
-ci::Vec2f b2FrictionJoint::GetAnchorB() const
+ci::Vec2f cb2FrictionJoint::GetAnchorB() const
 {
 	return m_bodyB->GetWorldPoint(m_localAnchorB);
 }
 
-ci::Vec2f b2FrictionJoint::GetReactionForce(float inv_dt) const
+ci::Vec2f cb2FrictionJoint::GetReactionForce(float inv_dt) const
 {
 	return inv_dt * m_linearImpulse;
 }
 
-float b2FrictionJoint::GetReactionTorque(float inv_dt) const
+float cb2FrictionJoint::GetReactionTorque(float inv_dt) const
 {
 	return inv_dt * m_angularImpulse;
 }
 
-void b2FrictionJoint::SetMaxForce(float force)
+void cb2FrictionJoint::SetMaxForce(float force)
 {
-	b2Assert(cb2::isValid(force) && force >= 0.0f);
+	cb2Assert(cb2::isValid(force) && force >= 0.0f);
 	m_maxForce = force;
 }
 
-float b2FrictionJoint::GetMaxForce() const
+float cb2FrictionJoint::GetMaxForce() const
 {
 	return m_maxForce;
 }
 
-void b2FrictionJoint::SetMaxTorque(float torque)
+void cb2FrictionJoint::SetMaxTorque(float torque)
 {
-	b2Assert(cb2::isValid(torque) && torque >= 0.0f);
+	cb2Assert(cb2::isValid(torque) && torque >= 0.0f);
 	m_maxTorque = torque;
 }
 
-float b2FrictionJoint::GetMaxTorque() const
+float cb2FrictionJoint::GetMaxTorque() const
 {
 	return m_maxTorque;
 }
 
-void b2FrictionJoint::Dump()
+void cb2FrictionJoint::Dump()
 {
 	int indexA = m_bodyA->m_islandIndex;
 	int indexB = m_bodyB->m_islandIndex;
 
-	b2Log("  b2FrictionJointDef jd;\n");
-	b2Log("  jd.bodyA = bodies[%d];\n", indexA);
-	b2Log("  jd.bodyB = bodies[%d];\n", indexB);
-	b2Log("  jd.collideConnected = bool(%d);\n", m_collideConnected);
-	b2Log("  jd.localAnchorA.set(%.15lef, %.15lef);\n", m_localAnchorA.x, m_localAnchorA.y);
-	b2Log("  jd.localAnchorB.set(%.15lef, %.15lef);\n", m_localAnchorB.x, m_localAnchorB.y);
-	b2Log("  jd.maxForce = %.15lef;\n", m_maxForce);
-	b2Log("  jd.maxTorque = %.15lef;\n", m_maxTorque);
-	b2Log("  joints[%d] = m_world->CreateJoint(&jd);\n", m_index);
+	cb2Log("  cb2FrictionJointDef jd;\n");
+	cb2Log("  jd.bodyA = bodies[%d];\n", indexA);
+	cb2Log("  jd.bodyB = bodies[%d];\n", indexB);
+	cb2Log("  jd.collideConnected = bool(%d);\n", m_collideConnected);
+	cb2Log("  jd.localAnchorA.set(%.15lef, %.15lef);\n", m_localAnchorA.x, m_localAnchorA.y);
+	cb2Log("  jd.localAnchorB.set(%.15lef, %.15lef);\n", m_localAnchorB.x, m_localAnchorB.y);
+	cb2Log("  jd.maxForce = %.15lef;\n", m_maxForce);
+	cb2Log("  jd.maxTorque = %.15lef;\n", m_maxTorque);
+	cb2Log("  joints[%d] = m_world->CreateJoint(&jd);\n", m_index);
 }

@@ -16,28 +16,28 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_DRAW_H
-#define B2_DRAW_H
+#ifndef CB2_DRAW_H
+#define CB2_DRAW_H
 
 #include <CinderBox2D/Common/cb2Math.h>
 
 /// Color for debug drawing. Each value has the range [0,1].
-struct b2Color
+struct cb2Color
 {
-	b2Color() {}
-	b2Color(float r, float g, float b) : r(r), g(g), b(b) {}
+	cb2Color() {}
+	cb2Color(float r, float g, float b) : r(r), g(g), b(b) {}
 	void set(float ri, float gi, float bi) { r = ri; g = gi; b = bi; }
 	float r, g, b;
 };
 
-/// Implement and register this class with a b2World to provide debug drawing of physics
+/// Implement and register this class with a cb2World to provide debug drawing of physics
 /// entities in your game.
-class b2Draw
+class cb2Draw
 {
 public:
-	b2Draw();
+	cb2Draw();
 
-	virtual ~b2Draw() {}
+	virtual ~cb2Draw() {}
 
 	enum
 	{
@@ -61,23 +61,23 @@ public:
 	void ClearFlags(unsigned int flags);
 
 	/// Draw a closed polygon provided in CCW order.
-	virtual void DrawPolygon(const ci::Vec2f* vertices, int vertexCount, const b2Color& color) = 0;
+	virtual void DrawPolygon(const ci::Vec2f* vertices, int vertexCount, const cb2Color& color) = 0;
 
 	/// Draw a solid closed polygon provided in CCW order.
-	virtual void DrawSolidPolygon(const ci::Vec2f* vertices, int vertexCount, const b2Color& color) = 0;
+	virtual void DrawSolidPolygon(const ci::Vec2f* vertices, int vertexCount, const cb2Color& color) = 0;
 
 	/// Draw a circle.
-	virtual void DrawCircle(const ci::Vec2f& center, float radius, const b2Color& color) = 0;
+	virtual void DrawCircle(const ci::Vec2f& center, float radius, const cb2Color& color) = 0;
 	
 	/// Draw a solid circle.
-	virtual void DrawSolidCircle(const ci::Vec2f& center, float radius, const ci::Vec2f& axis, const b2Color& color) = 0;
+	virtual void DrawSolidCircle(const ci::Vec2f& center, float radius, const ci::Vec2f& axis, const cb2Color& color) = 0;
 	
 	/// Draw a line segment.
-	virtual void DrawSegment(const ci::Vec2f& p1, const ci::Vec2f& p2, const b2Color& color) = 0;
+	virtual void DrawSegment(const ci::Vec2f& p1, const ci::Vec2f& p2, const cb2Color& color) = 0;
 
 	/// Draw a transform. Choose your own length scale.
 	/// @param xf a transform.
-	virtual void DrawTransform(const b2Transform& xf) = 0;
+	virtual void DrawTransform(const cb2Transform& xf) = 0;
 
 protected:
 	unsigned int m_drawFlags;

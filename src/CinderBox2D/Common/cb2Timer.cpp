@@ -20,12 +20,12 @@
 
 #if defined(_WIN32)
 
-double b2Timer::s_invFrequency = 0.0f;
+double cb2Timer::s_invFrequency = 0.0f;
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-b2Timer::b2Timer()
+cb2Timer::cb2Timer()
 {
 	LARGE_INTEGER largeInteger;
 
@@ -43,14 +43,14 @@ b2Timer::b2Timer()
 	m_start = double(largeInteger.QuadPart);
 }
 
-void b2Timer::Reset()
+void cb2Timer::Reset()
 {
 	LARGE_INTEGER largeInteger;
 	QueryPerformanceCounter(&largeInteger);
 	m_start = double(largeInteger.QuadPart);
 }
 
-float b2Timer::GetMilliseconds() const
+float cb2Timer::GetMilliseconds() const
 {
 	LARGE_INTEGER largeInteger;
 	QueryPerformanceCounter(&largeInteger);
@@ -63,12 +63,12 @@ float b2Timer::GetMilliseconds() const
 
 #include <sys/time.h>
 
-b2Timer::b2Timer()
+cb2Timer::cb2Timer()
 {
     Reset();
 }
 
-void b2Timer::Reset()
+void cb2Timer::Reset()
 {
     timeval t;
     gettimeofday(&t, 0);
@@ -76,7 +76,7 @@ void b2Timer::Reset()
     m_start_usec = t.tv_usec;
 }
 
-float b2Timer::GetMilliseconds() const
+float cb2Timer::GetMilliseconds() const
 {
     timeval t;
     gettimeofday(&t, 0);
@@ -85,15 +85,15 @@ float b2Timer::GetMilliseconds() const
 
 #else
 
-b2Timer::b2Timer()
+cb2Timer::cb2Timer()
 {
 }
 
-void b2Timer::Reset()
+void cb2Timer::Reset()
 {
 }
 
-float b2Timer::GetMilliseconds() const
+float cb2Timer::GetMilliseconds() const
 {
 	return 0.0f;
 }

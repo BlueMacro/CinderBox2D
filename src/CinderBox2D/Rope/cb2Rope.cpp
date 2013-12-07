@@ -19,7 +19,7 @@
 #include <CinderBox2D/Rope/cb2Rope.h>
 #include <CinderBox2D/Common/cb2Draw.h>
 
-b2Rope::b2Rope()
+cb2Rope::cb2Rope()
 {
 	m_count = 0;
 	m_ps = NULL;
@@ -32,24 +32,24 @@ b2Rope::b2Rope()
 	m_k3 = 0.1f;
 }
 
-b2Rope::~b2Rope()
+cb2Rope::~cb2Rope()
 {
-	b2Free(m_ps);
-	b2Free(m_p0s);
-	b2Free(m_vs);
-	b2Free(m_ims);
-	b2Free(m_Ls);
-	b2Free(m_as);
+	cb2Free(m_ps);
+	cb2Free(m_p0s);
+	cb2Free(m_vs);
+	cb2Free(m_ims);
+	cb2Free(m_Ls);
+	cb2Free(m_as);
 }
 
-void b2Rope::Initialize(const b2RopeDef* def)
+void cb2Rope::Initialize(const cb2RopeDef* def)
 {
-	b2Assert(def->count >= 3);
+	cb2Assert(def->count >= 3);
 	m_count = def->count;
-	m_ps = (ci::Vec2f*)b2Alloc(m_count * sizeof(ci::Vec2f));
-	m_p0s = (ci::Vec2f*)b2Alloc(m_count * sizeof(ci::Vec2f));
-	m_vs = (ci::Vec2f*)b2Alloc(m_count * sizeof(ci::Vec2f));
-	m_ims = (float*)b2Alloc(m_count * sizeof(float));
+	m_ps = (ci::Vec2f*)cb2Alloc(m_count * sizeof(ci::Vec2f));
+	m_p0s = (ci::Vec2f*)cb2Alloc(m_count * sizeof(ci::Vec2f));
+	m_vs = (ci::Vec2f*)cb2Alloc(m_count * sizeof(ci::Vec2f));
+	m_ims = (float*)cb2Alloc(m_count * sizeof(float));
 
 	for (int i = 0; i < m_count; ++i)
 	{
@@ -70,14 +70,14 @@ void b2Rope::Initialize(const b2RopeDef* def)
 
 	int count2 = m_count - 1;
 	int count3 = m_count - 2;
-	m_Ls = (float*)b2Alloc(count2 * sizeof(float));
-	m_as = (float*)b2Alloc(count3 * sizeof(float));
+	m_Ls = (float*)cb2Alloc(count2 * sizeof(float));
+	m_as = (float*)cb2Alloc(count3 * sizeof(float));
 
 	for (int i = 0; i < count2; ++i)
 	{
 		ci::Vec2f p1 = m_ps[i];
 		ci::Vec2f p2 = m_ps[i+1];
-		m_Ls[i] = b2Distance(p1, p2);
+		m_Ls[i] = cb2Distance(p1, p2);
 	}
 
 	for (int i = 0; i < count3; ++i)
@@ -89,10 +89,10 @@ void b2Rope::Initialize(const b2RopeDef* def)
 		ci::Vec2f d1 = p2 - p1;
 		ci::Vec2f d2 = p3 - p2;
 
-		float a = b2Cross(d1, d2);
-		float b = b2Dot(d1, d2);
+		float a = cb2Cross(d1, d2);
+		float b = cb2Dot(d1, d2);
 
-		m_as[i] = b2Atan2(a, b);
+		m_as[i] = cb2Atan2(a, b);
 	}
 
 	m_gravity = def->gravity;
@@ -101,7 +101,7 @@ void b2Rope::Initialize(const b2RopeDef* def)
 	m_k3 = def->k3;
 }
 
-void b2Rope::Step(float h, int iterations)
+void cb2Rope::Step(float h, int iterations)
 {
 	if (h == 0.0)
 	{
@@ -136,7 +136,7 @@ void b2Rope::Step(float h, int iterations)
 	}
 }
 
-void b2Rope::SolveC2()
+void cb2Rope::SolveC2()
 {
 	int count2 = m_count - 1;
 
@@ -168,7 +168,7 @@ void b2Rope::SolveC2()
 	}
 }
 
-void b2Rope::SetAngle(float angle)
+void cb2Rope::SetAngle(float angle)
 {
 	int count3 = m_count - 2;
 	for (int i = 0; i < count3; ++i)
@@ -177,7 +177,7 @@ void b2Rope::SetAngle(float angle)
 	}
 }
 
-void b2Rope::SolveC3()
+void cb2Rope::SolveC3()
 {
 	int count3 = m_count - 2;
 
@@ -202,10 +202,10 @@ void b2Rope::SolveC3()
 			continue;
 		}
 
-		float a = b2Cross(d1, d2);
-		float b = b2Dot(d1, d2);
+		float a = cb2Cross(d1, d2);
+		float b = cb2Dot(d1, d2);
 
-		float angle = b2Atan2(a, b);
+		float angle = cb2Atan2(a, b);
 
 		ci::Vec2f Jd1 = (-1.0f / L1sqr) * cb2::skew(d1);
 		ci::Vec2f Jd2 = (1.0f / L2sqr) * cb2::skew(d2);
@@ -214,7 +214,7 @@ void b2Rope::SolveC3()
 		ci::Vec2f J2 = Jd1 - Jd2;
 		ci::Vec2f J3 = Jd2;
 
-		float mass = m1 * b2Dot(J1, J1) + m2 * b2Dot(J2, J2) + m3 * b2Dot(J3, J3);
+		float mass = m1 * cb2Dot(J1, J1) + m2 * cb2Dot(J2, J2) + m3 * cb2Dot(J3, J3);
 		if (mass == 0.0f)
 		{
 			continue;
@@ -224,15 +224,15 @@ void b2Rope::SolveC3()
 
 		float C = angle - m_as[i];
 
-		while (C > b2_pi)
+		while (C > cb2_pi)
 		{
-			angle -= 2 * b2_pi;
+			angle -= 2 * cb2_pi;
 			C = angle - m_as[i];
 		}
 
-		while (C < -b2_pi)
+		while (C < -cb2_pi)
 		{
-			angle += 2.0f * b2_pi;
+			angle += 2.0f * cb2_pi;
 			C = angle - m_as[i];
 		}
 
@@ -248,9 +248,9 @@ void b2Rope::SolveC3()
 	}
 }
 
-void b2Rope::Draw(b2Draw* draw) const
+void cb2Rope::Draw(cb2Draw* draw) const
 {
-	b2Color c(0.4f, 0.5f, 0.7f);
+	cb2Color c(0.4f, 0.5f, 0.7f);
 
 	for (int i = 0; i < m_count - 1; ++i)
 	{

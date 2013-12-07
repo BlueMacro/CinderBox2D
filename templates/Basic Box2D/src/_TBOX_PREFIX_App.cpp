@@ -18,21 +18,21 @@ class _TBOX_PREFIX_App : public AppNative {
 	
 	void addBox( const Vec2f &pos );
 	
-	b2World				*mWorld;
-	vector<b2Body*>		mBoxes;
+	cb2World				*mWorld;
+	vector<cb2Body*>		mBoxes;
 };
 
 void _TBOX_PREFIX_App::setup()
 {
-	b2Vec2 gravity( 0.0f, 10.0f );
-	mWorld = new b2World( gravity );
+	cb2Vec2 gravity( 0.0f, 10.0f );
+	mWorld = new cb2World( gravity );
 
-	b2BodyDef groundBodyDef;
+	cb2BodyDef groundBodyDef;
 	groundBodyDef.position.Set( 0.0f, getWindowHeight() );
-	b2Body* groundBody = mWorld->CreateBody(&groundBodyDef);
+	cb2Body* groundBody = mWorld->CreateBody(&groundBodyDef);
 
 	// Define the ground box shape.
-	b2PolygonShape groundBox;
+	cb2PolygonShape groundBox;
 
 	// The extents are the half-widths of the box.
 	groundBox.SetAsBox( getWindowWidth(), 10.0f );
@@ -44,16 +44,16 @@ void _TBOX_PREFIX_App::setup()
 
 void _TBOX_PREFIX_App::addBox( const Vec2f &pos )
 {
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
+	cb2BodyDef bodyDef;
+	bodyDef.type = cb2_dynamicBody;
 	bodyDef.position.Set( pos.x, pos.y );
 
-	b2Body *body = mWorld->CreateBody( &bodyDef );
+	cb2Body *body = mWorld->CreateBody( &bodyDef );
 
-	b2PolygonShape dynamicBox;
+	cb2PolygonShape dynamicBox;
 	dynamicBox.SetAsBox( BOX_SIZE, BOX_SIZE );
 
-	b2FixtureDef fixtureDef;
+	cb2FixtureDef fixtureDef;
 	fixtureDef.shape = &dynamicBox;
 	fixtureDef.density = 1.0f;
 	fixtureDef.friction = 0.3f;
@@ -80,7 +80,7 @@ void _TBOX_PREFIX_App::draw()
 	gl::clear( Color( 0, 0, 0 ) );
 	
 	gl::color( Color( 1, 0.5f, 0.25f ) );
-	for( vector<b2Body*>::const_iterator boxIt = mBoxes.begin(); boxIt != mBoxes.end(); ++boxIt ) {
+	for( vector<cb2Body*>::const_iterator boxIt = mBoxes.begin(); boxIt != mBoxes.end(); ++boxIt ) {
 		Vec2f pos( (*boxIt)->GetPosition().x, (*boxIt)->GetPosition().y );
 		float t = toDegrees( (*boxIt)->GetAngle() );
 

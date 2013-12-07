@@ -19,15 +19,15 @@
 #include <CinderBox2D/Collision/Shapes/cb2PolygonShape.h>
 #include <new>
 
-b2Shape* b2PolygonShape::Clone(b2BlockAllocator* allocator) const
+cb2Shape* cb2PolygonShape::Clone(cb2BlockAllocator* allocator) const
 {
-	void* mem = allocator->Allocate(sizeof(b2PolygonShape));
-	b2PolygonShape* clone = new (mem) b2PolygonShape;
+	void* mem = allocator->Allocate(sizeof(cb2PolygonShape));
+	cb2PolygonShape* clone = new (mem) cb2PolygonShape;
 	*clone = *this;
 	return clone;
 }
 
-void b2PolygonShape::SetAsBox(float hx, float hy)
+void cb2PolygonShape::SetAsBox(float hx, float hy)
 {
 	m_count = 4;
 	m_vertices[0].set(-hx, -hy);
@@ -41,7 +41,7 @@ void b2PolygonShape::SetAsBox(float hx, float hy)
 	cb2::setZero(m_centroid);
 }
 
-void b2PolygonShape::SetAsBox(float hx, float hy, const ci::Vec2f& center, float angle)
+void cb2PolygonShape::SetAsBox(float hx, float hy, const ci::Vec2f& center, float angle)
 {
 	m_count = 4;
 	m_vertices[0].set(-hx, -hy);
@@ -54,26 +54,26 @@ void b2PolygonShape::SetAsBox(float hx, float hy, const ci::Vec2f& center, float
 	m_normals[3].set(-1.0f, 0.0f);
 	m_centroid = center;
 
-	b2Transform xf;
+	cb2Transform xf;
 	xf.p = center;
 	xf.q.set(angle);
 
 	// Transform vertices and normals.
 	for (int i = 0; i < m_count; ++i)
 	{
-		m_vertices[i] = b2Mul(xf, m_vertices[i]);
-		m_normals[i] = b2Mul(xf.q, m_normals[i]);
+		m_vertices[i] = cb2Mul(xf, m_vertices[i]);
+		m_normals[i] = cb2Mul(xf.q, m_normals[i]);
 	}
 }
 
-int b2PolygonShape::GetChildCount() const
+int cb2PolygonShape::GetChildCount() const
 {
 	return 1;
 }
 
 static ci::Vec2f ComputeCentroid(const ci::Vec2f* vs, int count)
 {
-	b2Assert(count >= 3);
+	cb2Assert(count >= 3);
 
 	ci::Vec2f c; c.set(0.0f, 0.0f);
 	float area = 0.0f;
@@ -102,7 +102,7 @@ static ci::Vec2f ComputeCentroid(const ci::Vec2f* vs, int count)
 		ci::Vec2f e1 = p2 - p1;
 		ci::Vec2f e2 = p3 - p1;
 
-		float D = b2Cross(e1, e2);
+		float D = cb2Cross(e1, e2);
 
 		float triangleArea = 0.5f * D;
 		area += triangleArea;
@@ -112,24 +112,24 @@ static ci::Vec2f ComputeCentroid(const ci::Vec2f* vs, int count)
 	}
 
 	// Centroid
-	b2Assert(area > b2_epsilon);
+	cb2Assert(area > cb2_epsilon);
 	c *= 1.0f / area;
 	return c;
 }
 
-void b2PolygonShape::set(const ci::Vec2f* vertices, int count)
+void cb2PolygonShape::set(const ci::Vec2f* vertices, int count)
 {
-	b2Assert(3 <= count && count <= b2_maxPolygonVertices);
+	cb2Assert(3 <= count && count <= cb2_maxPolygonVertices);
 	if (count < 3)
 	{
 		SetAsBox(1.0f, 1.0f);
 		return;
 	}
 	
-	int n = b2Min(count, b2_maxPolygonVertices);
+	int n = cb2Min(count, cb2_maxPolygonVertices);
 
 	// Perform welding and copy vertices into local buffer.
-	ci::Vec2f ps[b2_maxPolygonVertices];
+	ci::Vec2f ps[cb2_maxPolygonVertices];
 	int tempCount = 0;
 	for (int i = 0; i < n; ++i)
 	{
@@ -138,7 +138,7 @@ void b2PolygonShape::set(const ci::Vec2f* vertices, int count)
 		bool unique = true;
 		for (int j = 0; j < tempCount; ++j)
 		{
-			if (b2DistanceSquared(v, ps[j]) < 0.5f * b2_linearSlop)
+			if (cb2DistanceSquared(v, ps[j]) < 0.5f * cb2_linearSlop)
 			{
 				unique = false;
 				break;
@@ -155,7 +155,7 @@ void b2PolygonShape::set(const ci::Vec2f* vertices, int count)
 	if (n < 3)
 	{
 		// Polygon is degenerate.
-		b2Assert(false);
+		cb2Assert(false);
 		SetAsBox(1.0f, 1.0f);
 		return;
 	}
@@ -176,7 +176,7 @@ void b2PolygonShape::set(const ci::Vec2f* vertices, int count)
 		}
 	}
 
-	int hull[b2_maxPolygonVertices];
+	int hull[cb2_maxPolygonVertices];
 	int m = 0;
 	int ih = i0;
 
@@ -195,7 +195,7 @@ void b2PolygonShape::set(const ci::Vec2f* vertices, int count)
 
 			ci::Vec2f r = ps[ie] - ps[hull[m]];
 			ci::Vec2f v = ps[j] - ps[hull[m]];
-			float c = b2Cross(r, v);
+			float c = cb2Cross(r, v);
 			if (c < 0.0f)
 			{
 				ie = j;
@@ -231,8 +231,8 @@ void b2PolygonShape::set(const ci::Vec2f* vertices, int count)
 		int i1 = i;
 		int i2 = i + 1 < m ? i + 1 : 0;
 		ci::Vec2f edge = m_vertices[i2] - m_vertices[i1];
-		b2Assert(edge.lengthSquared() > b2_epsilon * b2_epsilon);
-		m_normals[i] = b2Cross(edge, 1.0f);
+		cb2Assert(edge.lengthSquared() > cb2_epsilon * cb2_epsilon);
+		m_normals[i] = cb2Cross(edge, 1.0f);
 		m_normals[i].normalize();
 	}
 
@@ -240,13 +240,13 @@ void b2PolygonShape::set(const ci::Vec2f* vertices, int count)
 	m_centroid = ComputeCentroid(m_vertices, m);
 }
 
-bool b2PolygonShape::TestPoint(const b2Transform& xf, const ci::Vec2f& p) const
+bool cb2PolygonShape::TestPoint(const cb2Transform& xf, const ci::Vec2f& p) const
 {
-	ci::Vec2f pLocal = b2MulT(xf.q, p - xf.p);
+	ci::Vec2f pLocal = cb2MulT(xf.q, p - xf.p);
 
 	for (int i = 0; i < m_count; ++i)
 	{
-		float dot = b2Dot(m_normals[i], pLocal - m_vertices[i]);
+		float dot = cb2Dot(m_normals[i], pLocal - m_vertices[i]);
 		if (dot > 0.0f)
 		{
 			return false;
@@ -256,14 +256,14 @@ bool b2PolygonShape::TestPoint(const b2Transform& xf, const ci::Vec2f& p) const
 	return true;
 }
 
-bool b2PolygonShape::RayCast(b2RayCastOutput* output, const b2RayCastInput& input,
-								const b2Transform& xf, int childIndex) const
+bool cb2PolygonShape::RayCast(cb2RayCastOutput* output, const cb2RayCastInput& input,
+								const cb2Transform& xf, int childIndex) const
 {
-	B2_NOT_USED(childIndex);
+	CB2_NOT_USED(childIndex);
 
 	// Put the ray into the polygon's frame of reference.
-	ci::Vec2f p1 = b2MulT(xf.q, input.p1 - xf.p);
-	ci::Vec2f p2 = b2MulT(xf.q, input.p2 - xf.p);
+	ci::Vec2f p1 = cb2MulT(xf.q, input.p1 - xf.p);
+	ci::Vec2f p2 = cb2MulT(xf.q, input.p2 - xf.p);
 	ci::Vec2f d = p2 - p1;
 
 	float lower = 0.0f, upper = input.maxFraction;
@@ -275,8 +275,8 @@ bool b2PolygonShape::RayCast(b2RayCastOutput* output, const b2RayCastInput& inpu
 		// p = p1 + a * d
 		// dot(normal, p - v) = 0
 		// dot(normal, p1 - v) + a * dot(normal, d) = 0
-		float numerator = b2Dot(m_normals[i], m_vertices[i] - p1);
-		float denominator = b2Dot(m_normals[i], d);
+		float numerator = cb2Dot(m_normals[i], m_vertices[i] - p1);
+		float denominator = cb2Dot(m_normals[i], d);
 
 		if (denominator == 0.0f)
 		{	
@@ -309,37 +309,37 @@ bool b2PolygonShape::RayCast(b2RayCastOutput* output, const b2RayCastInput& inpu
 		// The use of epsilon here causes the assert on lower to trip
 		// in some cases. Apparently the use of epsilon was to make edge
 		// shapes work, but now those are handled separately.
-		//if (upper < lower - b2_epsilon)
+		//if (upper < lower - cb2_epsilon)
 		if (upper < lower)
 		{
 			return false;
 		}
 	}
 
-	b2Assert(0.0f <= lower && lower <= input.maxFraction);
+	cb2Assert(0.0f <= lower && lower <= input.maxFraction);
 
 	if (index >= 0)
 	{
 		output->fraction = lower;
-		output->normal = b2Mul(xf.q, m_normals[index]);
+		output->normal = cb2Mul(xf.q, m_normals[index]);
 		return true;
 	}
 
 	return false;
 }
 
-void b2PolygonShape::ComputeAABB(b2AABB* aabb, const b2Transform& xf, int childIndex) const
+void cb2PolygonShape::ComputeAABB(cb2AABB* aabb, const cb2Transform& xf, int childIndex) const
 {
-	B2_NOT_USED(childIndex);
+	CB2_NOT_USED(childIndex);
 
-	ci::Vec2f lower = b2Mul(xf, m_vertices[0]);
+	ci::Vec2f lower = cb2Mul(xf, m_vertices[0]);
 	ci::Vec2f upper = lower;
 
 	for (int i = 1; i < m_count; ++i)
 	{
-		ci::Vec2f v = b2Mul(xf, m_vertices[i]);
-		lower = b2Min(lower, v);
-		upper = b2Max(upper, v);
+		ci::Vec2f v = cb2Mul(xf, m_vertices[i]);
+		lower = cb2Min(lower, v);
+		upper = cb2Max(upper, v);
 	}
 
 	ci::Vec2f r(m_radius, m_radius);
@@ -347,7 +347,7 @@ void b2PolygonShape::ComputeAABB(b2AABB* aabb, const b2Transform& xf, int childI
 	aabb->upperBound = upper + r;
 }
 
-void b2PolygonShape::ComputeMass(b2MassData* massData, float density) const
+void cb2PolygonShape::ComputeMass(cb2MassData* massData, float density) const
 {
 	// Polygon mass, centroid, and inertia.
 	// Let rho be the polygon density in mass per unit area.
@@ -373,7 +373,7 @@ void b2PolygonShape::ComputeMass(b2MassData* massData, float density) const
 	//
 	// The rest of the derivation is handled by computer algebra.
 
-	b2Assert(m_count >= 3);
+	cb2Assert(m_count >= 3);
 
 	ci::Vec2f center; center.set(0.0f, 0.0f);
 	float area = 0.0f;
@@ -398,7 +398,7 @@ void b2PolygonShape::ComputeMass(b2MassData* massData, float density) const
 		ci::Vec2f e1 = m_vertices[i] - s;
 		ci::Vec2f e2 = i + 1 < m_count ? m_vertices[i+1] - s : m_vertices[0] - s;
 
-		float D = b2Cross(e1, e2);
+		float D = cb2Cross(e1, e2);
 
 		float triangleArea = 0.5f * D;
 		area += triangleArea;
@@ -419,7 +419,7 @@ void b2PolygonShape::ComputeMass(b2MassData* massData, float density) const
 	massData->mass = density * area;
 
 	// Center of mass
-	b2Assert(area > b2_epsilon);
+	cb2Assert(area > cb2_epsilon);
 	center *= 1.0f / area;
 	massData->center = center + s;
 
@@ -427,10 +427,10 @@ void b2PolygonShape::ComputeMass(b2MassData* massData, float density) const
 	massData->I = density * I;
 	
 	// Shift to center of mass then to original body origin.
-	massData->I += massData->mass * (b2Dot(massData->center, massData->center) - b2Dot(center, center));
+	massData->I += massData->mass * (cb2Dot(massData->center, massData->center) - cb2Dot(center, center));
 }
 
-bool b2PolygonShape::Validate() const
+bool cb2PolygonShape::Validate() const
 {
 	for (int i = 0; i < m_count; ++i)
 	{
@@ -447,7 +447,7 @@ bool b2PolygonShape::Validate() const
 			}
 
 			ci::Vec2f v = m_vertices[j] - p;
-			float c = b2Cross(e, v);
+			float c = cb2Cross(e, v);
 			if (c < 0.0f)
 			{
 				return false;

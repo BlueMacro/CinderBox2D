@@ -32,7 +32,7 @@
 // J = [0 0 -1 0 0 1]
 // K = invI1 + invI2
 
-void b2MotorJointDef::Initialize(b2Body* bA, b2Body* bB)
+void cb2MotorJointDef::Initialize(cb2Body* bA, cb2Body* bB)
 {
 	bodyA = bA;
 	bodyB = bB;
@@ -44,8 +44,8 @@ void b2MotorJointDef::Initialize(b2Body* bA, b2Body* bB)
 	angularOffset = angleB - angleA;
 }
 
-b2MotorJoint::b2MotorJoint(const b2MotorJointDef* def)
-: b2Joint(def)
+cb2MotorJoint::cb2MotorJoint(const cb2MotorJointDef* def)
+: cb2Joint(def)
 {
 	m_linearOffset = def->linearOffset;
 	m_angularOffset = def->angularOffset;
@@ -57,7 +57,7 @@ b2MotorJoint::b2MotorJoint(const b2MotorJointDef* def)
 	m_correctionFactor = def->correctionFactor;
 }
 
-void b2MotorJoint::InitVelocityConstraints(const b2SolverData& data)
+void cb2MotorJoint::InitVelocityConstraints(const cb2SolverData& data)
 {
 	m_indexA = m_bodyA->m_islandIndex;
 	m_indexB = m_bodyB->m_islandIndex;
@@ -78,11 +78,11 @@ void b2MotorJoint::InitVelocityConstraints(const b2SolverData& data)
 	ci::Vec2f vB = data.velocities[m_indexB].v;
 	float wB = data.velocities[m_indexB].w;
 
-	b2Rot qA(aA), qB(aB);
+	cb2Rot qA(aA), qB(aB);
 
 	// Compute the effective mass matrix.
-	m_rA = b2Mul(qA, -m_localCenterA);
-	m_rB = b2Mul(qB, -m_localCenterB);
+	m_rA = cb2Mul(qA, -m_localCenterA);
+	m_rB = cb2Mul(qB, -m_localCenterB);
 
 	// J = [-I -r1_skew I r2_skew]
 	//     [ 0       -1 0       1]
@@ -110,7 +110,7 @@ void b2MotorJoint::InitVelocityConstraints(const b2SolverData& data)
 		m_angularMass = 1.0f / m_angularMass;
 	}
 
-	m_linearError = cB + m_rB - cA - m_rA - b2Mul(qA, m_linearOffset);
+	m_linearError = cB + m_rB - cA - m_rA - cb2Mul(qA, m_linearOffset);
 	m_angularError = aB - aA - m_angularOffset;
 
 	if (data.step.warmStarting)
@@ -121,9 +121,9 @@ void b2MotorJoint::InitVelocityConstraints(const b2SolverData& data)
 
 		ci::Vec2f P(m_linearImpulse.x, m_linearImpulse.y);
 		vA -= mA * P;
-		wA -= iA * (b2Cross(m_rA, P) + m_angularImpulse);
+		wA -= iA * (cb2Cross(m_rA, P) + m_angularImpulse);
 		vB += mB * P;
-		wB += iB * (b2Cross(m_rB, P) + m_angularImpulse);
+		wB += iB * (cb2Cross(m_rB, P) + m_angularImpulse);
 	}
 	else
 	{
@@ -137,7 +137,7 @@ void b2MotorJoint::InitVelocityConstraints(const b2SolverData& data)
 	data.velocities[m_indexB].w = wB;
 }
 
-void b2MotorJoint::SolveVelocityConstraints(const b2SolverData& data)
+void cb2MotorJoint::SolveVelocityConstraints(const cb2SolverData& data)
 {
 	ci::Vec2f vA = data.velocities[m_indexA].v;
 	float wA = data.velocities[m_indexA].w;
@@ -157,7 +157,7 @@ void b2MotorJoint::SolveVelocityConstraints(const b2SolverData& data)
 
 		float oldImpulse = m_angularImpulse;
 		float maxImpulse = h * m_maxTorque;
-		m_angularImpulse = b2Clamp(m_angularImpulse + impulse, -maxImpulse, maxImpulse);
+		m_angularImpulse = cb2Clamp(m_angularImpulse + impulse, -maxImpulse, maxImpulse);
 		impulse = m_angularImpulse - oldImpulse;
 
 		wA -= iA * impulse;
@@ -166,9 +166,9 @@ void b2MotorJoint::SolveVelocityConstraints(const b2SolverData& data)
 
 	// Solve linear friction
 	{
-		ci::Vec2f Cdot = vB + b2Cross(wB, m_rB) - vA - b2Cross(wA, m_rA) + inv_h * m_correctionFactor * m_linearError;
+		ci::Vec2f Cdot = vB + cb2Cross(wB, m_rB) - vA - cb2Cross(wA, m_rA) + inv_h * m_correctionFactor * m_linearError;
 
-		ci::Vec2f impulse = -b2Mul(m_linearMass, Cdot);
+		ci::Vec2f impulse = -cb2Mul(m_linearMass, Cdot);
 		ci::Vec2f oldImpulse = m_linearImpulse;
 		m_linearImpulse += impulse;
 
@@ -183,10 +183,10 @@ void b2MotorJoint::SolveVelocityConstraints(const b2SolverData& data)
 		impulse = m_linearImpulse - oldImpulse;
 
 		vA -= mA * impulse;
-		wA -= iA * b2Cross(m_rA, impulse);
+		wA -= iA * cb2Cross(m_rA, impulse);
 
 		vB += mB * impulse;
-		wB += iB * b2Cross(m_rB, impulse);
+		wB += iB * cb2Cross(m_rB, impulse);
 	}
 
 	data.velocities[m_indexA].v = vA;
@@ -195,67 +195,67 @@ void b2MotorJoint::SolveVelocityConstraints(const b2SolverData& data)
 	data.velocities[m_indexB].w = wB;
 }
 
-bool b2MotorJoint::SolvePositionConstraints(const b2SolverData& data)
+bool cb2MotorJoint::SolvePositionConstraints(const cb2SolverData& data)
 {
-	B2_NOT_USED(data);
+	CB2_NOT_USED(data);
 
 	return true;
 }
 
-ci::Vec2f b2MotorJoint::GetAnchorA() const
+ci::Vec2f cb2MotorJoint::GetAnchorA() const
 {
 	return m_bodyA->GetPosition();
 }
 
-ci::Vec2f b2MotorJoint::GetAnchorB() const
+ci::Vec2f cb2MotorJoint::GetAnchorB() const
 {
 	return m_bodyB->GetPosition();
 }
 
-ci::Vec2f b2MotorJoint::GetReactionForce(float inv_dt) const
+ci::Vec2f cb2MotorJoint::GetReactionForce(float inv_dt) const
 {
 	return inv_dt * m_linearImpulse;
 }
 
-float b2MotorJoint::GetReactionTorque(float inv_dt) const
+float cb2MotorJoint::GetReactionTorque(float inv_dt) const
 {
 	return inv_dt * m_angularImpulse;
 }
 
-void b2MotorJoint::SetMaxForce(float force)
+void cb2MotorJoint::SetMaxForce(float force)
 {
-	b2Assert(cb2::isValid(force) && force >= 0.0f);
+	cb2Assert(cb2::isValid(force) && force >= 0.0f);
 	m_maxForce = force;
 }
 
-float b2MotorJoint::GetMaxForce() const
+float cb2MotorJoint::GetMaxForce() const
 {
 	return m_maxForce;
 }
 
-void b2MotorJoint::SetMaxTorque(float torque)
+void cb2MotorJoint::SetMaxTorque(float torque)
 {
-	b2Assert(cb2::isValid(torque) && torque >= 0.0f);
+	cb2Assert(cb2::isValid(torque) && torque >= 0.0f);
 	m_maxTorque = torque;
 }
 
-float b2MotorJoint::GetMaxTorque() const
+float cb2MotorJoint::GetMaxTorque() const
 {
 	return m_maxTorque;
 }
 
-void b2MotorJoint::SetCorrectionFactor(float factor)
+void cb2MotorJoint::SetCorrectionFactor(float factor)
 {
-	b2Assert(cb2::isValid(factor) && 0.0f <= factor && factor <= 1.0f);
+	cb2Assert(cb2::isValid(factor) && 0.0f <= factor && factor <= 1.0f);
 	m_correctionFactor = factor;
 }
 
-float b2MotorJoint::GetCorrectionFactor() const
+float cb2MotorJoint::GetCorrectionFactor() const
 {
 	return m_correctionFactor;
 }
 
-void b2MotorJoint::SetLinearOffset(const ci::Vec2f& linearOffset)
+void cb2MotorJoint::SetLinearOffset(const ci::Vec2f& linearOffset)
 {
 	if (linearOffset.x != m_linearOffset.x || linearOffset.y != m_linearOffset.y)
 	{
@@ -265,12 +265,12 @@ void b2MotorJoint::SetLinearOffset(const ci::Vec2f& linearOffset)
 	}
 }
 
-const ci::Vec2f& b2MotorJoint::GetLinearOffset() const
+const ci::Vec2f& cb2MotorJoint::GetLinearOffset() const
 {
 	return m_linearOffset;
 }
 
-void b2MotorJoint::SetAngularOffset(float angularOffset)
+void cb2MotorJoint::SetAngularOffset(float angularOffset)
 {
 	if (angularOffset != m_angularOffset)
 	{
@@ -280,24 +280,24 @@ void b2MotorJoint::SetAngularOffset(float angularOffset)
 	}
 }
 
-float b2MotorJoint::GetAngularOffset() const
+float cb2MotorJoint::GetAngularOffset() const
 {
 	return m_angularOffset;
 }
 
-void b2MotorJoint::Dump()
+void cb2MotorJoint::Dump()
 {
 	int indexA = m_bodyA->m_islandIndex;
 	int indexB = m_bodyB->m_islandIndex;
 
-	b2Log("  b2MotorJointDef jd;\n");
-	b2Log("  jd.bodyA = bodies[%d];\n", indexA);
-	b2Log("  jd.bodyB = bodies[%d];\n", indexB);
-	b2Log("  jd.collideConnected = bool(%d);\n", m_collideConnected);
-	b2Log("  jd.linearOffset.Set(%.15lef, %.15lef);\n", m_linearOffset.x, m_linearOffset.y);
-	b2Log("  jd.angularOffset = %.15lef;\n", m_angularOffset);
-	b2Log("  jd.maxForce = %.15lef;\n", m_maxForce);
-	b2Log("  jd.maxTorque = %.15lef;\n", m_maxTorque);
-	b2Log("  jd.correctionFactor = %.15lef;\n", m_correctionFactor);
-	b2Log("  joints[%d] = m_world->CreateJoint(&jd);\n", m_index);
+	cb2Log("  cb2MotorJointDef jd;\n");
+	cb2Log("  jd.bodyA = bodies[%d];\n", indexA);
+	cb2Log("  jd.bodyB = bodies[%d];\n", indexB);
+	cb2Log("  jd.collideConnected = bool(%d);\n", m_collideConnected);
+	cb2Log("  jd.linearOffset.Set(%.15lef, %.15lef);\n", m_linearOffset.x, m_linearOffset.y);
+	cb2Log("  jd.angularOffset = %.15lef;\n", m_angularOffset);
+	cb2Log("  jd.maxForce = %.15lef;\n", m_maxForce);
+	cb2Log("  jd.maxTorque = %.15lef;\n", m_maxTorque);
+	cb2Log("  jd.correctionFactor = %.15lef;\n", m_correctionFactor);
+	cb2Log("  joints[%d] = m_world->CreateJoint(&jd);\n", m_index);
 }

@@ -16,16 +16,16 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_MOUSE_JOINT_H
-#define B2_MOUSE_JOINT_H
+#ifndef CB2_MOUSE_JOINT_H
+#define CB2_MOUSE_JOINT_H
 
 #include <CinderBox2D/Dynamics/Joints/cb2Joint.h>
 
 /// Mouse joint definition. This requires a world target point,
 /// tuning parameters, and the time step.
-struct b2MouseJointDef : public b2JointDef
+struct cb2MouseJointDef : public cb2JointDef
 {
-	b2MouseJointDef()
+	cb2MouseJointDef()
 	{
 		type = e_mouseJoint;
 		target.set(0.0f, 0.0f);
@@ -57,20 +57,20 @@ struct b2MouseJointDef : public b2JointDef
 /// NOTE: this joint is not documented in the manual because it was
 /// developed to be used in the testbed. If you want to learn how to
 /// use the mouse joint, look at the testbed.
-class b2MouseJoint : public b2Joint
+class cb2MouseJoint : public cb2Joint
 {
 public:
 
-	/// Implements b2Joint.
+	/// Implements cb2Joint.
 	ci::Vec2f GetAnchorA() const;
 
-	/// Implements b2Joint.
+	/// Implements cb2Joint.
 	ci::Vec2f GetAnchorB() const;
 
-	/// Implements b2Joint.
+	/// Implements cb2Joint.
 	ci::Vec2f GetReactionForce(float inv_dt) const;
 
-	/// Implements b2Joint.
+	/// Implements cb2Joint.
 	float GetReactionTorque(float inv_dt) const;
 
 	/// Use this to update the target point.
@@ -90,19 +90,19 @@ public:
 	float GetDampingRatio() const;
 
 	/// The mouse joint does not support dumping.
-	void Dump() { b2Log("Mouse joint dumping is not supported.\n"); }
+	void Dump() { cb2Log("Mouse joint dumping is not supported.\n"); }
 
-	/// Implement b2Joint::ShiftOrigin
+	/// Implement cb2Joint::ShiftOrigin
 	void ShiftOrigin(const ci::Vec2f& newOrigin);
 
 protected:
-	friend class b2Joint;
+	friend class cb2Joint;
 
-	b2MouseJoint(const b2MouseJointDef* def);
+	cb2MouseJoint(const cb2MouseJointDef* def);
 
-	void InitVelocityConstraints(const b2SolverData& data);
-	void SolveVelocityConstraints(const b2SolverData& data);
-	bool SolvePositionConstraints(const b2SolverData& data);
+	void InitVelocityConstraints(const cb2SolverData& data);
+	void SolveVelocityConstraints(const cb2SolverData& data);
+	bool SolvePositionConstraints(const cb2SolverData& data);
 
 	ci::Vec2f m_localAnchorB;
 	ci::Vec2f m_targetA;

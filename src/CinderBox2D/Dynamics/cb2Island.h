@@ -16,27 +16,27 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_ISLAND_H
-#define B2_ISLAND_H
+#ifndef CB2_ISLAND_H
+#define CB2_ISLAND_H
 
 #include <CinderBox2D/Common/cb2Math.h>
 #include <CinderBox2D/Dynamics/cb2Body.h>
 #include <CinderBox2D/Dynamics/cb2TimeStep.h>
 
-class b2Contact;
-class b2Joint;
-class b2StackAllocator;
-class b2ContactListener;
-struct b2ContactVelocityConstraint;
-struct b2Profile;
+class cb2Contact;
+class cb2Joint;
+class cb2StackAllocator;
+class cb2ContactListener;
+struct cb2ContactVelocityConstraint;
+struct cb2Profile;
 
 /// This is an internal class.
-class b2Island
+class cb2Island
 {
 public:
-	b2Island(int bodyCapacity, int contactCapacity, int jointCapacity,
-			b2StackAllocator* allocator, b2ContactListener* listener);
-	~b2Island();
+	cb2Island(int bodyCapacity, int contactCapacity, int jointCapacity,
+			cb2StackAllocator* allocator, cb2ContactListener* listener);
+	~cb2Island();
 
 	void Clear()
 	{
@@ -45,41 +45,41 @@ public:
 		m_jointCount = 0;
 	}
 
-	void Solve(b2Profile* profile, const b2TimeStep& step, const ci::Vec2f& gravity, bool allowSleep);
+	void Solve(cb2Profile* profile, const cb2TimeStep& step, const ci::Vec2f& gravity, bool allowSleep);
 
-	void SolveTOI(const b2TimeStep& subStep, int toiIndexA, int toiIndexB);
+	void SolveTOI(const cb2TimeStep& subStep, int toiIndexA, int toiIndexB);
 
-	void Add(b2Body* body)
+	void Add(cb2Body* body)
 	{
-		b2Assert(m_bodyCount < m_bodyCapacity);
+		cb2Assert(m_bodyCount < m_bodyCapacity);
 		body->m_islandIndex = m_bodyCount;
 		m_bodies[m_bodyCount] = body;
 		++m_bodyCount;
 	}
 
-	void Add(b2Contact* contact)
+	void Add(cb2Contact* contact)
 	{
-		b2Assert(m_contactCount < m_contactCapacity);
+		cb2Assert(m_contactCount < m_contactCapacity);
 		m_contacts[m_contactCount++] = contact;
 	}
 
-	void Add(b2Joint* joint)
+	void Add(cb2Joint* joint)
 	{
-		b2Assert(m_jointCount < m_jointCapacity);
+		cb2Assert(m_jointCount < m_jointCapacity);
 		m_joints[m_jointCount++] = joint;
 	}
 
-	void Report(const b2ContactVelocityConstraint* constraints);
+	void Report(const cb2ContactVelocityConstraint* constraints);
 
-	b2StackAllocator* m_allocator;
-	b2ContactListener* m_listener;
+	cb2StackAllocator* m_allocator;
+	cb2ContactListener* m_listener;
 
-	b2Body** m_bodies;
-	b2Contact** m_contacts;
-	b2Joint** m_joints;
+	cb2Body** m_bodies;
+	cb2Contact** m_contacts;
+	cb2Joint** m_joints;
 
-	b2Position* m_positions;
-	b2Velocity* m_velocities;
+	cb2Position* m_positions;
+	cb2Velocity* m_velocities;
 
 	int m_bodyCount;
 	int m_jointCount;

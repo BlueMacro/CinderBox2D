@@ -16,13 +16,13 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_TIME_STEP_H
-#define B2_TIME_STEP_H
+#ifndef CB2_TIME_STEP_H
+#define CB2_TIME_STEP_H
 
 #include <CinderBox2D/Common/cb2Math.h>
 
 /// Profiling data. Times are in milliseconds.
-struct b2Profile
+struct cb2Profile
 {
 	float step;
 	float collide;
@@ -35,7 +35,7 @@ struct b2Profile
 };
 
 /// This is an internal structure.
-struct b2TimeStep
+struct cb2TimeStep
 {
 	float dt;			// time step
 	float inv_dt;		// inverse time step (0 if dt == 0).
@@ -46,25 +46,25 @@ struct b2TimeStep
 };
 
 /// This is an internal structure.
-struct b2Position
+struct cb2Position
 {
 	ci::Vec2f c;
 	float a;
 };
 
 /// This is an internal structure.
-struct b2Velocity
+struct cb2Velocity
 {
 	ci::Vec2f v;
 	float w;
 };
 
 /// Solver Data
-struct b2SolverData
+struct cb2SolverData
 {
-	b2TimeStep step;
-	b2Position* positions;
-	b2Velocity* velocities;
+	cb2TimeStep step;
+	cb2Position* positions;
+	cb2Velocity* velocities;
 };
 
 #endif

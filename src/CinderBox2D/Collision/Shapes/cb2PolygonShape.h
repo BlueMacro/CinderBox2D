@@ -16,28 +16,28 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_POLYGON_SHAPE_H
-#define B2_POLYGON_SHAPE_H
+#ifndef CB2_POLYGON_SHAPE_H
+#define CB2_POLYGON_SHAPE_H
 
 #include <CinderBox2D/Collision/Shapes/cb2Shape.h>
 
 /// A convex polygon. It is assumed that the interior of the polygon is to
 /// the left of each edge.
-/// Polygons have a maximum number of vertices equal to b2_maxPolygonVertices.
+/// Polygons have a maximum number of vertices equal to cb2_maxPolygonVertices.
 /// In most cases you should not need many vertices for a convex polygon.
-class b2PolygonShape : public b2Shape
+class cb2PolygonShape : public cb2Shape
 {
 public:
-	b2PolygonShape();
+	cb2PolygonShape();
 
-	/// Implement b2Shape.
-	b2Shape* Clone(b2BlockAllocator* allocator) const;
+	/// Implement cb2Shape.
+	cb2Shape* Clone(cb2BlockAllocator* allocator) const;
 
-	/// @see b2Shape::GetChildCount
+	/// @see cb2Shape::GetChildCount
 	int GetChildCount() const;
 
 	/// Create a convex hull from the given array of local points.
-	/// The count must be in the range [3, b2_maxPolygonVertices].
+	/// The count must be in the range [3, cb2_maxPolygonVertices].
 	/// @warning the points may be re-ordered, even if they form a convex polygon
 	/// @warning collinear points are handled but not removed. Collinear points
 	/// may lead to poor stacking behavior.
@@ -55,18 +55,18 @@ public:
 	/// @param angle the rotation of the box in local coordinates.
 	void SetAsBox(float hx, float hy, const ci::Vec2f& center, float angle);
 
-	/// @see b2Shape::TestPoint
-	bool TestPoint(const b2Transform& transform, const ci::Vec2f& p) const;
+	/// @see cb2Shape::TestPoint
+	bool TestPoint(const cb2Transform& transform, const ci::Vec2f& p) const;
 
-	/// Implement b2Shape.
-	bool RayCast(b2RayCastOutput* output, const b2RayCastInput& input,
-					const b2Transform& transform, int childIndex) const;
+	/// Implement cb2Shape.
+	bool RayCast(cb2RayCastOutput* output, const cb2RayCastInput& input,
+					const cb2Transform& transform, int childIndex) const;
 
-	/// @see b2Shape::ComputeAABB
-	void ComputeAABB(b2AABB* aabb, const b2Transform& transform, int childIndex) const;
+	/// @see cb2Shape::ComputeAABB
+	void ComputeAABB(cb2AABB* aabb, const cb2Transform& transform, int childIndex) const;
 
-	/// @see b2Shape::ComputeMass
-	void ComputeMass(b2MassData* massData, float density) const;
+	/// @see cb2Shape::ComputeMass
+	void ComputeMass(cb2MassData* massData, float density) const;
 
 	/// Get the vertex count.
 	int GetVertexCount() const { return m_count; }
@@ -79,21 +79,21 @@ public:
 	bool Validate() const;
 
 	ci::Vec2f m_centroid;
-	ci::Vec2f m_vertices[b2_maxPolygonVertices];
-	ci::Vec2f m_normals[b2_maxPolygonVertices];
+	ci::Vec2f m_vertices[cb2_maxPolygonVertices];
+	ci::Vec2f m_normals[cb2_maxPolygonVertices];
 	int m_count;
 };
 
-inline b2PolygonShape::b2PolygonShape()
+inline cb2PolygonShape::cb2PolygonShape()
 {
 	m_type = e_polygon;
-	m_radius = b2_polygonRadius;
+	m_radius = cb2_polygonRadius;
 	m_count = 0;
 }
 
-inline const ci::Vec2f& b2PolygonShape::GetVertex(int index) const
+inline const ci::Vec2f& cb2PolygonShape::GetVertex(int index) const
 {
-	b2Assert(0 <= index && index < m_count);
+	cb2Assert(0 <= index && index < m_count);
 	return m_vertices[index];
 }
 

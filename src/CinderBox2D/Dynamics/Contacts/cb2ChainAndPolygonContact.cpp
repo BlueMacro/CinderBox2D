@@ -24,30 +24,30 @@
 
 #include <new>
 
-b2Contact* b2ChainAndPolygonContact::Create(b2Fixture* fixtureA, int indexA, b2Fixture* fixtureB, int indexB, b2BlockAllocator* allocator)
+cb2Contact* cb2ChainAndPolygonContact::Create(cb2Fixture* fixtureA, int indexA, cb2Fixture* fixtureB, int indexB, cb2BlockAllocator* allocator)
 {
-	void* mem = allocator->Allocate(sizeof(b2ChainAndPolygonContact));
-	return new (mem) b2ChainAndPolygonContact(fixtureA, indexA, fixtureB, indexB);
+	void* mem = allocator->Allocate(sizeof(cb2ChainAndPolygonContact));
+	return new (mem) cb2ChainAndPolygonContact(fixtureA, indexA, fixtureB, indexB);
 }
 
-void b2ChainAndPolygonContact::Destroy(b2Contact* contact, b2BlockAllocator* allocator)
+void cb2ChainAndPolygonContact::Destroy(cb2Contact* contact, cb2BlockAllocator* allocator)
 {
-	((b2ChainAndPolygonContact*)contact)->~b2ChainAndPolygonContact();
-	allocator->Free(contact, sizeof(b2ChainAndPolygonContact));
+	((cb2ChainAndPolygonContact*)contact)->~cb2ChainAndPolygonContact();
+	allocator->Free(contact, sizeof(cb2ChainAndPolygonContact));
 }
 
-b2ChainAndPolygonContact::b2ChainAndPolygonContact(b2Fixture* fixtureA, int indexA, b2Fixture* fixtureB, int indexB)
-: b2Contact(fixtureA, indexA, fixtureB, indexB)
+cb2ChainAndPolygonContact::cb2ChainAndPolygonContact(cb2Fixture* fixtureA, int indexA, cb2Fixture* fixtureB, int indexB)
+: cb2Contact(fixtureA, indexA, fixtureB, indexB)
 {
-	b2Assert(m_fixtureA->GetType() == b2Shape::e_chain);
-	b2Assert(m_fixtureB->GetType() == b2Shape::e_polygon);
+	cb2Assert(m_fixtureA->GetType() == cb2Shape::e_chain);
+	cb2Assert(m_fixtureB->GetType() == cb2Shape::e_polygon);
 }
 
-void b2ChainAndPolygonContact::Evaluate(b2Manifold* manifold, const b2Transform& xfA, const b2Transform& xfB)
+void cb2ChainAndPolygonContact::Evaluate(cb2Manifold* manifold, const cb2Transform& xfA, const cb2Transform& xfB)
 {
-	b2ChainShape* chain = (b2ChainShape*)m_fixtureA->GetShape();
-	b2EdgeShape edge;
+	cb2ChainShape* chain = (cb2ChainShape*)m_fixtureA->GetShape();
+	cb2EdgeShape edge;
 	chain->GetChildEdge(&edge, m_indexA);
-	b2CollideEdgeAndPolygon(	manifold, &edge, xfA,
-								(b2PolygonShape*)m_fixtureB->GetShape(), xfB);
+	cb2CollideEdgeAndPolygon(	manifold, &edge, xfA,
+								(cb2PolygonShape*)m_fixtureB->GetShape(), xfB);
 }

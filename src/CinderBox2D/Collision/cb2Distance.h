@@ -17,22 +17,22 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_DISTANCE_H
-#define B2_DISTANCE_H
+#ifndef CB2_DISTANCE_H
+#define CB2_DISTANCE_H
 
 #include <CinderBox2D/Common/cb2Math.h>
 
-class b2Shape;
+class cb2Shape;
 
 /// A distance proxy is used by the GJK algorithm.
 /// It encapsulates any shape.
-struct b2DistanceProxy
+struct cb2DistanceProxy
 {
-	b2DistanceProxy() : m_vertices(NULL), m_count(0), m_radius(0.0f) {}
+	cb2DistanceProxy() : m_vertices(NULL), m_count(0), m_radius(0.0f) {}
 
 	/// Initialize the proxy using the given shape. The shape
 	/// must remain in scope while the proxy is in use.
-	void set(const b2Shape* shape, int index);
+	void set(const cb2Shape* shape, int index);
 
 	/// Get the supporting vertex index in the given direction.
 	int GetSupport(const ci::Vec2f& d) const;
@@ -43,7 +43,7 @@ struct b2DistanceProxy
 	/// Get the vertex count.
 	int GetVertexCount() const;
 
-	/// Get a vertex by index. Used by b2Distance.
+	/// Get a vertex by index. Used by cb2Distance.
 	const ci::Vec2f& GetVertex(int index) const;
 
 	ci::Vec2f m_buffer[2];
@@ -52,9 +52,9 @@ struct b2DistanceProxy
 	float m_radius;
 };
 
-/// Used to warm start b2Distance.
+/// Used to warm start cb2Distance.
 /// set count to zero on first call.
-struct b2SimplexCache
+struct cb2SimplexCache
 {
 	float metric;		///< length or area
 	unsigned short count;
@@ -62,20 +62,20 @@ struct b2SimplexCache
 	unsigned char indexB[3];	///< vertices on shape B
 };
 
-/// Input for b2Distance.
+/// Input for cb2Distance.
 /// You have to option to use the shape radii
 /// in the computation. Even 
-struct b2DistanceInput
+struct cb2DistanceInput
 {
-	b2DistanceProxy proxyA;
-	b2DistanceProxy proxyB;
-	b2Transform transformA;
-	b2Transform transformB;
+	cb2DistanceProxy proxyA;
+	cb2DistanceProxy proxyB;
+	cb2Transform transformA;
+	cb2Transform transformB;
 	bool useRadii;
 };
 
-/// Output for b2Distance.
-struct b2DistanceOutput
+/// Output for cb2Distance.
+struct cb2DistanceOutput
 {
 	ci::Vec2f pointA;		///< closest point on shapeA
 	ci::Vec2f pointB;		///< closest point on shapeB
@@ -84,33 +84,33 @@ struct b2DistanceOutput
 };
 
 /// Compute the closest points between two shapes. Supports any combination of:
-/// b2CircleShape, b2PolygonShape, b2EdgeShape. The simplex cache is input/output.
-/// On the first call set b2SimplexCache.count to zero.
-void b2Distance(b2DistanceOutput* output,
-				b2SimplexCache* cache, 
-				const b2DistanceInput* input);
+/// cb2CircleShape, cb2PolygonShape, cb2EdgeShape. The simplex cache is input/output.
+/// On the first call set cb2SimplexCache.count to zero.
+void cb2Distance(cb2DistanceOutput* output,
+				cb2SimplexCache* cache, 
+				const cb2DistanceInput* input);
 
 
 //////////////////////////////////////////////////////////////////////////
 
-inline int b2DistanceProxy::GetVertexCount() const
+inline int cb2DistanceProxy::GetVertexCount() const
 {
 	return m_count;
 }
 
-inline const ci::Vec2f& b2DistanceProxy::GetVertex(int index) const
+inline const ci::Vec2f& cb2DistanceProxy::GetVertex(int index) const
 {
-	b2Assert(0 <= index && index < m_count);
+	cb2Assert(0 <= index && index < m_count);
 	return m_vertices[index];
 }
 
-inline int b2DistanceProxy::GetSupport(const ci::Vec2f& d) const
+inline int cb2DistanceProxy::GetSupport(const ci::Vec2f& d) const
 {
 	int bestIndex = 0;
-	float bestValue = b2Dot(m_vertices[0], d);
+	float bestValue = cb2Dot(m_vertices[0], d);
 	for (int i = 1; i < m_count; ++i)
 	{
-		float value = b2Dot(m_vertices[i], d);
+		float value = cb2Dot(m_vertices[i], d);
 		if (value > bestValue)
 		{
 			bestIndex = i;
@@ -121,13 +121,13 @@ inline int b2DistanceProxy::GetSupport(const ci::Vec2f& d) const
 	return bestIndex;
 }
 
-inline const ci::Vec2f& b2DistanceProxy::GetSupportVertex(const ci::Vec2f& d) const
+inline const ci::Vec2f& cb2DistanceProxy::GetSupportVertex(const ci::Vec2f& d) const
 {
 	int bestIndex = 0;
-	float bestValue = b2Dot(m_vertices[0], d);
+	float bestValue = cb2Dot(m_vertices[0], d);
 	for (int i = 1; i < m_count; ++i)
 	{
-		float value = b2Dot(m_vertices[i], d);
+		float value = cb2Dot(m_vertices[i], d);
 		if (value > bestValue)
 		{
 			bestIndex = i;

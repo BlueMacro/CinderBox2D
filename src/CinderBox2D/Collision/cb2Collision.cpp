@@ -19,9 +19,9 @@
 #include <CinderBox2D/Collision/cb2Collision.h>
 #include <CinderBox2D/Collision/cb2Distance.h>
 
-void b2WorldManifold::Initialize(const b2Manifold* manifold,
-						  const b2Transform& xfA, float radiusA,
-						  const b2Transform& xfB, float radiusB)
+void cb2WorldManifold::Initialize(const cb2Manifold* manifold,
+						  const cb2Transform& xfA, float radiusA,
+						  const cb2Transform& xfB, float radiusB)
 {
 	if (manifold->pointCount == 0)
 	{
@@ -30,12 +30,12 @@ void b2WorldManifold::Initialize(const b2Manifold* manifold,
 
 	switch (manifold->type)
 	{
-	case b2Manifold::e_circles:
+	case cb2Manifold::e_circles:
 		{
 			normal.set(1.0f, 0.0f);
-			ci::Vec2f pointA = b2Mul(xfA, manifold->localPoint);
-			ci::Vec2f pointB = b2Mul(xfB, manifold->points[0].localPoint);
-			if (b2DistanceSquared(pointA, pointB) > b2_epsilon * b2_epsilon)
+			ci::Vec2f pointA = cb2Mul(xfA, manifold->localPoint);
+			ci::Vec2f pointB = cb2Mul(xfB, manifold->points[0].localPoint);
+			if (cb2DistanceSquared(pointA, pointB) > cb2_epsilon * cb2_epsilon)
 			{
 				normal = pointB - pointA;
 				normal.normalize();
@@ -44,38 +44,38 @@ void b2WorldManifold::Initialize(const b2Manifold* manifold,
 			ci::Vec2f cA = pointA + radiusA * normal;
 			ci::Vec2f cB = pointB - radiusB * normal;
 			points[0] = 0.5f * (cA + cB);
-			separations[0] = b2Dot(cB - cA, normal);
+			separations[0] = cb2Dot(cB - cA, normal);
 		}
 		break;
 
-	case b2Manifold::e_faceA:
+	case cb2Manifold::e_faceA:
 		{
-			normal = b2Mul(xfA.q, manifold->localNormal);
-			ci::Vec2f planePoint = b2Mul(xfA, manifold->localPoint);
+			normal = cb2Mul(xfA.q, manifold->localNormal);
+			ci::Vec2f planePoint = cb2Mul(xfA, manifold->localPoint);
 			
 			for (int i = 0; i < manifold->pointCount; ++i)
 			{
-				ci::Vec2f clipPoint = b2Mul(xfB, manifold->points[i].localPoint);
-				ci::Vec2f cA = clipPoint + (radiusA - b2Dot(clipPoint - planePoint, normal)) * normal;
+				ci::Vec2f clipPoint = cb2Mul(xfB, manifold->points[i].localPoint);
+				ci::Vec2f cA = clipPoint + (radiusA - cb2Dot(clipPoint - planePoint, normal)) * normal;
 				ci::Vec2f cB = clipPoint - radiusB * normal;
 				points[i] = 0.5f * (cA + cB);
-				separations[i] = b2Dot(cB - cA, normal);
+				separations[i] = cb2Dot(cB - cA, normal);
 			}
 		}
 		break;
 
-	case b2Manifold::e_faceB:
+	case cb2Manifold::e_faceB:
 		{
-			normal = b2Mul(xfB.q, manifold->localNormal);
-			ci::Vec2f planePoint = b2Mul(xfB, manifold->localPoint);
+			normal = cb2Mul(xfB.q, manifold->localNormal);
+			ci::Vec2f planePoint = cb2Mul(xfB, manifold->localPoint);
 
 			for (int i = 0; i < manifold->pointCount; ++i)
 			{
-				ci::Vec2f clipPoint = b2Mul(xfA, manifold->points[i].localPoint);
-				ci::Vec2f cB = clipPoint + (radiusB - b2Dot(clipPoint - planePoint, normal)) * normal;
+				ci::Vec2f clipPoint = cb2Mul(xfA, manifold->points[i].localPoint);
+				ci::Vec2f cB = clipPoint + (radiusB - cb2Dot(clipPoint - planePoint, normal)) * normal;
 				ci::Vec2f cA = clipPoint - radiusA * normal;
 				points[i] = 0.5f * (cA + cB);
-				separations[i] = b2Dot(cA - cB, normal);
+				separations[i] = cb2Dot(cA - cB, normal);
 			}
 
 			// Ensure normal points from A to B.
@@ -85,27 +85,27 @@ void b2WorldManifold::Initialize(const b2Manifold* manifold,
 	}
 }
 
-void b2GetPointStates(b2PointState state1[b2_maxManifoldPoints], b2PointState state2[b2_maxManifoldPoints],
-					  const b2Manifold* manifold1, const b2Manifold* manifold2)
+void cb2GetPointStates(cb2PointState state1[cb2_maxManifoldPoints], cb2PointState state2[cb2_maxManifoldPoints],
+					  const cb2Manifold* manifold1, const cb2Manifold* manifold2)
 {
-	for (int i = 0; i < b2_maxManifoldPoints; ++i)
+	for (int i = 0; i < cb2_maxManifoldPoints; ++i)
 	{
-		state1[i] = b2_nullState;
-		state2[i] = b2_nullState;
+		state1[i] = cb2_nullState;
+		state2[i] = cb2_nullState;
 	}
 
 	// Detect persists and removes.
 	for (int i = 0; i < manifold1->pointCount; ++i)
 	{
-		b2ContactID id = manifold1->points[i].id;
+		cb2ContactID id = manifold1->points[i].id;
 
-		state1[i] = b2_removeState;
+		state1[i] = cb2_removeState;
 
 		for (int j = 0; j < manifold2->pointCount; ++j)
 		{
 			if (manifold2->points[j].id.key == id.key)
 			{
-				state1[i] = b2_persistState;
+				state1[i] = cb2_persistState;
 				break;
 			}
 		}
@@ -114,15 +114,15 @@ void b2GetPointStates(b2PointState state1[b2_maxManifoldPoints], b2PointState st
 	// Detect persists and adds.
 	for (int i = 0; i < manifold2->pointCount; ++i)
 	{
-		b2ContactID id = manifold2->points[i].id;
+		cb2ContactID id = manifold2->points[i].id;
 
-		state2[i] = b2_addState;
+		state2[i] = cb2_addState;
 
 		for (int j = 0; j < manifold1->pointCount; ++j)
 		{
 			if (manifold1->points[j].id.key == id.key)
 			{
-				state2[i] = b2_persistState;
+				state2[i] = cb2_persistState;
 				break;
 			}
 		}
@@ -130,20 +130,20 @@ void b2GetPointStates(b2PointState state1[b2_maxManifoldPoints], b2PointState st
 }
 
 // From Real-time Collision Detection, p179.
-bool b2AABB::RayCast(b2RayCastOutput* output, const b2RayCastInput& input) const
+bool cb2AABB::RayCast(cb2RayCastOutput* output, const cb2RayCastInput& input) const
 {
-	float tmin = -b2_maxFloat;
-	float tmax = b2_maxFloat;
+	float tmin = -cb2_maxFloat;
+	float tmax = cb2_maxFloat;
 
 	ci::Vec2f p = input.p1;
 	ci::Vec2f d = input.p2 - input.p1;
-	ci::Vec2f absD = b2Abs(d);
+	ci::Vec2f absD = cb2Abs(d);
 
 	ci::Vec2f normal;
 
 	for (int i = 0; i < 2; ++i)
 	{
-		if (absD[i] < b2_epsilon)
+		if (absD[i] < cb2_epsilon)
 		{
 			// Parallel.
 			if (p[i] < lowerBound[i] || upperBound[i] < p[i])
@@ -162,7 +162,7 @@ bool b2AABB::RayCast(b2RayCastOutput* output, const b2RayCastInput& input) const
 
 			if (t1 > t2)
 			{
-				b2Swap(t1, t2);
+				cb2Swap(t1, t2);
 				s = 1.0f;
 			}
 
@@ -175,7 +175,7 @@ bool b2AABB::RayCast(b2RayCastOutput* output, const b2RayCastInput& input) const
 			}
 
 			// Pull the max down
-			tmax = b2Min(tmax, t2);
+			tmax = cb2Min(tmax, t2);
 
 			if (tmin > tmax)
 			{
@@ -198,15 +198,15 @@ bool b2AABB::RayCast(b2RayCastOutput* output, const b2RayCastInput& input) const
 }
 
 // Sutherland-Hodgman clipping.
-int b2ClipSegmentToLine(b2ClipVertex vOut[2], const b2ClipVertex vIn[2],
+int cb2ClipSegmentToLine(cb2ClipVertex vOut[2], const cb2ClipVertex vIn[2],
 						const ci::Vec2f& normal, float offset, int vertexIndexA)
 {
 	// Start with no output points
 	int numOut = 0;
 
 	// Calculate the distance of end points to the line
-	float distance0 = b2Dot(normal, vIn[0].v) - offset;
-	float distance1 = b2Dot(normal, vIn[1].v) - offset;
+	float distance0 = cb2Dot(normal, vIn[0].v) - offset;
+	float distance1 = cb2Dot(normal, vIn[1].v) - offset;
 
 	// If the points are behind the plane
 	if (distance0 <= 0.0f) vOut[numOut++] = vIn[0];
@@ -222,31 +222,31 @@ int b2ClipSegmentToLine(b2ClipVertex vOut[2], const b2ClipVertex vIn[2],
 		// VertexA is hitting edgeB.
 		vOut[numOut].id.cf.indexA = static_cast<unsigned char>(vertexIndexA);
 		vOut[numOut].id.cf.indexB = vIn[0].id.cf.indexB;
-		vOut[numOut].id.cf.typeA = b2ContactFeature::e_vertex;
-		vOut[numOut].id.cf.typeB = b2ContactFeature::e_face;
+		vOut[numOut].id.cf.typeA = cb2ContactFeature::e_vertex;
+		vOut[numOut].id.cf.typeB = cb2ContactFeature::e_face;
 		++numOut;
 	}
 
 	return numOut;
 }
 
-bool b2TestOverlap(	const b2Shape* shapeA, int indexA,
-					const b2Shape* shapeB, int indexB,
-					const b2Transform& xfA, const b2Transform& xfB)
+bool cb2TestOverlap(	const cb2Shape* shapeA, int indexA,
+					const cb2Shape* shapeB, int indexB,
+					const cb2Transform& xfA, const cb2Transform& xfB)
 {
-	b2DistanceInput input;
+	cb2DistanceInput input;
 	input.proxyA.set(shapeA, indexA);
 	input.proxyB.set(shapeB, indexB);
 	input.transformA = xfA;
 	input.transformB = xfB;
 	input.useRadii = true;
 
-	b2SimplexCache cache;
+	cb2SimplexCache cache;
 	cache.count = 0;
 
-	b2DistanceOutput output;
+	cb2DistanceOutput output;
 
-	b2Distance(&output, &cache, &input);
+	cb2Distance(&output, &cache, &input);
 
-	return output.distance < 10.0f * b2_epsilon;
+	return output.distance < 10.0f * cb2_epsilon;
 }

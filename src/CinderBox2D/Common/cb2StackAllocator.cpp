@@ -19,7 +19,7 @@
 #include <CinderBox2D/Common/cb2StackAllocator.h>
 #include <CinderBox2D/Common/cb2Math.h>
 
-b2StackAllocator::b2StackAllocator()
+cb2StackAllocator::cb2StackAllocator()
 {
 	m_index = 0;
 	m_allocation = 0;
@@ -27,21 +27,21 @@ b2StackAllocator::b2StackAllocator()
 	m_entryCount = 0;
 }
 
-b2StackAllocator::~b2StackAllocator()
+cb2StackAllocator::~cb2StackAllocator()
 {
-	b2Assert(m_index == 0);
-	b2Assert(m_entryCount == 0);
+	cb2Assert(m_index == 0);
+	cb2Assert(m_entryCount == 0);
 }
 
-void* b2StackAllocator::Allocate(int size)
+void* cb2StackAllocator::Allocate(int size)
 {
-	b2Assert(m_entryCount < b2_maxStackEntries);
+	cb2Assert(m_entryCount < cb2_maxStackEntries);
 
-	b2StackEntry* entry = m_entries + m_entryCount;
+	cb2StackEntry* entry = m_entries + m_entryCount;
 	entry->size = size;
-	if (m_index + size > b2_stackSize)
+	if (m_index + size > cb2_stackSize)
 	{
-		entry->data = (char*)b2Alloc(size);
+		entry->data = (char*)cb2Alloc(size);
 		entry->usedMalloc = true;
 	}
 	else
@@ -52,20 +52,20 @@ void* b2StackAllocator::Allocate(int size)
 	}
 
 	m_allocation += size;
-	m_maxAllocation = b2Max(m_maxAllocation, m_allocation);
+	m_maxAllocation = cb2Max(m_maxAllocation, m_allocation);
 	++m_entryCount;
 
 	return entry->data;
 }
 
-void b2StackAllocator::Free(void* p)
+void cb2StackAllocator::Free(void* p)
 {
-	b2Assert(m_entryCount > 0);
-	b2StackEntry* entry = m_entries + m_entryCount - 1;
-	b2Assert(p == entry->data);
+	cb2Assert(m_entryCount > 0);
+	cb2StackEntry* entry = m_entries + m_entryCount - 1;
+	cb2Assert(p == entry->data);
 	if (entry->usedMalloc)
 	{
-		b2Free(p);
+		cb2Free(p);
 	}
 	else
 	{
@@ -77,7 +77,7 @@ void b2StackAllocator::Free(void* p)
 	p = NULL;
 }
 
-int b2StackAllocator::GetMaxAllocation() const
+int cb2StackAllocator::GetMaxAllocation() const
 {
 	return m_maxAllocation;
 }

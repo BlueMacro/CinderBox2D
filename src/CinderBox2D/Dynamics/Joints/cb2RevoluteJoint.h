@@ -16,8 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_REVOLUTE_JOINT_H
-#define B2_REVOLUTE_JOINT_H
+#ifndef CB2_REVOLUTE_JOINT_H
+#define CB2_REVOLUTE_JOINT_H
 
 #include <CinderBox2D/Dynamics/Joints/cb2Joint.h>
 
@@ -32,9 +32,9 @@
 /// 1. you might not know where the center of mass will be.
 /// 2. if you add/remove shapes from a body and recompute the mass,
 ///    the joints will be broken.
-struct b2RevoluteJointDef : public b2JointDef
+struct cb2RevoluteJointDef : public cb2JointDef
 {
-	b2RevoluteJointDef()
+	cb2RevoluteJointDef()
 	{
 		type = e_revoluteJoint;
 		localAnchorA.set(0.0f, 0.0f);
@@ -50,7 +50,7 @@ struct b2RevoluteJointDef : public b2JointDef
 
 	/// Initialize the bodies, anchors, and reference angle using a world
 	/// anchor point.
-	void Initialize(b2Body* bodyA, b2Body* bodyB, const ci::Vec2f& anchor);
+	void Initialize(cb2Body* bodyA, cb2Body* bodyB, const ci::Vec2f& anchor);
 
 	/// The local anchor point relative to bodyA's origin.
 	ci::Vec2f localAnchorA;
@@ -87,7 +87,7 @@ struct b2RevoluteJointDef : public b2JointDef
 /// a joint limit that specifies a lower and upper angle. You can use a motor
 /// to drive the relative rotation about the shared point. A maximum motor torque
 /// is provided so that infinite forces are not generated.
-class b2RevoluteJoint : public b2Joint
+class cb2RevoluteJoint : public cb2Joint
 {
 public:
 	ci::Vec2f GetAnchorA() const;
@@ -151,19 +151,19 @@ public:
 	/// Unit is N*m.
 	float GetMotorTorque(float inv_dt) const;
 
-	/// Dump to b2Log.
+	/// Dump to cb2Log.
 	void Dump();
 
 protected:
 	
-	friend class b2Joint;
-	friend class b2GearJoint;
+	friend class cb2Joint;
+	friend class cb2GearJoint;
 
-	b2RevoluteJoint(const b2RevoluteJointDef* def);
+	cb2RevoluteJoint(const cb2RevoluteJointDef* def);
 
-	void InitVelocityConstraints(const b2SolverData& data);
-	void SolveVelocityConstraints(const b2SolverData& data);
-	bool SolvePositionConstraints(const b2SolverData& data);
+	void InitVelocityConstraints(const cb2SolverData& data);
+	void SolveVelocityConstraints(const cb2SolverData& data);
+	bool SolvePositionConstraints(const cb2SolverData& data);
 
 	// Solver shared
 	ci::Vec2f m_localAnchorA;
@@ -193,10 +193,10 @@ protected:
 	float m_invIB;
 	ci::Matrix33f m_mass;			// effective mass for point-to-point constraint.
 	float m_motorMass;	// effective mass for motor/limit angular constraint.
-	b2LimitState m_limitState;
+	cb2LimitState m_limitState;
 };
 
-inline float b2RevoluteJoint::GetMotorSpeed() const
+inline float cb2RevoluteJoint::GetMotorSpeed() const
 {
 	return m_motorSpeed;
 }

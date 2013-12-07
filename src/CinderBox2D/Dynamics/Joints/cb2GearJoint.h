@@ -16,16 +16,16 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_GEAR_JOINT_H
-#define B2_GEAR_JOINT_H
+#ifndef CB2_GEAR_JOINT_H
+#define CB2_GEAR_JOINT_H
 
 #include <CinderBox2D/Dynamics/Joints/cb2Joint.h>
 
 /// Gear joint definition. This definition requires two existing
 /// revolute or prismatic joints (any combination will work).
-struct b2GearJointDef : public b2JointDef
+struct cb2GearJointDef : public cb2JointDef
 {
-	b2GearJointDef()
+	cb2GearJointDef()
 	{
 		type = e_gearJoint;
 		joint1 = NULL;
@@ -34,13 +34,13 @@ struct b2GearJointDef : public b2JointDef
 	}
 
 	/// The first revolute/prismatic joint attached to the gear joint.
-	b2Joint* joint1;
+	cb2Joint* joint1;
 
 	/// The second revolute/prismatic joint attached to the gear joint.
-	b2Joint* joint2;
+	cb2Joint* joint2;
 
 	/// The gear ratio.
-	/// @see b2GearJoint for explanation.
+	/// @see cb2GearJoint for explanation.
 	float ratio;
 };
 
@@ -53,7 +53,7 @@ struct b2GearJointDef : public b2JointDef
 /// of length or units of 1/length.
 /// @warning You have to manually destroy the gear joint if joint1 or joint2
 /// is destroyed.
-class b2GearJoint : public b2Joint
+class cb2GearJoint : public cb2Joint
 {
 public:
 	ci::Vec2f GetAnchorA() const;
@@ -63,10 +63,10 @@ public:
 	float GetReactionTorque(float inv_dt) const;
 
 	/// Get the first joint.
-	b2Joint* GetJoint1() { return m_joint1; }
+	cb2Joint* GetJoint1() { return m_joint1; }
 
 	/// Get the second joint.
-	b2Joint* GetJoint2() { return m_joint2; }
+	cb2Joint* GetJoint2() { return m_joint2; }
 
 	/// set/Get the gear ratio.
 	void SetRatio(float ratio);
@@ -77,23 +77,23 @@ public:
 
 protected:
 
-	friend class b2Joint;
-	b2GearJoint(const b2GearJointDef* data);
+	friend class cb2Joint;
+	cb2GearJoint(const cb2GearJointDef* data);
 
-	void InitVelocityConstraints(const b2SolverData& data);
-	void SolveVelocityConstraints(const b2SolverData& data);
-	bool SolvePositionConstraints(const b2SolverData& data);
+	void InitVelocityConstraints(const cb2SolverData& data);
+	void SolveVelocityConstraints(const cb2SolverData& data);
+	bool SolvePositionConstraints(const cb2SolverData& data);
 
-	b2Joint* m_joint1;
-	b2Joint* m_joint2;
+	cb2Joint* m_joint1;
+	cb2Joint* m_joint2;
 
-	b2JointType m_typeA;
-	b2JointType m_typeB;
+	cb2JointType m_typeA;
+	cb2JointType m_typeB;
 
 	// Body A is connected to body C
 	// Body B is connected to body D
-	b2Body* m_bodyC;
-	b2Body* m_bodyD;
+	cb2Body* m_bodyC;
+	cb2Body* m_bodyD;
 
 	// Solver shared
 	ci::Vec2f m_localAnchorA;

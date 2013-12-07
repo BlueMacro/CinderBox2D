@@ -16,18 +16,18 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_ROPE_JOINT_H
-#define B2_ROPE_JOINT_H
+#ifndef CB2_ROPE_JOINT_H
+#define CB2_ROPE_JOINT_H
 
 #include <CinderBox2D/Dynamics/Joints/cb2Joint.h>
 
 /// Rope joint definition. This requires two body anchor points and
 /// a maximum lengths.
 /// Note: by default the connected objects will not collide.
-/// see collideConnected in b2JointDef.
-struct b2RopeJointDef : public b2JointDef
+/// see collideConnected in cb2JointDef.
+struct cb2RopeJointDef : public cb2JointDef
 {
-	b2RopeJointDef()
+	cb2RopeJointDef()
 	{
 		type = e_ropeJoint;
 		localAnchorA.set(-1.0f, 0.0f);
@@ -42,7 +42,7 @@ struct b2RopeJointDef : public b2JointDef
 	ci::Vec2f localAnchorB;
 
 	/// The maximum length of the rope.
-	/// Warning: this must be larger than b2_linearSlop or
+	/// Warning: this must be larger than cb2_linearSlop or
 	/// the joint will have no effect.
 	float maxLength;
 };
@@ -53,9 +53,9 @@ struct b2RopeJointDef : public b2JointDef
 /// the simulation you will get some non-physical behavior.
 /// A model that would allow you to dynamically modify the length
 /// would have some sponginess, so I chose not to implement it
-/// that way. See b2DistanceJoint if you want to dynamically
+/// that way. See cb2DistanceJoint if you want to dynamically
 /// control length.
-class b2RopeJoint : public b2Joint
+class cb2RopeJoint : public cb2Joint
 {
 public:
 	ci::Vec2f GetAnchorA() const;
@@ -74,19 +74,19 @@ public:
 	void SetMaxLength(float length) { m_maxLength = length; }
 	float GetMaxLength() const;
 
-	b2LimitState GetLimitState() const;
+	cb2LimitState GetLimitState() const;
 
 	/// Dump joint to dmLog
 	void Dump();
 
 protected:
 
-	friend class b2Joint;
-	b2RopeJoint(const b2RopeJointDef* data);
+	friend class cb2Joint;
+	cb2RopeJoint(const cb2RopeJointDef* data);
 
-	void InitVelocityConstraints(const b2SolverData& data);
-	void SolveVelocityConstraints(const b2SolverData& data);
-	bool SolvePositionConstraints(const b2SolverData& data);
+	void InitVelocityConstraints(const cb2SolverData& data);
+	void SolveVelocityConstraints(const cb2SolverData& data);
+	bool SolvePositionConstraints(const cb2SolverData& data);
 
 	// Solver shared
 	ci::Vec2f m_localAnchorA;
@@ -108,7 +108,7 @@ protected:
 	float m_invIA;
 	float m_invIB;
 	float m_mass;
-	b2LimitState m_state;
+	cb2LimitState m_state;
 };
 
 #endif

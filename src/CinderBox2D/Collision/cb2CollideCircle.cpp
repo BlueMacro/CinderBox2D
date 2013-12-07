@@ -20,18 +20,18 @@
 #include <CinderBox2D/Collision/Shapes/cb2CircleShape.h>
 #include <CinderBox2D/Collision/Shapes/cb2PolygonShape.h>
 
-void b2CollideCircles(
-	b2Manifold* manifold,
-	const b2CircleShape* circleA, const b2Transform& xfA,
-	const b2CircleShape* circleB, const b2Transform& xfB)
+void cb2CollideCircles(
+	cb2Manifold* manifold,
+	const cb2CircleShape* circleA, const cb2Transform& xfA,
+	const cb2CircleShape* circleB, const cb2Transform& xfB)
 {
 	manifold->pointCount = 0;
 
-	ci::Vec2f pA = b2Mul(xfA, circleA->m_p);
-	ci::Vec2f pB = b2Mul(xfB, circleB->m_p);
+	ci::Vec2f pA = cb2Mul(xfA, circleA->m_p);
+	ci::Vec2f pB = cb2Mul(xfB, circleB->m_p);
 
 	ci::Vec2f d = pB - pA;
-	float distSqr = b2Dot(d, d);
+	float distSqr = cb2Dot(d, d);
 	float rA = circleA->m_radius, rB = circleB->m_radius;
 	float radius = rA + rB;
 	if (distSqr > radius * radius)
@@ -39,7 +39,7 @@ void b2CollideCircles(
 		return;
 	}
 
-	manifold->type = b2Manifold::e_circles;
+	manifold->type = cb2Manifold::e_circles;
 	manifold->localPoint = circleA->m_p;
 	cb2::setZero(manifold->localNormal);
 	manifold->pointCount = 1;
@@ -48,20 +48,20 @@ void b2CollideCircles(
 	manifold->points[0].id.key = 0;
 }
 
-void b2CollidePolygonAndCircle(
-	b2Manifold* manifold,
-	const b2PolygonShape* polygonA, const b2Transform& xfA,
-	const b2CircleShape* circleB, const b2Transform& xfB)
+void cb2CollidePolygonAndCircle(
+	cb2Manifold* manifold,
+	const cb2PolygonShape* polygonA, const cb2Transform& xfA,
+	const cb2CircleShape* circleB, const cb2Transform& xfB)
 {
 	manifold->pointCount = 0;
 
 	// Compute circle position in the frame of the polygon.
-	ci::Vec2f c = b2Mul(xfB, circleB->m_p);
-	ci::Vec2f cLocal = b2MulT(xfA, c);
+	ci::Vec2f c = cb2Mul(xfB, circleB->m_p);
+	ci::Vec2f cLocal = cb2MulT(xfA, c);
 
 	// Find the min separating edge.
 	int normalIndex = 0;
-	float separation = -b2_maxFloat;
+	float separation = -cb2_maxFloat;
 	float radius = polygonA->m_radius + circleB->m_radius;
 	int vertexCount = polygonA->m_count;
 	const ci::Vec2f* vertices = polygonA->m_vertices;
@@ -69,7 +69,7 @@ void b2CollidePolygonAndCircle(
 
 	for (int i = 0; i < vertexCount; ++i)
 	{
-		float s = b2Dot(normals[i], cLocal - vertices[i]);
+		float s = cb2Dot(normals[i], cLocal - vertices[i]);
 
 		if (s > radius)
 		{
@@ -91,10 +91,10 @@ void b2CollidePolygonAndCircle(
 	ci::Vec2f v2 = vertices[vertIndex2];
 
 	// If the center is inside the polygon ...
-	if (separation < b2_epsilon)
+	if (separation < cb2_epsilon)
 	{
 		manifold->pointCount = 1;
-		manifold->type = b2Manifold::e_faceA;
+		manifold->type = cb2Manifold::e_faceA;
 		manifold->localNormal = normals[normalIndex];
 		manifold->localPoint = 0.5f * (v1 + v2);
 		manifold->points[0].localPoint = circleB->m_p;
@@ -103,17 +103,17 @@ void b2CollidePolygonAndCircle(
 	}
 
 	// Compute barycentric coordinates
-	float u1 = b2Dot(cLocal - v1, v2 - v1);
-	float u2 = b2Dot(cLocal - v2, v1 - v2);
+	float u1 = cb2Dot(cLocal - v1, v2 - v1);
+	float u2 = cb2Dot(cLocal - v2, v1 - v2);
 	if (u1 <= 0.0f)
 	{
-		if (b2DistanceSquared(cLocal, v1) > radius * radius)
+		if (cb2DistanceSquared(cLocal, v1) > radius * radius)
 		{
 			return;
 		}
 
 		manifold->pointCount = 1;
-		manifold->type = b2Manifold::e_faceA;
+		manifold->type = cb2Manifold::e_faceA;
 		manifold->localNormal = cLocal - v1;
 		manifold->localNormal.normalize();
 		manifold->localPoint = v1;
@@ -122,13 +122,13 @@ void b2CollidePolygonAndCircle(
 	}
 	else if (u2 <= 0.0f)
 	{
-		if (b2DistanceSquared(cLocal, v2) > radius * radius)
+		if (cb2DistanceSquared(cLocal, v2) > radius * radius)
 		{
 			return;
 		}
 
 		manifold->pointCount = 1;
-		manifold->type = b2Manifold::e_faceA;
+		manifold->type = cb2Manifold::e_faceA;
 		manifold->localNormal = cLocal - v2;
 		manifold->localNormal.normalize();
 		manifold->localPoint = v2;
@@ -138,14 +138,14 @@ void b2CollidePolygonAndCircle(
 	else
 	{
 		ci::Vec2f faceCenter = 0.5f * (v1 + v2);
-		float separation = b2Dot(cLocal - faceCenter, normals[vertIndex1]);
+		float separation = cb2Dot(cLocal - faceCenter, normals[vertIndex1]);
 		if (separation > radius)
 		{
 			return;
 		}
 
 		manifold->pointCount = 1;
-		manifold->type = b2Manifold::e_faceA;
+		manifold->type = cb2Manifold::e_faceA;
 		manifold->localNormal = normals[vertIndex1];
 		manifold->localPoint = faceCenter;
 		manifold->points[0].localPoint = circleB->m_p;

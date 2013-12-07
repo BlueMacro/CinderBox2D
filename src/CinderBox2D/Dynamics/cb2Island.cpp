@@ -55,7 +55,7 @@ after the constraint is solved. The radius vectors (aka Jacobians) are
 re-computed too (otherwise the algorithm has horrible instability). The pseudo
 velocity states are not needed because they are effectively zero at the beginning
 of each iteration. Since we have the current position error, we allow the
-iterations to terminate early if the error becomes smaller than b2_linearSlop.
+iterations to terminate early if the error becomes smaller than cb2_linearSlop.
 
 Full NGS or just NGS - Like Modified NGS except the effective mass are re-computed
 each time a constraint is solved.
@@ -145,12 +145,12 @@ This might be faster than computing sin+cos.
 However, we can compute sin+cos of the same angle fast.
 */
 
-b2Island::b2Island(
+cb2Island::cb2Island(
 	int bodyCapacity,
 	int contactCapacity,
 	int jointCapacity,
-	b2StackAllocator* allocator,
-	b2ContactListener* listener)
+	cb2StackAllocator* allocator,
+	cb2ContactListener* listener)
 {
 	m_bodyCapacity = bodyCapacity;
 	m_contactCapacity = contactCapacity;
@@ -162,15 +162,15 @@ b2Island::b2Island(
 	m_allocator = allocator;
 	m_listener = listener;
 
-	m_bodies = (b2Body**)m_allocator->Allocate(bodyCapacity * sizeof(b2Body*));
-	m_contacts = (b2Contact**)m_allocator->Allocate(contactCapacity	 * sizeof(b2Contact*));
-	m_joints = (b2Joint**)m_allocator->Allocate(jointCapacity * sizeof(b2Joint*));
+	m_bodies = (cb2Body**)m_allocator->Allocate(bodyCapacity * sizeof(cb2Body*));
+	m_contacts = (cb2Contact**)m_allocator->Allocate(contactCapacity	 * sizeof(cb2Contact*));
+	m_joints = (cb2Joint**)m_allocator->Allocate(jointCapacity * sizeof(cb2Joint*));
 
-	m_velocities = (b2Velocity*)m_allocator->Allocate(m_bodyCapacity * sizeof(b2Velocity));
-	m_positions = (b2Position*)m_allocator->Allocate(m_bodyCapacity * sizeof(b2Position));
+	m_velocities = (cb2Velocity*)m_allocator->Allocate(m_bodyCapacity * sizeof(cb2Velocity));
+	m_positions = (cb2Position*)m_allocator->Allocate(m_bodyCapacity * sizeof(cb2Position));
 }
 
-b2Island::~b2Island()
+cb2Island::~cb2Island()
 {
 	// Warning: the order should reverse the constructor order.
 	m_allocator->Free(m_positions);
@@ -180,16 +180,16 @@ b2Island::~b2Island()
 	m_allocator->Free(m_bodies);
 }
 
-void b2Island::Solve(b2Profile* profile, const b2TimeStep& step, const ci::Vec2f& gravity, bool allowSleep)
+void cb2Island::Solve(cb2Profile* profile, const cb2TimeStep& step, const ci::Vec2f& gravity, bool allowSleep)
 {
-	b2Timer timer;
+	cb2Timer timer;
 
 	float h = step.dt;
 
 	// Integrate velocities and apply damping. Initialize the body state.
 	for (int i = 0; i < m_bodyCount; ++i)
 	{
-		b2Body* b = m_bodies[i];
+		cb2Body* b = m_bodies[i];
 
 		ci::Vec2f c = b->m_sweep.c;
 		float a = b->m_sweep.a;
@@ -200,7 +200,7 @@ void b2Island::Solve(b2Profile* profile, const b2TimeStep& step, const ci::Vec2f
 		b->m_sweep.c0 = b->m_sweep.c;
 		b->m_sweep.a0 = b->m_sweep.a;
 
-		if (b->m_type == b2_dynamicBody)
+		if (b->m_type == cb2_dynamicBody)
 		{
 			// Integrate velocities.
 			v += h * (b->m_gravityScale * gravity + b->m_invMass * b->m_force);
@@ -226,13 +226,13 @@ void b2Island::Solve(b2Profile* profile, const b2TimeStep& step, const ci::Vec2f
 	timer.Reset();
 
 	// Solver data
-	b2SolverData solverData;
+	cb2SolverData solverData;
 	solverData.step = step;
 	solverData.positions = m_positions;
 	solverData.velocities = m_velocities;
 
 	// Initialize velocity constraints.
-	b2ContactSolverDef contactSolverDef;
+	cb2ContactSolverDef contactSolverDef;
 	contactSolverDef.step = step;
 	contactSolverDef.contacts = m_contacts;
 	contactSolverDef.count = m_contactCount;
@@ -240,7 +240,7 @@ void b2Island::Solve(b2Profile* profile, const b2TimeStep& step, const ci::Vec2f
 	contactSolverDef.velocities = m_velocities;
 	contactSolverDef.allocator = m_allocator;
 
-	b2ContactSolver contactSolver(&contactSolverDef);
+	cb2ContactSolver contactSolver(&contactSolverDef);
 	contactSolver.InitializeVelocityConstraints();
 
 	if (step.warmStarting)
@@ -281,16 +281,16 @@ void b2Island::Solve(b2Profile* profile, const b2TimeStep& step, const ci::Vec2f
 
 		// Check for large velocities
 		ci::Vec2f translation = h * v;
-		if (b2Dot(translation, translation) > b2_maxTranslationSquared)
+		if (cb2Dot(translation, translation) > cb2_maxTranslationSquared)
 		{
-			float ratio = b2_maxTranslation / translation.length();
+			float ratio = cb2_maxTranslation / translation.length();
 			v *= ratio;
 		}
 
 		float rotation = h * w;
-		if (rotation * rotation > b2_maxRotationSquared)
+		if (rotation * rotation > cb2_maxRotationSquared)
 		{
-			float ratio = b2_maxRotation / b2Abs(rotation);
+			float ratio = cb2_maxRotation / cb2Abs(rotation);
 			w *= ratio;
 		}
 
@@ -329,7 +329,7 @@ void b2Island::Solve(b2Profile* profile, const b2TimeStep& step, const ci::Vec2f
 	// Copy state buffers back to the bodies
 	for (int i = 0; i < m_bodyCount; ++i)
 	{
-		b2Body* body = m_bodies[i];
+		cb2Body* body = m_bodies[i];
 		body->m_sweep.c = m_positions[i].c;
 		body->m_sweep.a = m_positions[i].a;
 		body->m_linearVelocity = m_velocities[i].v;
@@ -343,22 +343,22 @@ void b2Island::Solve(b2Profile* profile, const b2TimeStep& step, const ci::Vec2f
 
 	if (allowSleep)
 	{
-		float minSleepTime = b2_maxFloat;
+		float minSleepTime = cb2_maxFloat;
 
-		const float linTolSqr = b2_linearSleepTolerance * b2_linearSleepTolerance;
-		const float angTolSqr = b2_angularSleepTolerance * b2_angularSleepTolerance;
+		const float linTolSqr = cb2_linearSleepTolerance * cb2_linearSleepTolerance;
+		const float angTolSqr = cb2_angularSleepTolerance * cb2_angularSleepTolerance;
 
 		for (int i = 0; i < m_bodyCount; ++i)
 		{
-			b2Body* b = m_bodies[i];
-			if (b->GetType() == b2_staticBody)
+			cb2Body* b = m_bodies[i];
+			if (b->GetType() == cb2_staticBody)
 			{
 				continue;
 			}
 
-			if ((b->m_flags & b2Body::e_autoSleepFlag) == 0 ||
+			if ((b->m_flags & cb2Body::e_autoSleepFlag) == 0 ||
 				b->m_angularVelocity * b->m_angularVelocity > angTolSqr ||
-				b2Dot(b->m_linearVelocity, b->m_linearVelocity) > linTolSqr)
+				cb2Dot(b->m_linearVelocity, b->m_linearVelocity) > linTolSqr)
 			{
 				b->m_sleepTime = 0.0f;
 				minSleepTime = 0.0f;
@@ -366,44 +366,44 @@ void b2Island::Solve(b2Profile* profile, const b2TimeStep& step, const ci::Vec2f
 			else
 			{
 				b->m_sleepTime += h;
-				minSleepTime = b2Min(minSleepTime, b->m_sleepTime);
+				minSleepTime = cb2Min(minSleepTime, b->m_sleepTime);
 			}
 		}
 
-		if (minSleepTime >= b2_timeToSleep && positionSolved)
+		if (minSleepTime >= cb2_timeToSleep && positionSolved)
 		{
 			for (int i = 0; i < m_bodyCount; ++i)
 			{
-				b2Body* b = m_bodies[i];
+				cb2Body* b = m_bodies[i];
 				b->SetAwake(false);
 			}
 		}
 	}
 }
 
-void b2Island::SolveTOI(const b2TimeStep& subStep, int toiIndexA, int toiIndexB)
+void cb2Island::SolveTOI(const cb2TimeStep& subStep, int toiIndexA, int toiIndexB)
 {
-	b2Assert(toiIndexA < m_bodyCount);
-	b2Assert(toiIndexB < m_bodyCount);
+	cb2Assert(toiIndexA < m_bodyCount);
+	cb2Assert(toiIndexB < m_bodyCount);
 
 	// Initialize the body state.
 	for (int i = 0; i < m_bodyCount; ++i)
 	{
-		b2Body* b = m_bodies[i];
+		cb2Body* b = m_bodies[i];
 		m_positions[i].c = b->m_sweep.c;
 		m_positions[i].a = b->m_sweep.a;
 		m_velocities[i].v = b->m_linearVelocity;
 		m_velocities[i].w = b->m_angularVelocity;
 	}
 
-	b2ContactSolverDef contactSolverDef;
+	cb2ContactSolverDef contactSolverDef;
 	contactSolverDef.contacts = m_contacts;
 	contactSolverDef.count = m_contactCount;
 	contactSolverDef.allocator = m_allocator;
 	contactSolverDef.step = subStep;
 	contactSolverDef.positions = m_positions;
 	contactSolverDef.velocities = m_velocities;
-	b2ContactSolver contactSolver(&contactSolverDef);
+	cb2ContactSolver contactSolver(&contactSolverDef);
 
 	// Solve position constraints.
 	for (int i = 0; i < subStep.positionIterations; ++i)
@@ -419,27 +419,27 @@ void b2Island::SolveTOI(const b2TimeStep& subStep, int toiIndexA, int toiIndexB)
 	// Is the new position really safe?
 	for (int i = 0; i < m_contactCount; ++i)
 	{
-		b2Contact* c = m_contacts[i];
-		b2Fixture* fA = c->GetFixtureA();
-		b2Fixture* fB = c->GetFixtureB();
+		cb2Contact* c = m_contacts[i];
+		cb2Fixture* fA = c->GetFixtureA();
+		cb2Fixture* fB = c->GetFixtureB();
 
-		b2Body* bA = fA->GetBody();
-		b2Body* bB = fB->GetBody();
+		cb2Body* bA = fA->GetBody();
+		cb2Body* bB = fB->GetBody();
 
 		int indexA = c->GetChildIndexA();
 		int indexB = c->GetChildIndexB();
 
-		b2DistanceInput input;
+		cb2DistanceInput input;
 		input.proxyA.set(fA->GetShape(), indexA);
 		input.proxyB.set(fB->GetShape(), indexB);
 		input.transformA = bA->GetTransform();
 		input.transformB = bB->GetTransform();
 		input.useRadii = false;
 
-		b2DistanceOutput output;
-		b2SimplexCache cache;
+		cb2DistanceOutput output;
+		cb2SimplexCache cache;
 		cache.count = 0;
-		b2Distance(&output, &cache, &input);
+		cb2Distance(&output, &cache, &input);
 
 		if (output.distance == 0 || cache.count == 3)
 		{
@@ -479,16 +479,16 @@ void b2Island::SolveTOI(const b2TimeStep& subStep, int toiIndexA, int toiIndexB)
 
 		// Check for large velocities
 		ci::Vec2f translation = h * v;
-		if (b2Dot(translation, translation) > b2_maxTranslationSquared)
+		if (cb2Dot(translation, translation) > cb2_maxTranslationSquared)
 		{
-			float ratio = b2_maxTranslation / translation.length();
+			float ratio = cb2_maxTranslation / translation.length();
 			v *= ratio;
 		}
 
 		float rotation = h * w;
-		if (rotation * rotation > b2_maxRotationSquared)
+		if (rotation * rotation > cb2_maxRotationSquared)
 		{
-			float ratio = b2_maxRotation / b2Abs(rotation);
+			float ratio = cb2_maxRotation / cb2Abs(rotation);
 			w *= ratio;
 		}
 
@@ -502,7 +502,7 @@ void b2Island::SolveTOI(const b2TimeStep& subStep, int toiIndexA, int toiIndexB)
 		m_velocities[i].w = w;
 
 		// Sync bodies
-		b2Body* body = m_bodies[i];
+		cb2Body* body = m_bodies[i];
 		body->m_sweep.c = c;
 		body->m_sweep.a = a;
 		body->m_linearVelocity = v;
@@ -513,7 +513,7 @@ void b2Island::SolveTOI(const b2TimeStep& subStep, int toiIndexA, int toiIndexB)
 	Report(contactSolver.m_velocityConstraints);
 }
 
-void b2Island::Report(const b2ContactVelocityConstraint* constraints)
+void cb2Island::Report(const cb2ContactVelocityConstraint* constraints)
 {
 	if (m_listener == NULL)
 	{
@@ -522,11 +522,11 @@ void b2Island::Report(const b2ContactVelocityConstraint* constraints)
 
 	for (int i = 0; i < m_contactCount; ++i)
 	{
-		b2Contact* c = m_contacts[i];
+		cb2Contact* c = m_contacts[i];
 
-		const b2ContactVelocityConstraint* vc = constraints + i;
+		const cb2ContactVelocityConstraint* vc = constraints + i;
 		
-		b2ContactImpulse impulse;
+		cb2ContactImpulse impulse;
 		impulse.count = vc->pointCount;
 		for (int j = 0; j < vc->pointCount; ++j)
 		{

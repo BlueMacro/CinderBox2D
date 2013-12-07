@@ -22,28 +22,28 @@
 
 #include <new>
 
-b2Contact* b2PolygonAndCircleContact::Create(b2Fixture* fixtureA, int, b2Fixture* fixtureB, int, b2BlockAllocator* allocator)
+cb2Contact* cb2PolygonAndCircleContact::Create(cb2Fixture* fixtureA, int, cb2Fixture* fixtureB, int, cb2BlockAllocator* allocator)
 {
-	void* mem = allocator->Allocate(sizeof(b2PolygonAndCircleContact));
-	return new (mem) b2PolygonAndCircleContact(fixtureA, fixtureB);
+	void* mem = allocator->Allocate(sizeof(cb2PolygonAndCircleContact));
+	return new (mem) cb2PolygonAndCircleContact(fixtureA, fixtureB);
 }
 
-void b2PolygonAndCircleContact::Destroy(b2Contact* contact, b2BlockAllocator* allocator)
+void cb2PolygonAndCircleContact::Destroy(cb2Contact* contact, cb2BlockAllocator* allocator)
 {
-	((b2PolygonAndCircleContact*)contact)->~b2PolygonAndCircleContact();
-	allocator->Free(contact, sizeof(b2PolygonAndCircleContact));
+	((cb2PolygonAndCircleContact*)contact)->~cb2PolygonAndCircleContact();
+	allocator->Free(contact, sizeof(cb2PolygonAndCircleContact));
 }
 
-b2PolygonAndCircleContact::b2PolygonAndCircleContact(b2Fixture* fixtureA, b2Fixture* fixtureB)
-: b2Contact(fixtureA, 0, fixtureB, 0)
+cb2PolygonAndCircleContact::cb2PolygonAndCircleContact(cb2Fixture* fixtureA, cb2Fixture* fixtureB)
+: cb2Contact(fixtureA, 0, fixtureB, 0)
 {
-	b2Assert(m_fixtureA->GetType() == b2Shape::e_polygon);
-	b2Assert(m_fixtureB->GetType() == b2Shape::e_circle);
+	cb2Assert(m_fixtureA->GetType() == cb2Shape::e_polygon);
+	cb2Assert(m_fixtureB->GetType() == cb2Shape::e_circle);
 }
 
-void b2PolygonAndCircleContact::Evaluate(b2Manifold* manifold, const b2Transform& xfA, const b2Transform& xfB)
+void cb2PolygonAndCircleContact::Evaluate(cb2Manifold* manifold, const cb2Transform& xfA, const cb2Transform& xfB)
 {
-	b2CollidePolygonAndCircle(	manifold,
-								(b2PolygonShape*)m_fixtureA->GetShape(), xfA,
-								(b2CircleShape*)m_fixtureB->GetShape(), xfB);
+	cb2CollidePolygonAndCircle(	manifold,
+								(cb2PolygonShape*)m_fixtureA->GetShape(), xfA,
+								(cb2CircleShape*)m_fixtureB->GetShape(), xfB);
 }

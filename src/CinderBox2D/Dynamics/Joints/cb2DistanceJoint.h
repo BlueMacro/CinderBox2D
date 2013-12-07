@@ -16,8 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_DISTANCE_JOINT_H
-#define B2_DISTANCE_JOINT_H
+#ifndef CB2_DISTANCE_JOINT_H
+#define CB2_DISTANCE_JOINT_H
 
 #include <CinderBox2D/Dynamics/Joints/cb2Joint.h>
 
@@ -27,9 +27,9 @@
 /// so that the initial configuration can violate the constraint
 /// slightly. This helps when saving and loading a game.
 /// @warning Do not use a zero or short length.
-struct b2DistanceJointDef : public b2JointDef
+struct cb2DistanceJointDef : public cb2JointDef
 {
-	b2DistanceJointDef()
+	cb2DistanceJointDef()
 	{
 		type = e_distanceJoint;
 		localAnchorA.set(0.0f, 0.0f);
@@ -41,7 +41,7 @@ struct b2DistanceJointDef : public b2JointDef
 
 	/// Initialize the bodies, anchors, and length using the world
 	/// anchors.
-	void Initialize(b2Body* bodyA, b2Body* bodyB,
+	void Initialize(cb2Body* bodyA, cb2Body* bodyB,
 					const ci::Vec2f& anchorA, const ci::Vec2f& anchorB);
 
 	/// The local anchor point relative to bodyA's origin.
@@ -64,7 +64,7 @@ struct b2DistanceJointDef : public b2JointDef
 /// A distance joint constrains two points on two bodies
 /// to remain at a fixed distance from each other. You can view
 /// this as a massless, rigid rod.
-class b2DistanceJoint : public b2Joint
+class cb2DistanceJoint : public cb2Joint
 {
 public:
 
@@ -103,12 +103,12 @@ public:
 
 protected:
 
-	friend class b2Joint;
-	b2DistanceJoint(const b2DistanceJointDef* data);
+	friend class cb2Joint;
+	cb2DistanceJoint(const cb2DistanceJointDef* data);
 
-	void InitVelocityConstraints(const b2SolverData& data);
-	void SolveVelocityConstraints(const b2SolverData& data);
-	bool SolvePositionConstraints(const b2SolverData& data);
+	void InitVelocityConstraints(const cb2SolverData& data);
+	void SolveVelocityConstraints(const cb2SolverData& data);
+	bool SolvePositionConstraints(const cb2SolverData& data);
 
 	float m_frequencyHz;
 	float m_dampingRatio;
@@ -136,32 +136,32 @@ protected:
 	float m_mass;
 };
 
-inline void b2DistanceJoint::SetLength(float length)
+inline void cb2DistanceJoint::SetLength(float length)
 {
 	m_length = length;
 }
 
-inline float b2DistanceJoint::GetLength() const
+inline float cb2DistanceJoint::GetLength() const
 {
 	return m_length;
 }
 
-inline void b2DistanceJoint::SetFrequency(float hz)
+inline void cb2DistanceJoint::SetFrequency(float hz)
 {
 	m_frequencyHz = hz;
 }
 
-inline float b2DistanceJoint::GetFrequency() const
+inline float cb2DistanceJoint::GetFrequency() const
 {
 	return m_frequencyHz;
 }
 
-inline void b2DistanceJoint::SetDampingRatio(float ratio)
+inline void cb2DistanceJoint::SetDampingRatio(float ratio)
 {
 	m_dampingRatio = ratio;
 }
 
-inline float b2DistanceJoint::GetDampingRatio() const
+inline float cb2DistanceJoint::GetDampingRatio() const
 {
 	return m_dampingRatio;
 }

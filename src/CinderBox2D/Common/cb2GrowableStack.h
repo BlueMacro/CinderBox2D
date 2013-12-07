@@ -16,8 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_GROWABLE_STACK_H
-#define B2_GROWABLE_STACK_H
+#ifndef CB2_GROWABLE_STACK_H
+#define CB2_GROWABLE_STACK_H
 #include <CinderBox2D/Common/cb2Settings.h>
 #include <memory.h>
 
@@ -25,21 +25,21 @@
 /// If the stack size exceeds the initial capacity, the heap is used
 /// to increase the size of the stack.
 template <typename T, int N>
-class b2GrowableStack
+class cb2GrowableStack
 {
 public:
-	b2GrowableStack()
+	cb2GrowableStack()
 	{
 		m_stack = m_array;
 		m_count = 0;
 		m_capacity = N;
 	}
 
-	~b2GrowableStack()
+	~cb2GrowableStack()
 	{
 		if (m_stack != m_array)
 		{
-			b2Free(m_stack);
+			cb2Free(m_stack);
 			m_stack = NULL;
 		}
 	}
@@ -50,11 +50,11 @@ public:
 		{
 			T* old = m_stack;
 			m_capacity *= 2;
-			m_stack = (T*)b2Alloc(m_capacity * sizeof(T));
+			m_stack = (T*)cb2Alloc(m_capacity * sizeof(T));
 			memcpy(m_stack, old, m_count * sizeof(T));
 			if (old != m_array)
 			{
-				b2Free(old);
+				cb2Free(old);
 			}
 		}
 
@@ -64,7 +64,7 @@ public:
 
 	T Pop()
 	{
-		b2Assert(m_count > 0);
+		cb2Assert(m_count > 0);
 		--m_count;
 		return m_stack[m_count];
 	}

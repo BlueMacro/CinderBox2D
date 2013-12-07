@@ -18,27 +18,27 @@
 
 #include <CinderBox2D/Common/cb2Draw.h>
 
-b2Draw::b2Draw()
+cb2Draw::cb2Draw()
 {
 	m_drawFlags = 0;
 }
 
-void b2Draw::SetFlags(unsigned int flags)
+void cb2Draw::SetFlags(unsigned int flags)
 {
 	m_drawFlags = flags;
 }
 
-unsigned int b2Draw::GetFlags() const
+unsigned int cb2Draw::GetFlags() const
 {
 	return m_drawFlags;
 }
 
-void b2Draw::AppendFlags(unsigned int flags)
+void cb2Draw::AppendFlags(unsigned int flags)
 {
 	m_drawFlags |= flags;
 }
 
-void b2Draw::ClearFlags(unsigned int flags)
+void cb2Draw::ClearFlags(unsigned int flags)
 {
 	m_drawFlags &= ~flags;
 }

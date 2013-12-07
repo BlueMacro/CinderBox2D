@@ -16,8 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_PRISMATIC_JOINT_H
-#define B2_PRISMATIC_JOINT_H
+#ifndef CB2_PRISMATIC_JOINT_H
+#define CB2_PRISMATIC_JOINT_H
 
 #include <CinderBox2D/Dynamics/Joints/cb2Joint.h>
 
@@ -27,9 +27,9 @@
 /// can violate the constraint slightly. The joint translation is zero
 /// when the local anchor points coincide in world space. Using local
 /// anchors and a local axis helps when saving and loading a game.
-struct b2PrismaticJointDef : public b2JointDef
+struct cb2PrismaticJointDef : public cb2JointDef
 {
-	b2PrismaticJointDef()
+	cb2PrismaticJointDef()
 	{
 		type = e_prismaticJoint;
 		cb2::setZero(localAnchorA);
@@ -46,7 +46,7 @@ struct b2PrismaticJointDef : public b2JointDef
 
 	/// Initialize the bodies, anchors, axis, and reference angle using the world
 	/// anchor and unit world axis.
-	void Initialize(b2Body* bodyA, b2Body* bodyB, const ci::Vec2f& anchor, const ci::Vec2f& axis);
+	void Initialize(cb2Body* bodyA, cb2Body* bodyB, const ci::Vec2f& anchor, const ci::Vec2f& axis);
 
 	/// The local anchor point relative to bodyA's origin.
 	ci::Vec2f localAnchorA;
@@ -83,7 +83,7 @@ struct b2PrismaticJointDef : public b2JointDef
 /// along an axis fixed in bodyA. Relative rotation is prevented. You can
 /// use a joint limit to restrict the range of motion and a joint motor to
 /// drive the motion or to model joint friction.
-class b2PrismaticJoint : public b2Joint
+class cb2PrismaticJoint : public cb2Joint
 {
 public:
 	ci::Vec2f GetAnchorA() const;
@@ -144,17 +144,17 @@ public:
 	/// Get the current motor force given the inverse time step, usually in N.
 	float GetMotorForce(float inv_dt) const;
 
-	/// Dump to b2Log
+	/// Dump to cb2Log
 	void Dump();
 
 protected:
-	friend class b2Joint;
-	friend class b2GearJoint;
-	b2PrismaticJoint(const b2PrismaticJointDef* def);
+	friend class cb2Joint;
+	friend class cb2GearJoint;
+	cb2PrismaticJoint(const cb2PrismaticJointDef* def);
 
-	void InitVelocityConstraints(const b2SolverData& data);
-	void SolveVelocityConstraints(const b2SolverData& data);
-	bool SolvePositionConstraints(const b2SolverData& data);
+	void InitVelocityConstraints(const cb2SolverData& data);
+	void SolveVelocityConstraints(const cb2SolverData& data);
+	bool SolvePositionConstraints(const cb2SolverData& data);
 
 	// Solver shared
 	ci::Vec2f m_localAnchorA;
@@ -170,7 +170,7 @@ protected:
 	float m_motorSpeed;
 	bool m_enableLimit;
 	bool m_enableMotor;
-	b2LimitState m_limitState;
+	cb2LimitState m_limitState;
 
 	// Solver temp
 	int m_indexA;
@@ -188,7 +188,7 @@ protected:
 	float m_motorMass;
 };
 
-inline float b2PrismaticJoint::GetMotorSpeed() const
+inline float cb2PrismaticJoint::GetMotorSpeed() const
 {
 	return m_motorSpeed;
 }

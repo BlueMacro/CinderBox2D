@@ -16,17 +16,17 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_ROPE_H
-#define B2_ROPE_H
+#ifndef CB2_ROPE_H
+#define CB2_ROPE_H
 
 #include <CinderBox2D/Common/cb2Math.h>
 
-class b2Draw;
+class cb2Draw;
 
 /// 
-struct b2RopeDef
+struct cb2RopeDef
 {
-	b2RopeDef()
+	cb2RopeDef()
 	{
 		vertices = NULL;
 		count = 0;
@@ -60,14 +60,14 @@ struct b2RopeDef
 };
 
 /// 
-class b2Rope
+class cb2Rope
 {
 public:
-	b2Rope();
-	~b2Rope();
+	cb2Rope();
+	~cb2Rope();
 
 	///
-	void Initialize(const b2RopeDef* def);
+	void Initialize(const cb2RopeDef* def);
 
 	///
 	void Step(float timeStep, int iterations);
@@ -85,7 +85,7 @@ public:
 	}
 
 	///
-	void Draw(b2Draw* draw) const;
+	void Draw(cb2Draw* draw) const;
 
 	///
 	void SetAngle(float angle);

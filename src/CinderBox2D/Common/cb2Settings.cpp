@@ -21,21 +21,21 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-b2Version b2_version = {2, 3, 1};
+cb2Version cb2_version = {2, 3, 1};
 
 // Memory allocators. Modify these to use your own allocator.
-void* b2Alloc(int size)
+void* cb2Alloc(int size)
 {
 	return malloc(size);
 }
 
-void b2Free(void* mem)
+void cb2Free(void* mem)
 {
 	free(mem);
 }
 
 // You can modify this to use your logging facility.
-void b2Log(const char* string, ...)
+void cb2Log(const char* string, ...)
 {
 	va_list args;
 	va_start(args, string);

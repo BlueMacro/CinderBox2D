@@ -16,8 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_WHEEL_JOINT_H
-#define B2_WHEEL_JOINT_H
+#ifndef CB2_WHEEL_JOINT_H
+#define CB2_WHEEL_JOINT_H
 
 #include <CinderBox2D/Dynamics/Joints/cb2Joint.h>
 
@@ -27,9 +27,9 @@
 /// can violate the constraint slightly. The joint translation is zero
 /// when the local anchor points coincide in world space. Using local
 /// anchors and a local axis helps when saving and loading a game.
-struct b2WheelJointDef : public b2JointDef
+struct cb2WheelJointDef : public cb2JointDef
 {
-	b2WheelJointDef()
+	cb2WheelJointDef()
 	{
 		type = e_wheelJoint;
 		cb2::setZero(localAnchorA);
@@ -44,7 +44,7 @@ struct b2WheelJointDef : public b2JointDef
 
 	/// Initialize the bodies, anchors, axis, and reference angle using the world
 	/// anchor and world axis.
-	void Initialize(b2Body* bodyA, b2Body* bodyB, const ci::Vec2f& anchor, const ci::Vec2f& axis);
+	void Initialize(cb2Body* bodyA, cb2Body* bodyB, const ci::Vec2f& anchor, const ci::Vec2f& axis);
 
 	/// The local anchor point relative to bodyA's origin.
 	ci::Vec2f localAnchorA;
@@ -76,7 +76,7 @@ struct b2WheelJointDef : public b2JointDef
 /// joint limit to restrict the range of motion and a joint motor to drive
 /// the rotation or to model rotational friction.
 /// This joint is designed for vehicle suspensions.
-class b2WheelJoint : public b2Joint
+class cb2WheelJoint : public cb2Joint
 {
 public:
 	ci::Vec2f GetAnchorA() const;
@@ -127,17 +127,17 @@ public:
 	void SetSpringDampingRatio(float ratio);
 	float GetSpringDampingRatio() const;
 
-	/// Dump to b2Log
+	/// Dump to cb2Log
 	void Dump();
 
 protected:
 
-	friend class b2Joint;
-	b2WheelJoint(const b2WheelJointDef* def);
+	friend class cb2Joint;
+	cb2WheelJoint(const cb2WheelJointDef* def);
 
-	void InitVelocityConstraints(const b2SolverData& data);
-	void SolveVelocityConstraints(const b2SolverData& data);
-	bool SolvePositionConstraints(const b2SolverData& data);
+	void InitVelocityConstraints(const cb2SolverData& data);
+	void SolveVelocityConstraints(const cb2SolverData& data);
+	bool SolvePositionConstraints(const cb2SolverData& data);
 
 	float m_frequencyHz;
 	float m_dampingRatio;
@@ -178,32 +178,32 @@ protected:
 	float m_gamma;
 };
 
-inline float b2WheelJoint::GetMotorSpeed() const
+inline float cb2WheelJoint::GetMotorSpeed() const
 {
 	return m_motorSpeed;
 }
 
-inline float b2WheelJoint::GetMaxMotorTorque() const
+inline float cb2WheelJoint::GetMaxMotorTorque() const
 {
 	return m_maxMotorTorque;
 }
 
-inline void b2WheelJoint::SetSpringFrequencyHz(float hz)
+inline void cb2WheelJoint::SetSpringFrequencyHz(float hz)
 {
 	m_frequencyHz = hz;
 }
 
-inline float b2WheelJoint::GetSpringFrequencyHz() const
+inline float cb2WheelJoint::GetSpringFrequencyHz() const
 {
 	return m_frequencyHz;
 }
 
-inline void b2WheelJoint::SetSpringDampingRatio(float ratio)
+inline void cb2WheelJoint::SetSpringDampingRatio(float ratio)
 {
 	m_dampingRatio = ratio;
 }
 
-inline float b2WheelJoint::GetSpringDampingRatio() const
+inline float cb2WheelJoint::GetSpringDampingRatio() const
 {
 	return m_dampingRatio;
 }

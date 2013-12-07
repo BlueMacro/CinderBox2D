@@ -16,19 +16,19 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_TIMER_H
-#define B2_TIMER_H
+#ifndef CB2_TIMER_H
+#define CB2_TIMER_H
 
 #include <CinderBox2D/Common/cb2Settings.h>
 
 /// Timer for profiling. This has platform specific code and may
 /// not work on every platform.
-class b2Timer
+class cb2Timer
 {
 public:
 
 	/// Constructor
-	b2Timer();
+	cb2Timer();
 
 	/// Reset the timer.
 	void Reset();

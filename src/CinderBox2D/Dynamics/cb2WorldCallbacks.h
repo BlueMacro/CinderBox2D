@@ -16,55 +16,55 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_WORLD_CALLBACKS_H
-#define B2_WORLD_CALLBACKS_H
+#ifndef CB2_WORLD_CALLBACKS_H
+#define CB2_WORLD_CALLBACKS_H
 
 #include <CinderBox2D/Common/cb2Settings.h>
 #include <CinderBox2D/Common/cb2Math.h>
 
-class b2Fixture;
-class b2Body;
-class b2Joint;
-class b2Contact;
-struct b2ContactResult;
-struct b2Manifold;
+class cb2Fixture;
+class cb2Body;
+class cb2Joint;
+class cb2Contact;
+struct cb2ContactResult;
+struct cb2Manifold;
 
 /// Joints and fixtures are destroyed when their associated
 /// body is destroyed. Implement this listener so that you
 /// may nullify references to these joints and shapes.
-class b2DestructionListener
+class cb2DestructionListener
 {
 public:
-	virtual ~b2DestructionListener() {}
+	virtual ~cb2DestructionListener() {}
 
 	/// Called when any joint is about to be destroyed due
 	/// to the destruction of one of its attached bodies.
-	virtual void SayGoodbye(b2Joint* joint) = 0;
+	virtual void SayGoodbye(cb2Joint* joint) = 0;
 
 	/// Called when any fixture is about to be destroyed due
 	/// to the destruction of its parent body.
-	virtual void SayGoodbye(b2Fixture* fixture) = 0;
+	virtual void SayGoodbye(cb2Fixture* fixture) = 0;
 };
 
 /// Implement this class to provide collision filtering. In other words, you can implement
 /// this class if you want finer control over contact creation.
-class b2ContactFilter
+class cb2ContactFilter
 {
 public:
-	virtual ~b2ContactFilter() {}
+	virtual ~cb2ContactFilter() {}
 
 	/// Return true if contact calculations should be performed between these two shapes.
 	/// @warning for performance reasons this is only called when the AABBs begin to overlap.
-	virtual bool ShouldCollide(b2Fixture* fixtureA, b2Fixture* fixtureB);
+	virtual bool ShouldCollide(cb2Fixture* fixtureA, cb2Fixture* fixtureB);
 };
 
 /// Contact impulses for reporting. Impulses are used instead of forces because
 /// sub-step forces may approach infinity for rigid body collisions. These
-/// match up one-to-one with the contact points in b2Manifold.
-struct b2ContactImpulse
+/// match up one-to-one with the contact points in cb2Manifold.
+struct cb2ContactImpulse
 {
-	float normalImpulses[b2_maxManifoldPoints];
-	float tangentImpulses[b2_maxManifoldPoints];
+	float normalImpulses[cb2_maxManifoldPoints];
+	float tangentImpulses[cb2_maxManifoldPoints];
 	int count;
 };
 
@@ -77,16 +77,16 @@ struct b2ContactImpulse
 /// You should strive to make your callbacks efficient because there may be
 /// many callbacks per time step.
 /// @warning You cannot create/destroy Box2D entities inside these callbacks.
-class b2ContactListener
+class cb2ContactListener
 {
 public:
-	virtual ~b2ContactListener() {}
+	virtual ~cb2ContactListener() {}
 
 	/// Called when two fixtures begin to touch.
-	virtual void BeginContact(b2Contact* contact) { B2_NOT_USED(contact); }
+	virtual void BeginContact(cb2Contact* contact) { CB2_NOT_USED(contact); }
 
 	/// Called when two fixtures cease to touch.
-	virtual void EndContact(b2Contact* contact) { B2_NOT_USED(contact); }
+	virtual void EndContact(cb2Contact* contact) { CB2_NOT_USED(contact); }
 
 	/// This is called after a contact is updated. This allows you to inspect a
 	/// contact before it goes to the solver. If you are careful, you can modify the
@@ -98,10 +98,10 @@ public:
 	/// Note: if you set the number of contact points to zero, you will not
 	/// get an EndContact callback. However, you may get a BeginContact callback
 	/// the next step.
-	virtual void PreSolve(b2Contact* contact, const b2Manifold* oldManifold)
+	virtual void PreSolve(cb2Contact* contact, const cb2Manifold* oldManifold)
 	{
-		B2_NOT_USED(contact);
-		B2_NOT_USED(oldManifold);
+		CB2_NOT_USED(contact);
+		CB2_NOT_USED(oldManifold);
 	}
 
 	/// This lets you inspect a contact after the solver is finished. This is useful
@@ -110,31 +110,31 @@ public:
 	/// arbitrarily large if the sub-step is small. Hence the impulse is provided explicitly
 	/// in a separate data structure.
 	/// Note: this is only called for contacts that are touching, solid, and awake.
-	virtual void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse)
+	virtual void PostSolve(cb2Contact* contact, const cb2ContactImpulse* impulse)
 	{
-		B2_NOT_USED(contact);
-		B2_NOT_USED(impulse);
+		CB2_NOT_USED(contact);
+		CB2_NOT_USED(impulse);
 	}
 };
 
 /// Callback class for AABB queries.
-/// See b2World::Query
-class b2QueryCallback
+/// See cb2World::Query
+class cb2QueryCallback
 {
 public:
-	virtual ~b2QueryCallback() {}
+	virtual ~cb2QueryCallback() {}
 
 	/// Called for each fixture found in the query AABB.
 	/// @return false to terminate the query.
-	virtual bool ReportFixture(b2Fixture* fixture) = 0;
+	virtual bool ReportFixture(cb2Fixture* fixture) = 0;
 };
 
 /// Callback class for ray casts.
-/// See b2World::RayCast
-class b2RayCastCallback
+/// See cb2World::RayCast
+class cb2RayCastCallback
 {
 public:
-	virtual ~b2RayCastCallback() {}
+	virtual ~cb2RayCastCallback() {}
 
 	/// Called for each fixture found in the query. You control how the ray cast
 	/// proceeds by returning a float:
@@ -147,7 +147,7 @@ public:
 	/// @param normal the normal vector at the point of intersection
 	/// @return -1 to filter, 0 to terminate, fraction to clip the ray for
 	/// closest hit, 1 to continue
-	virtual float ReportFixture(	b2Fixture* fixture, const ci::Vec2f& point,
+	virtual float ReportFixture(	cb2Fixture* fixture, const ci::Vec2f& point,
 									const ci::Vec2f& normal, float fraction) = 0;
 };
 

@@ -16,18 +16,18 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_PULLEY_JOINT_H
-#define B2_PULLEY_JOINT_H
+#ifndef CB2_PULLEY_JOINT_H
+#define CB2_PULLEY_JOINT_H
 
 #include <CinderBox2D/Dynamics/Joints/cb2Joint.h>
 
-const float b2_minPulleyLength = 2.0f;
+const float cb2_minPulleyLength = 2.0f;
 
 /// Pulley joint definition. This requires two ground anchors,
 /// two dynamic body anchor points, and a pulley ratio.
-struct b2PulleyJointDef : public b2JointDef
+struct cb2PulleyJointDef : public cb2JointDef
 {
-	b2PulleyJointDef()
+	cb2PulleyJointDef()
 	{
 		type = e_pulleyJoint;
 		groundAnchorA.set(-1.0f, 1.0f);
@@ -41,7 +41,7 @@ struct b2PulleyJointDef : public b2JointDef
 	}
 
 	/// Initialize the bodies, anchors, lengths, max lengths, and ratio using the world anchors.
-	void Initialize(b2Body* bodyA, b2Body* bodyB,
+	void Initialize(cb2Body* bodyA, cb2Body* bodyB,
 					const ci::Vec2f& groundAnchorA, const ci::Vec2f& groundAnchorB,
 					const ci::Vec2f& anchorA, const ci::Vec2f& anchorB,
 					float ratio);
@@ -76,7 +76,7 @@ struct b2PulleyJointDef : public b2JointDef
 /// work better when combined with prismatic joints. You should also cover the
 /// the anchor points with static shapes to prevent one side from going to
 /// zero length.
-class b2PulleyJoint : public b2Joint
+class cb2PulleyJoint : public cb2Joint
 {
 public:
 	ci::Vec2f GetAnchorA() const;
@@ -109,17 +109,17 @@ public:
 	/// Dump joint to dmLog
 	void Dump();
 
-	/// Implement b2Joint::ShiftOrigin
+	/// Implement cb2Joint::ShiftOrigin
 	void ShiftOrigin(const ci::Vec2f& newOrigin);
 
 protected:
 
-	friend class b2Joint;
-	b2PulleyJoint(const b2PulleyJointDef* data);
+	friend class cb2Joint;
+	cb2PulleyJoint(const cb2PulleyJointDef* data);
 
-	void InitVelocityConstraints(const b2SolverData& data);
-	void SolveVelocityConstraints(const b2SolverData& data);
-	bool SolvePositionConstraints(const b2SolverData& data);
+	void InitVelocityConstraints(const cb2SolverData& data);
+	void SolveVelocityConstraints(const cb2SolverData& data);
+	bool SolvePositionConstraints(const cb2SolverData& data);
 
 	ci::Vec2f m_groundAnchorA;
 	ci::Vec2f m_groundAnchorB;

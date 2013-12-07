@@ -29,8 +29,8 @@
 // K = J * invM * JT
 //   = invMassA + invIA * cross(rA, u)^2 + invMassB + invIB * cross(rB, u)^2
 
-b2RopeJoint::b2RopeJoint(const b2RopeJointDef* def)
-: b2Joint(def)
+cb2RopeJoint::cb2RopeJoint(const cb2RopeJointDef* def)
+: cb2Joint(def)
 {
 	m_localAnchorA = def->localAnchorA;
 	m_localAnchorB = def->localAnchorB;
@@ -43,7 +43,7 @@ b2RopeJoint::b2RopeJoint(const b2RopeJointDef* def)
 	m_length = 0.0f;
 }
 
-void b2RopeJoint::InitVelocityConstraints(const b2SolverData& data)
+void cb2RopeJoint::InitVelocityConstraints(const cb2SolverData& data)
 {
 	m_indexA = m_bodyA->m_islandIndex;
 	m_indexB = m_bodyB->m_islandIndex;
@@ -64,10 +64,10 @@ void b2RopeJoint::InitVelocityConstraints(const b2SolverData& data)
 	ci::Vec2f vB = data.velocities[m_indexB].v;
 	float wB = data.velocities[m_indexB].w;
 
-	b2Rot qA(aA), qB(aB);
+	cb2Rot qA(aA), qB(aB);
 
-	m_rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-	m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
+	m_rA = cb2Mul(qA, m_localAnchorA - m_localCenterA);
+	m_rB = cb2Mul(qB, m_localAnchorB - m_localCenterB);
 	m_u = cB + m_rB - cA - m_rA;
 
 	m_length = m_u.length();
@@ -82,7 +82,7 @@ void b2RopeJoint::InitVelocityConstraints(const b2SolverData& data)
 		m_state = e_inactiveLimit;
 	}
 
-	if (m_length > b2_linearSlop)
+	if (m_length > cb2_linearSlop)
 	{
 		m_u *= 1.0f / m_length;
 	}
@@ -95,8 +95,8 @@ void b2RopeJoint::InitVelocityConstraints(const b2SolverData& data)
 	}
 
 	// Compute effective mass.
-	float crA = b2Cross(m_rA, m_u);
-	float crB = b2Cross(m_rB, m_u);
+	float crA = cb2Cross(m_rA, m_u);
+	float crB = cb2Cross(m_rB, m_u);
 	float invMass = m_invMassA + m_invIA * crA * crA + m_invMassB + m_invIB * crB * crB;
 
 	m_mass = invMass != 0.0f ? 1.0f / invMass : 0.0f;
@@ -108,9 +108,9 @@ void b2RopeJoint::InitVelocityConstraints(const b2SolverData& data)
 
 		ci::Vec2f P = m_impulse * m_u;
 		vA -= m_invMassA * P;
-		wA -= m_invIA * b2Cross(m_rA, P);
+		wA -= m_invIA * cb2Cross(m_rA, P);
 		vB += m_invMassB * P;
-		wB += m_invIB * b2Cross(m_rB, P);
+		wB += m_invIB * cb2Cross(m_rB, P);
 	}
 	else
 	{
@@ -123,7 +123,7 @@ void b2RopeJoint::InitVelocityConstraints(const b2SolverData& data)
 	data.velocities[m_indexB].w = wB;
 }
 
-void b2RopeJoint::SolveVelocityConstraints(const b2SolverData& data)
+void cb2RopeJoint::SolveVelocityConstraints(const cb2SolverData& data)
 {
 	ci::Vec2f vA = data.velocities[m_indexA].v;
 	float wA = data.velocities[m_indexA].w;
@@ -131,10 +131,10 @@ void b2RopeJoint::SolveVelocityConstraints(const b2SolverData& data)
 	float wB = data.velocities[m_indexB].w;
 
 	// Cdot = dot(u, v + cross(w, r))
-	ci::Vec2f vpA = vA + b2Cross(wA, m_rA);
-	ci::Vec2f vpB = vB + b2Cross(wB, m_rB);
+	ci::Vec2f vpA = vA + cb2Cross(wA, m_rA);
+	ci::Vec2f vpB = vB + cb2Cross(wB, m_rB);
 	float C = m_length - m_maxLength;
-	float Cdot = b2Dot(m_u, vpB - vpA);
+	float Cdot = cb2Dot(m_u, vpB - vpA);
 
 	// Predictive constraint.
 	if (C < 0.0f)
@@ -144,14 +144,14 @@ void b2RopeJoint::SolveVelocityConstraints(const b2SolverData& data)
 
 	float impulse = -m_mass * Cdot;
 	float oldImpulse = m_impulse;
-	m_impulse = b2Min(0.0f, m_impulse + impulse);
+	m_impulse = cb2Min(0.0f, m_impulse + impulse);
 	impulse = m_impulse - oldImpulse;
 
 	ci::Vec2f P = impulse * m_u;
 	vA -= m_invMassA * P;
-	wA -= m_invIA * b2Cross(m_rA, P);
+	wA -= m_invIA * cb2Cross(m_rA, P);
 	vB += m_invMassB * P;
-	wB += m_invIB * b2Cross(m_rB, P);
+	wB += m_invIB * cb2Cross(m_rB, P);
 
 	data.velocities[m_indexA].v = vA;
 	data.velocities[m_indexA].w = wA;
@@ -159,84 +159,84 @@ void b2RopeJoint::SolveVelocityConstraints(const b2SolverData& data)
 	data.velocities[m_indexB].w = wB;
 }
 
-bool b2RopeJoint::SolvePositionConstraints(const b2SolverData& data)
+bool cb2RopeJoint::SolvePositionConstraints(const cb2SolverData& data)
 {
 	ci::Vec2f cA = data.positions[m_indexA].c;
 	float aA = data.positions[m_indexA].a;
 	ci::Vec2f cB = data.positions[m_indexB].c;
 	float aB = data.positions[m_indexB].a;
 
-	b2Rot qA(aA), qB(aB);
+	cb2Rot qA(aA), qB(aB);
 
-	ci::Vec2f rA = b2Mul(qA, m_localAnchorA - m_localCenterA);
-	ci::Vec2f rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
+	ci::Vec2f rA = cb2Mul(qA, m_localAnchorA - m_localCenterA);
+	ci::Vec2f rB = cb2Mul(qB, m_localAnchorB - m_localCenterB);
 	ci::Vec2f u = cB + rB - cA - rA;
   
 	float length = u.length();
   u /= length;
 	float C = length - m_maxLength;
 
-	C = b2Clamp(C, 0.0f, b2_maxLinearCorrection);
+	C = cb2Clamp(C, 0.0f, cb2_maxLinearCorrection);
 
 	float impulse = -m_mass * C;
 	ci::Vec2f P = impulse * u;
 
 	cA -= m_invMassA * P;
-	aA -= m_invIA * b2Cross(rA, P);
+	aA -= m_invIA * cb2Cross(rA, P);
 	cB += m_invMassB * P;
-	aB += m_invIB * b2Cross(rB, P);
+	aB += m_invIB * cb2Cross(rB, P);
 
 	data.positions[m_indexA].c = cA;
 	data.positions[m_indexA].a = aA;
 	data.positions[m_indexB].c = cB;
 	data.positions[m_indexB].a = aB;
 
-	return length - m_maxLength < b2_linearSlop;
+	return length - m_maxLength < cb2_linearSlop;
 }
 
-ci::Vec2f b2RopeJoint::GetAnchorA() const
+ci::Vec2f cb2RopeJoint::GetAnchorA() const
 {
 	return m_bodyA->GetWorldPoint(m_localAnchorA);
 }
 
-ci::Vec2f b2RopeJoint::GetAnchorB() const
+ci::Vec2f cb2RopeJoint::GetAnchorB() const
 {
 	return m_bodyB->GetWorldPoint(m_localAnchorB);
 }
 
-ci::Vec2f b2RopeJoint::GetReactionForce(float inv_dt) const
+ci::Vec2f cb2RopeJoint::GetReactionForce(float inv_dt) const
 {
 	ci::Vec2f F = (inv_dt * m_impulse) * m_u;
 	return F;
 }
 
-float b2RopeJoint::GetReactionTorque(float inv_dt) const
+float cb2RopeJoint::GetReactionTorque(float inv_dt) const
 {
-	B2_NOT_USED(inv_dt);
+	CB2_NOT_USED(inv_dt);
 	return 0.0f;
 }
 
-float b2RopeJoint::GetMaxLength() const
+float cb2RopeJoint::GetMaxLength() const
 {
 	return m_maxLength;
 }
 
-b2LimitState b2RopeJoint::GetLimitState() const
+cb2LimitState cb2RopeJoint::GetLimitState() const
 {
 	return m_state;
 }
 
-void b2RopeJoint::Dump()
+void cb2RopeJoint::Dump()
 {
 	int indexA = m_bodyA->m_islandIndex;
 	int indexB = m_bodyB->m_islandIndex;
 
-	b2Log("  b2RopeJointDef jd;\n");
-	b2Log("  jd.bodyA = bodies[%d];\n", indexA);
-	b2Log("  jd.bodyB = bodies[%d];\n", indexB);
-	b2Log("  jd.collideConnected = bool(%d);\n", m_collideConnected);
-	b2Log("  jd.localAnchorA.set(%.15lef, %.15lef);\n", m_localAnchorA.x, m_localAnchorA.y);
-	b2Log("  jd.localAnchorB.set(%.15lef, %.15lef);\n", m_localAnchorB.x, m_localAnchorB.y);
-	b2Log("  jd.maxLength = %.15lef;\n", m_maxLength);
-	b2Log("  joints[%d] = m_world->CreateJoint(&jd);\n", m_index);
+	cb2Log("  cb2RopeJointDef jd;\n");
+	cb2Log("  jd.bodyA = bodies[%d];\n", indexA);
+	cb2Log("  jd.bodyB = bodies[%d];\n", indexB);
+	cb2Log("  jd.collideConnected = bool(%d);\n", m_collideConnected);
+	cb2Log("  jd.localAnchorA.set(%.15lef, %.15lef);\n", m_localAnchorA.x, m_localAnchorA.y);
+	cb2Log("  jd.localAnchorB.set(%.15lef, %.15lef);\n", m_localAnchorB.x, m_localAnchorB.y);
+	cb2Log("  jd.maxLength = %.15lef;\n", m_maxLength);
+	cb2Log("  joints[%d] = m_world->CreateJoint(&jd);\n", m_index);
 }

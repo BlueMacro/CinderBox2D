@@ -16,17 +16,17 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_JOINT_H
-#define B2_JOINT_H
+#ifndef CB2_JOINT_H
+#define CB2_JOINT_H
 
 #include <CinderBox2D/Common/cb2Math.h>
 
-class b2Body;
-class b2Joint;
-struct b2SolverData;
-class b2BlockAllocator;
+class cb2Body;
+class cb2Joint;
+struct cb2SolverData;
+class cb2BlockAllocator;
 
-enum b2JointType
+enum cb2JointType
 {
 	e_unknownJoint,
 	e_revoluteJoint,
@@ -42,7 +42,7 @@ enum b2JointType
 	e_motorJoint
 };
 
-enum b2LimitState
+enum cb2LimitState
 {
 	e_inactiveLimit,
 	e_atLowerLimit,
@@ -50,7 +50,7 @@ enum b2LimitState
 	e_equalLimits
 };
 
-struct b2Jacobian
+struct cb2Jacobian
 {
 	ci::Vec2f linear;
 	float angularA;
@@ -62,18 +62,18 @@ struct b2Jacobian
 /// is an edge. A joint edge belongs to a doubly linked list
 /// maintained in each attached body. Each joint has two joint
 /// nodes, one for each attached body.
-struct b2JointEdge
+struct cb2JointEdge
 {
-	b2Body* other;			///< provides quick access to the other body attached.
-	b2Joint* joint;			///< the joint
-	b2JointEdge* prev;		///< the previous joint edge in the body's joint list
-	b2JointEdge* next;		///< the next joint edge in the body's joint list
+	cb2Body* other;			///< provides quick access to the other body attached.
+	cb2Joint* joint;			///< the joint
+	cb2JointEdge* prev;		///< the previous joint edge in the body's joint list
+	cb2JointEdge* next;		///< the next joint edge in the body's joint list
 };
 
 /// Joint definitions are used to construct joints.
-struct b2JointDef
+struct cb2JointDef
 {
-	b2JointDef()
+	cb2JointDef()
 	{
 		type = e_unknownJoint;
 		userData = NULL;
@@ -83,16 +83,16 @@ struct b2JointDef
 	}
 
 	/// The joint type is set automatically for concrete joint types.
-	b2JointType type;
+	cb2JointType type;
 
 	/// Use this to attach application specific data to your joints.
 	void* userData;
 
 	/// The first attached body.
-	b2Body* bodyA;
+	cb2Body* bodyA;
 
 	/// The second attached body.
-	b2Body* bodyB;
+	cb2Body* bodyB;
 
 	/// set this flag to true if the attached bodies should collide.
 	bool collideConnected;
@@ -100,18 +100,18 @@ struct b2JointDef
 
 /// The base joint class. Joints are used to constraint two bodies together in
 /// various fashions. Some joints also feature limits and motors.
-class b2Joint
+class cb2Joint
 {
 public:
 
 	/// Get the type of the concrete joint.
-	b2JointType GetType() const;
+	cb2JointType GetType() const;
 
 	/// Get the first body attached to this joint.
-	b2Body* GetBodyA();
+	cb2Body* GetBodyA();
 
 	/// Get the second body attached to this joint.
-	b2Body* GetBodyB();
+	cb2Body* GetBodyB();
 
 	/// Get the anchor point on bodyA in world coordinates.
 	virtual ci::Vec2f GetAnchorA() const = 0;
@@ -126,8 +126,8 @@ public:
 	virtual float GetReactionTorque(float inv_dt) const = 0;
 
 	/// Get the next joint the world joint list.
-	b2Joint* GetNext();
-	const b2Joint* GetNext() const;
+	cb2Joint* GetNext();
+	const cb2Joint* GetNext() const;
 
 	/// Get the user data pointer.
 	void* GetUserData() const;
@@ -144,36 +144,36 @@ public:
 	bool GetCollideConnected() const;
 
 	/// Dump this joint to the log file.
-	virtual void Dump() { b2Log("// Dump is not supported for this joint type.\n"); }
+	virtual void Dump() { cb2Log("// Dump is not supported for this joint type.\n"); }
 
 	/// Shift the origin for any points stored in world coordinates.
-	virtual void ShiftOrigin(const ci::Vec2f& newOrigin) { B2_NOT_USED(newOrigin);  }
+	virtual void ShiftOrigin(const ci::Vec2f& newOrigin) { CB2_NOT_USED(newOrigin);  }
 
 protected:
-	friend class b2World;
-	friend class b2Body;
-	friend class b2Island;
-	friend class b2GearJoint;
+	friend class cb2World;
+	friend class cb2Body;
+	friend class cb2Island;
+	friend class cb2GearJoint;
 
-	static b2Joint* Create(const b2JointDef* def, b2BlockAllocator* allocator);
-	static void Destroy(b2Joint* joint, b2BlockAllocator* allocator);
+	static cb2Joint* Create(const cb2JointDef* def, cb2BlockAllocator* allocator);
+	static void Destroy(cb2Joint* joint, cb2BlockAllocator* allocator);
 
-	b2Joint(const b2JointDef* def);
-	virtual ~b2Joint() {}
+	cb2Joint(const cb2JointDef* def);
+	virtual ~cb2Joint() {}
 
-	virtual void InitVelocityConstraints(const b2SolverData& data) = 0;
-	virtual void SolveVelocityConstraints(const b2SolverData& data) = 0;
+	virtual void InitVelocityConstraints(const cb2SolverData& data) = 0;
+	virtual void SolveVelocityConstraints(const cb2SolverData& data) = 0;
 
 	// This returns true if the position errors are within tolerance.
-	virtual bool SolvePositionConstraints(const b2SolverData& data) = 0;
+	virtual bool SolvePositionConstraints(const cb2SolverData& data) = 0;
 
-	b2JointType m_type;
-	b2Joint* m_prev;
-	b2Joint* m_next;
-	b2JointEdge m_edgeA;
-	b2JointEdge m_edgeB;
-	b2Body* m_bodyA;
-	b2Body* m_bodyB;
+	cb2JointType m_type;
+	cb2Joint* m_prev;
+	cb2Joint* m_next;
+	cb2JointEdge m_edgeA;
+	cb2JointEdge m_edgeB;
+	cb2Body* m_bodyA;
+	cb2Body* m_bodyB;
 
 	int m_index;
 
@@ -183,42 +183,42 @@ protected:
 	void* m_userData;
 };
 
-inline b2JointType b2Joint::GetType() const
+inline cb2JointType cb2Joint::GetType() const
 {
 	return m_type;
 }
 
-inline b2Body* b2Joint::GetBodyA()
+inline cb2Body* cb2Joint::GetBodyA()
 {
 	return m_bodyA;
 }
 
-inline b2Body* b2Joint::GetBodyB()
+inline cb2Body* cb2Joint::GetBodyB()
 {
 	return m_bodyB;
 }
 
-inline b2Joint* b2Joint::GetNext()
+inline cb2Joint* cb2Joint::GetNext()
 {
 	return m_next;
 }
 
-inline const b2Joint* b2Joint::GetNext() const
+inline const cb2Joint* cb2Joint::GetNext() const
 {
 	return m_next;
 }
 
-inline void* b2Joint::GetUserData() const
+inline void* cb2Joint::GetUserData() const
 {
 	return m_userData;
 }
 
-inline void b2Joint::SetUserData(void* data)
+inline void cb2Joint::SetUserData(void* data)
 {
 	m_userData = data;
 }
 
-inline bool b2Joint::GetCollideConnected() const
+inline bool cb2Joint::GetCollideConnected() const
 {
 	return m_collideConnected;
 }

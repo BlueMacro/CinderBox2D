@@ -16,24 +16,24 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_EDGE_AND_CIRCLE_CONTACT_H
-#define B2_EDGE_AND_CIRCLE_CONTACT_H
+#ifndef CB2_EDGE_AND_CIRCLE_CONTACT_H
+#define CB2_EDGE_AND_CIRCLE_CONTACT_H
 
 #include <CinderBox2D/Dynamics/Contacts/cb2Contact.h>
 
-class b2BlockAllocator;
+class cb2BlockAllocator;
 
-class b2EdgeAndCircleContact : public b2Contact
+class cb2EdgeAndCircleContact : public cb2Contact
 {
 public:
-	static b2Contact* Create(	b2Fixture* fixtureA, int indexA,
-								b2Fixture* fixtureB, int indexB, b2BlockAllocator* allocator);
-	static void Destroy(b2Contact* contact, b2BlockAllocator* allocator);
+	static cb2Contact* Create(	cb2Fixture* fixtureA, int indexA,
+								cb2Fixture* fixtureB, int indexB, cb2BlockAllocator* allocator);
+	static void Destroy(cb2Contact* contact, cb2BlockAllocator* allocator);
 
-	b2EdgeAndCircleContact(b2Fixture* fixtureA, b2Fixture* fixtureB);
-	~b2EdgeAndCircleContact() {}
+	cb2EdgeAndCircleContact(cb2Fixture* fixtureA, cb2Fixture* fixtureB);
+	~cb2EdgeAndCircleContact() {}
 
-	void Evaluate(b2Manifold* manifold, const b2Transform& xfA, const b2Transform& xfB);
+	void Evaluate(cb2Manifold* manifold, const cb2Transform& xfA, const cb2Transform& xfB);
 };
 
 #endif

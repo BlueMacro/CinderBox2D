@@ -16,17 +16,17 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_WELD_JOINT_H
-#define B2_WELD_JOINT_H
+#ifndef CB2_WELD_JOINT_H
+#define CB2_WELD_JOINT_H
 
 #include <CinderBox2D/Dynamics/Joints/cb2Joint.h>
 
 /// Weld joint definition. You need to specify local anchor points
 /// where they are attached and the relative body angle. The position
 /// of the anchor points is important for computing the reaction torque.
-struct b2WeldJointDef : public b2JointDef
+struct cb2WeldJointDef : public cb2JointDef
 {
-	b2WeldJointDef()
+	cb2WeldJointDef()
 	{
 		type = e_weldJoint;
 		localAnchorA.set(0.0f, 0.0f);
@@ -38,7 +38,7 @@ struct b2WeldJointDef : public b2JointDef
 
 	/// Initialize the bodies, anchors, and reference angle using a world
 	/// anchor point.
-	void Initialize(b2Body* bodyA, b2Body* bodyB, const ci::Vec2f& anchor);
+	void Initialize(cb2Body* bodyA, cb2Body* bodyB, const ci::Vec2f& anchor);
 
 	/// The local anchor point relative to bodyA's origin.
 	ci::Vec2f localAnchorA;
@@ -59,7 +59,7 @@ struct b2WeldJointDef : public b2JointDef
 
 /// A weld joint essentially glues two bodies together. A weld joint may
 /// distort somewhat because the island constraint solver is approximate.
-class b2WeldJoint : public b2Joint
+class cb2WeldJoint : public cb2Joint
 {
 public:
 	ci::Vec2f GetAnchorA() const;
@@ -85,18 +85,18 @@ public:
 	void SetDampingRatio(float ratio) { m_dampingRatio = ratio; }
 	float GetDampingRatio() const { return m_dampingRatio; }
 
-	/// Dump to b2Log
+	/// Dump to cb2Log
 	void Dump();
 
 protected:
 
-	friend class b2Joint;
+	friend class cb2Joint;
 
-	b2WeldJoint(const b2WeldJointDef* def);
+	cb2WeldJoint(const cb2WeldJointDef* def);
 
-	void InitVelocityConstraints(const b2SolverData& data);
-	void SolveVelocityConstraints(const b2SolverData& data);
-	bool SolvePositionConstraints(const b2SolverData& data);
+	void InitVelocityConstraints(const cb2SolverData& data);
+	void SolveVelocityConstraints(const cb2SolverData& data);
+	bool SolvePositionConstraints(const cb2SolverData& data);
 
 	float m_frequencyHz;
 	float m_dampingRatio;

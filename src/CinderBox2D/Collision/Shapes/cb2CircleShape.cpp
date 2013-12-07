@@ -19,53 +19,53 @@
 #include <CinderBox2D/Collision/Shapes/cb2CircleShape.h>
 #include <new>
 
-b2Shape* b2CircleShape::Clone(b2BlockAllocator* allocator) const
+cb2Shape* cb2CircleShape::Clone(cb2BlockAllocator* allocator) const
 {
-	void* mem = allocator->Allocate(sizeof(b2CircleShape));
-	b2CircleShape* clone = new (mem) b2CircleShape;
+	void* mem = allocator->Allocate(sizeof(cb2CircleShape));
+	cb2CircleShape* clone = new (mem) cb2CircleShape;
 	*clone = *this;
 	return clone;
 }
 
-int b2CircleShape::GetChildCount() const
+int cb2CircleShape::GetChildCount() const
 {
 	return 1;
 }
 
-bool b2CircleShape::TestPoint(const b2Transform& transform, const ci::Vec2f& p) const
+bool cb2CircleShape::TestPoint(const cb2Transform& transform, const ci::Vec2f& p) const
 {
-	ci::Vec2f center = transform.p + b2Mul(transform.q, m_p);
+	ci::Vec2f center = transform.p + cb2Mul(transform.q, m_p);
 	ci::Vec2f d = p - center;
-	return b2Dot(d, d) <= m_radius * m_radius;
+	return cb2Dot(d, d) <= m_radius * m_radius;
 }
 
 // Collision Detection in Interactive 3D Environments by Gino van den Bergen
 // From Section 3.1.2
 // x = s + a * r
 // norm(x) = radius
-bool b2CircleShape::RayCast(b2RayCastOutput* output, const b2RayCastInput& input,
-							const b2Transform& transform, int childIndex) const
+bool cb2CircleShape::RayCast(cb2RayCastOutput* output, const cb2RayCastInput& input,
+							const cb2Transform& transform, int childIndex) const
 {
-	B2_NOT_USED(childIndex);
+	CB2_NOT_USED(childIndex);
 
-	ci::Vec2f position = transform.p + b2Mul(transform.q, m_p);
+	ci::Vec2f position = transform.p + cb2Mul(transform.q, m_p);
 	ci::Vec2f s = input.p1 - position;
-	float b = b2Dot(s, s) - m_radius * m_radius;
+	float b = cb2Dot(s, s) - m_radius * m_radius;
 
 	// Solve quadratic equation.
 	ci::Vec2f r = input.p2 - input.p1;
-	float c =  b2Dot(s, r);
-	float rr = b2Dot(r, r);
+	float c =  cb2Dot(s, r);
+	float rr = cb2Dot(r, r);
 	float sigma = c * c - rr * b;
 
 	// Check for negative discriminant and short segment.
-	if (sigma < 0.0f || rr < b2_epsilon)
+	if (sigma < 0.0f || rr < cb2_epsilon)
 	{
 		return false;
 	}
 
 	// Find the point of intersection of the line with the circle.
-	float a = -(c + b2Sqrt(sigma));
+	float a = -(c + cb2Sqrt(sigma));
 
 	// Is the intersection point on the segment?
 	if (0.0f <= a && a <= input.maxFraction * rr)
@@ -80,20 +80,20 @@ bool b2CircleShape::RayCast(b2RayCastOutput* output, const b2RayCastInput& input
 	return false;
 }
 
-void b2CircleShape::ComputeAABB(b2AABB* aabb, const b2Transform& transform, int childIndex) const
+void cb2CircleShape::ComputeAABB(cb2AABB* aabb, const cb2Transform& transform, int childIndex) const
 {
-	B2_NOT_USED(childIndex);
+	CB2_NOT_USED(childIndex);
 
-	ci::Vec2f p = transform.p + b2Mul(transform.q, m_p);
+	ci::Vec2f p = transform.p + cb2Mul(transform.q, m_p);
 	aabb->lowerBound.set(p.x - m_radius, p.y - m_radius);
 	aabb->upperBound.set(p.x + m_radius, p.y + m_radius);
 }
 
-void b2CircleShape::ComputeMass(b2MassData* massData, float density) const
+void cb2CircleShape::ComputeMass(cb2MassData* massData, float density) const
 {
-	massData->mass = density * b2_pi * m_radius * m_radius;
+	massData->mass = density * cb2_pi * m_radius * m_radius;
 	massData->center = m_p;
 
 	// inertia about the local origin
-	massData->I = massData->mass * (0.5f * m_radius * m_radius + b2Dot(m_p, m_p));
+	massData->I = massData->mass * (0.5f * m_radius * m_radius + cb2Dot(m_p, m_p));
 }

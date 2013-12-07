@@ -16,8 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_WORLD_H
-#define B2_WORLD_H
+#ifndef CB2_WORLD_H
+#define CB2_WORLD_H
 
 #include <CinderBox2D/Common/cb2Math.h>
 #include <CinderBox2D/Common/cb2BlockAllocator.h>
@@ -26,65 +26,65 @@
 #include <CinderBox2D/Dynamics/cb2WorldCallbacks.h>
 #include <CinderBox2D/Dynamics/cb2TimeStep.h>
 
-struct b2AABB;
-struct b2BodyDef;
-struct b2Color;
-struct b2JointDef;
-class b2Body;
-class b2Draw;
-class b2Fixture;
-class b2Joint;
+struct cb2AABB;
+struct cb2BodyDef;
+struct cb2Color;
+struct cb2JointDef;
+class cb2Body;
+class cb2Draw;
+class cb2Fixture;
+class cb2Joint;
 
 /// The world class manages all physics entities, dynamic simulation,
 /// and asynchronous queries. The world also contains efficient memory
 /// management facilities.
-class b2World
+class cb2World
 {
 public:
 	/// Construct a world object.
 	/// @param gravity the world gravity vector.
-	b2World(const ci::Vec2f& gravity);
+	cb2World(const ci::Vec2f& gravity);
 
 	/// Destruct the world. All physics entities are destroyed and all heap memory is released.
-	~b2World();
+	~cb2World();
 
 	/// Register a destruction listener. The listener is owned by you and must
 	/// remain in scope.
-	void SetDestructionListener(b2DestructionListener* listener);
+	void SetDestructionListener(cb2DestructionListener* listener);
 
 	/// Register a contact filter to provide specific control over collision.
-	/// Otherwise the default filter is used (b2_defaultFilter). The listener is
+	/// Otherwise the default filter is used (cb2_defaultFilter). The listener is
 	/// owned by you and must remain in scope. 
-	void SetContactFilter(b2ContactFilter* filter);
+	void SetContactFilter(cb2ContactFilter* filter);
 
 	/// Register a contact event listener. The listener is owned by you and must
 	/// remain in scope.
-	void SetContactListener(b2ContactListener* listener);
+	void SetContactListener(cb2ContactListener* listener);
 
 	/// Register a routine for debug drawing. The debug draw functions are called
-	/// inside with b2World::DrawDebugData method. The debug draw object is owned
+	/// inside with cb2World::DrawDebugData method. The debug draw object is owned
 	/// by you and must remain in scope.
-	void SetDebugDraw(b2Draw* debugDraw);
+	void SetDebugDraw(cb2Draw* debugDraw);
 
 	/// Create a rigid body given a definition. No reference to the definition
 	/// is retained.
 	/// @warning This function is locked during callbacks.
-	b2Body* CreateBody(const b2BodyDef* def);
+	cb2Body* CreateBody(const cb2BodyDef* def);
 
 	/// Destroy a rigid body given a definition. No reference to the definition
 	/// is retained. This function is locked during callbacks.
 	/// @warning This automatically deletes all associated shapes and joints.
 	/// @warning This function is locked during callbacks.
-	void DestroyBody(b2Body* body);
+	void DestroyBody(cb2Body* body);
 
 	/// Create a joint to constrain bodies together. No reference to the definition
 	/// is retained. This may cause the connected bodies to cease colliding.
 	/// @warning This function is locked during callbacks.
-	b2Joint* CreateJoint(const b2JointDef* def);
+	cb2Joint* CreateJoint(const cb2JointDef* def);
 
 	/// Destroy a joint. This may cause the connected bodies to begin colliding.
 	/// @warning This function is locked during callbacks.
-	void DestroyJoint(b2Joint* joint);
+	void DestroyJoint(cb2Joint* joint);
 
 	/// Take a time step. This performs collision detection, integration,
 	/// and constraint solution.
@@ -111,7 +111,7 @@ public:
 	/// provided AABB.
 	/// @param callback a user implemented callback class.
 	/// @param aabb the query box.
-	void QueryAABB(b2QueryCallback* callback, const b2AABB& aabb) const;
+	void QueryAABB(cb2QueryCallback* callback, const cb2AABB& aabb) const;
 
 	/// Ray-cast the world for all fixtures in the path of the ray. Your callback
 	/// controls whether you get the closest point, any point, or n-points.
@@ -119,27 +119,27 @@ public:
 	/// @param callback a user implemented callback class.
 	/// @param point1 the ray starting point
 	/// @param point2 the ray ending point
-	void RayCast(b2RayCastCallback* callback, const ci::Vec2f& point1, const ci::Vec2f& point2) const;
+	void RayCast(cb2RayCastCallback* callback, const ci::Vec2f& point1, const ci::Vec2f& point2) const;
 
-	/// Get the world body list. With the returned body, use b2Body::GetNext to get
+	/// Get the world body list. With the returned body, use cb2Body::GetNext to get
 	/// the next body in the world list. A NULL body indicates the end of the list.
 	/// @return the head of the world body list.
-	b2Body* GetBodyList();
-	const b2Body* GetBodyList() const;
+	cb2Body* GetBodyList();
+	const cb2Body* GetBodyList() const;
 
-	/// Get the world joint list. With the returned joint, use b2Joint::GetNext to get
+	/// Get the world joint list. With the returned joint, use cb2Joint::GetNext to get
 	/// the next joint in the world list. A NULL joint indicates the end of the list.
 	/// @return the head of the world joint list.
-	b2Joint* GetJointList();
-	const b2Joint* GetJointList() const;
+	cb2Joint* GetJointList();
+	const cb2Joint* GetJointList() const;
 
-	/// Get the world contact list. With the returned contact, use b2Contact::GetNext to get
+	/// Get the world contact list. With the returned contact, use cb2Contact::GetNext to get
 	/// the next contact in the world list. A NULL contact indicates the end of the list.
 	/// @return the head of the world contact list.
 	/// @warning contacts are created and destroyed in the middle of a time step.
-	/// Use b2ContactListener to avoid missing contacts.
-	b2Contact* GetContactList();
-	const b2Contact* GetContactList() const;
+	/// Use cb2ContactListener to avoid missing contacts.
+	cb2Contact* GetContactList();
+	const cb2Contact* GetContactList() const;
 
 	/// Enable/disable sleep.
 	void SetAllowSleeping(bool flag);
@@ -200,10 +200,10 @@ public:
 	void ShiftOrigin(const ci::Vec2f& newOrigin);
 
 	/// Get the contact manager for testing.
-	const b2ContactManager& GetContactManager() const;
+	const cb2ContactManager& GetContactManager() const;
 
 	/// Get the current profile.
-	const b2Profile& GetProfile() const;
+	const cb2Profile& GetProfile() const;
 
 	/// Dump the world into the log file.
 	/// @warning this should be called outside of a time step.
@@ -219,26 +219,26 @@ private:
 		e_clearForces	= 0x0004
 	};
 
-	friend class b2Body;
-	friend class b2Fixture;
-	friend class b2ContactManager;
-	friend class b2Controller;
+	friend class cb2Body;
+	friend class cb2Fixture;
+	friend class cb2ContactManager;
+	friend class cb2Controller;
 
-	void Solve(const b2TimeStep& step);
-	void SolveTOI(const b2TimeStep& step);
+	void Solve(const cb2TimeStep& step);
+	void SolveTOI(const cb2TimeStep& step);
 
-	void DrawJoint(b2Joint* joint);
-	void DrawShape(b2Fixture* shape, const b2Transform& xf, const b2Color& color);
+	void DrawJoint(cb2Joint* joint);
+	void DrawShape(cb2Fixture* shape, const cb2Transform& xf, const cb2Color& color);
 
-	b2BlockAllocator m_blockAllocator;
-	b2StackAllocator m_stackAllocator;
+	cb2BlockAllocator m_blockAllocator;
+	cb2StackAllocator m_stackAllocator;
 
 	int m_flags;
 
-	b2ContactManager m_contactManager;
+	cb2ContactManager m_contactManager;
 
-	b2Body* m_bodyList;
-	b2Joint* m_jointList;
+	cb2Body* m_bodyList;
+	cb2Joint* m_jointList;
 
 	int m_bodyCount;
 	int m_jointCount;
@@ -246,8 +246,8 @@ private:
 	ci::Vec2f m_gravity;
 	bool m_allowSleep;
 
-	b2DestructionListener* m_destructionListener;
-	b2Draw* g_debugDraw;
+	cb2DestructionListener* m_destructionListener;
+	cb2Draw* g_debugDraw;
 
 	// This is used to compute the time step ratio to
 	// support a variable time step.
@@ -260,70 +260,70 @@ private:
 
 	bool m_stepComplete;
 
-	b2Profile m_profile;
+	cb2Profile m_profile;
 };
 
-inline b2Body* b2World::GetBodyList()
+inline cb2Body* cb2World::GetBodyList()
 {
 	return m_bodyList;
 }
 
-inline const b2Body* b2World::GetBodyList() const
+inline const cb2Body* cb2World::GetBodyList() const
 {
 	return m_bodyList;
 }
 
-inline b2Joint* b2World::GetJointList()
+inline cb2Joint* cb2World::GetJointList()
 {
 	return m_jointList;
 }
 
-inline const b2Joint* b2World::GetJointList() const
+inline const cb2Joint* cb2World::GetJointList() const
 {
 	return m_jointList;
 }
 
-inline b2Contact* b2World::GetContactList()
+inline cb2Contact* cb2World::GetContactList()
 {
 	return m_contactManager.m_contactList;
 }
 
-inline const b2Contact* b2World::GetContactList() const
+inline const cb2Contact* cb2World::GetContactList() const
 {
 	return m_contactManager.m_contactList;
 }
 
-inline int b2World::GetBodyCount() const
+inline int cb2World::GetBodyCount() const
 {
 	return m_bodyCount;
 }
 
-inline int b2World::GetJointCount() const
+inline int cb2World::GetJointCount() const
 {
 	return m_jointCount;
 }
 
-inline int b2World::GetContactCount() const
+inline int cb2World::GetContactCount() const
 {
 	return m_contactManager.m_contactCount;
 }
 
-inline void b2World::SetGravity(const ci::Vec2f& gravity)
+inline void cb2World::SetGravity(const ci::Vec2f& gravity)
 {
 	m_gravity = gravity;
 }
 
-inline ci::Vec2f b2World::GetGravity() const
+inline ci::Vec2f cb2World::GetGravity() const
 {
 	return m_gravity;
 }
 
-inline bool b2World::IsLocked() const
+inline bool cb2World::IsLocked() const
 {
 	return (m_flags & e_locked) == e_locked;
 }
 
-inline void b2World::SetAutoClearForces(bool flag)
+inline void cb2World::SetAutoClearForces(bool flag)
 {
 	if (flag)
 	{
@@ -336,17 +336,17 @@ inline void b2World::SetAutoClearForces(bool flag)
 }
 
 /// Get the flag that controls automatic clearing of forces after each time step.
-inline bool b2World::GetAutoClearForces() const
+inline bool cb2World::GetAutoClearForces() const
 {
 	return (m_flags & e_clearForces) == e_clearForces;
 }
 
-inline const b2ContactManager& b2World::GetContactManager() const
+inline const cb2ContactManager& cb2World::GetContactManager() const
 {
 	return m_contactManager;
 }
 
-inline const b2Profile& b2World::GetProfile() const
+inline const cb2Profile& cb2World::GetProfile() const
 {
 	return m_profile;
 }

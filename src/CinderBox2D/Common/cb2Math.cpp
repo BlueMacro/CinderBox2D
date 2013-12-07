@@ -44,15 +44,15 @@ ci::Vec3f solve( const ci::Matrix33f& A, const ci::Vec3f& b)
   ci::Vec3f ey = A.getColumn(1);
   ci::Vec3f ez = A.getColumn(2);
 
-	float det = b2Dot(ex, b2Cross(ey, ez));
+	float det = cb2Dot(ex, cb2Cross(ey, ez));
 	if (det != 0.0f)
 	{
 		det = 1.0f / det;
 	}
 	ci::Vec3f x;
-	x.x = det * b2Dot(b, b2Cross(ey, ez));
-	x.y = det * b2Dot(ex, b2Cross(b, ez));
-	x.z = det * b2Dot(ex, b2Cross(ey, b));
+	x.x = det * cb2Dot(b, cb2Cross(ey, ez));
+	x.y = det * cb2Dot(ex, cb2Cross(b, ez));
+	x.z = det * cb2Dot(ex, cb2Cross(ey, b));
 	return x;
 }
 
@@ -95,7 +95,7 @@ void getSymInverse33( const ci::Matrix33f& A, ci::Matrix33f* M )
   ci::Vec3f ey = A.getColumn(1);
   ci::Vec3f ez = A.getColumn(2);
 
-	float det = b2Dot(ex, b2Cross(ey, ez));
+	float det = cb2Dot(ex, cb2Cross(ey, ez));
 
 	if (det != 0.0f)
 	{

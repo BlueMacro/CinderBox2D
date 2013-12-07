@@ -16,37 +16,37 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_CONTACT_MANAGER_H
-#define B2_CONTACT_MANAGER_H
+#ifndef CB2_CONTACT_MANAGER_H
+#define CB2_CONTACT_MANAGER_H
 
 #include <CinderBox2D/Collision/cb2BroadPhase.h>
 
-class b2Contact;
-class b2ContactFilter;
-class b2ContactListener;
-class b2BlockAllocator;
+class cb2Contact;
+class cb2ContactFilter;
+class cb2ContactListener;
+class cb2BlockAllocator;
 
-// Delegate of b2World.
-class b2ContactManager
+// Delegate of cb2World.
+class cb2ContactManager
 {
 public:
-	b2ContactManager();
+	cb2ContactManager();
 
 	// Broad-phase callback.
 	void AddPair(void* proxyUserDataA, void* proxyUserDataB);
 
 	void FindNewContacts();
 
-	void Destroy(b2Contact* c);
+	void Destroy(cb2Contact* c);
 
 	void Collide();
             
-	b2BroadPhase m_broadPhase;
-	b2Contact* m_contactList;
+	cb2BroadPhase m_broadPhase;
+	cb2Contact* m_contactList;
 	int m_contactCount;
-	b2ContactFilter* m_contactFilter;
-	b2ContactListener* m_contactListener;
-	b2BlockAllocator* m_allocator;
+	cb2ContactFilter* m_contactFilter;
+	cb2ContactListener* m_contactListener;
+	cb2BlockAllocator* m_allocator;
 };
 
 #endif

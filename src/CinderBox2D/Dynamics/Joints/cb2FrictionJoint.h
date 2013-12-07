@@ -16,15 +16,15 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_FRICTION_JOINT_H
-#define B2_FRICTION_JOINT_H
+#ifndef CB2_FRICTION_JOINT_H
+#define CB2_FRICTION_JOINT_H
 
 #include <CinderBox2D/Dynamics/Joints/cb2Joint.h>
 
 /// Friction joint definition.
-struct b2FrictionJointDef : public b2JointDef
+struct cb2FrictionJointDef : public cb2JointDef
 {
-	b2FrictionJointDef()
+	cb2FrictionJointDef()
 	{
 		type = e_frictionJoint;
 		maxForce = 0.0f;
@@ -33,7 +33,7 @@ struct b2FrictionJointDef : public b2JointDef
 
 	/// Initialize the bodies, anchors, axis, and reference angle using the world
 	/// anchor and world axis.
-	void Initialize(b2Body* bodyA, b2Body* bodyB, const ci::Vec2f& anchor);
+	void Initialize(cb2Body* bodyA, cb2Body* bodyB, const ci::Vec2f& anchor);
 
 	/// The local anchor point relative to bodyA's origin.
 	ci::Vec2f localAnchorA;
@@ -50,7 +50,7 @@ struct b2FrictionJointDef : public b2JointDef
 
 /// Friction joint. This is used for top-down friction.
 /// It provides 2D translational friction and angular friction.
-class b2FrictionJoint : public b2Joint
+class cb2FrictionJoint : public cb2Joint
 {
 public:
 	ci::Vec2f GetAnchorA() const;
@@ -82,13 +82,13 @@ public:
 
 protected:
 
-	friend class b2Joint;
+	friend class cb2Joint;
 
-	b2FrictionJoint(const b2FrictionJointDef* def);
+	cb2FrictionJoint(const cb2FrictionJointDef* def);
 
-	void InitVelocityConstraints(const b2SolverData& data);
-	void SolveVelocityConstraints(const b2SolverData& data);
-	bool SolvePositionConstraints(const b2SolverData& data);
+	void InitVelocityConstraints(const cb2SolverData& data);
+	void SolveVelocityConstraints(const cb2SolverData& data);
+	bool SolvePositionConstraints(const cb2SolverData& data);
 
 	ci::Vec2f m_localAnchorA;
 	ci::Vec2f m_localAnchorB;

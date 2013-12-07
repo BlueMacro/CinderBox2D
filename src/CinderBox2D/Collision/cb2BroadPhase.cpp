@@ -18,26 +18,26 @@
 
 #include <CinderBox2D/Collision/cb2BroadPhase.h>
 
-b2BroadPhase::b2BroadPhase()
+cb2BroadPhase::cb2BroadPhase()
 {
 	m_proxyCount = 0;
 
 	m_pairCapacity = 16;
 	m_pairCount = 0;
-	m_pairBuffer = (b2Pair*)b2Alloc(m_pairCapacity * sizeof(b2Pair));
+	m_pairBuffer = (cb2Pair*)cb2Alloc(m_pairCapacity * sizeof(cb2Pair));
 
 	m_moveCapacity = 16;
 	m_moveCount = 0;
-	m_moveBuffer = (int*)b2Alloc(m_moveCapacity * sizeof(int));
+	m_moveBuffer = (int*)cb2Alloc(m_moveCapacity * sizeof(int));
 }
 
-b2BroadPhase::~b2BroadPhase()
+cb2BroadPhase::~cb2BroadPhase()
 {
-	b2Free(m_moveBuffer);
-	b2Free(m_pairBuffer);
+	cb2Free(m_moveBuffer);
+	cb2Free(m_pairBuffer);
 }
 
-int b2BroadPhase::CreateProxy(const b2AABB& aabb, void* userData)
+int cb2BroadPhase::CreateProxy(const cb2AABB& aabb, void* userData)
 {
 	int proxyId = m_tree.CreateProxy(aabb, userData);
 	++m_proxyCount;
@@ -45,14 +45,14 @@ int b2BroadPhase::CreateProxy(const b2AABB& aabb, void* userData)
 	return proxyId;
 }
 
-void b2BroadPhase::DestroyProxy(int proxyId)
+void cb2BroadPhase::DestroyProxy(int proxyId)
 {
 	UnBufferMove(proxyId);
 	--m_proxyCount;
 	m_tree.DestroyProxy(proxyId);
 }
 
-void b2BroadPhase::MoveProxy(int proxyId, const b2AABB& aabb, const ci::Vec2f& displacement)
+void cb2BroadPhase::MoveProxy(int proxyId, const cb2AABB& aabb, const ci::Vec2f& displacement)
 {
 	bool buffer = m_tree.MoveProxy(proxyId, aabb, displacement);
 	if (buffer)
@@ -61,27 +61,27 @@ void b2BroadPhase::MoveProxy(int proxyId, const b2AABB& aabb, const ci::Vec2f& d
 	}
 }
 
-void b2BroadPhase::TouchProxy(int proxyId)
+void cb2BroadPhase::TouchProxy(int proxyId)
 {
 	BufferMove(proxyId);
 }
 
-void b2BroadPhase::BufferMove(int proxyId)
+void cb2BroadPhase::BufferMove(int proxyId)
 {
 	if (m_moveCount == m_moveCapacity)
 	{
 		int* oldBuffer = m_moveBuffer;
 		m_moveCapacity *= 2;
-		m_moveBuffer = (int*)b2Alloc(m_moveCapacity * sizeof(int));
+		m_moveBuffer = (int*)cb2Alloc(m_moveCapacity * sizeof(int));
 		memcpy(m_moveBuffer, oldBuffer, m_moveCount * sizeof(int));
-		b2Free(oldBuffer);
+		cb2Free(oldBuffer);
 	}
 
 	m_moveBuffer[m_moveCount] = proxyId;
 	++m_moveCount;
 }
 
-void b2BroadPhase::UnBufferMove(int proxyId)
+void cb2BroadPhase::UnBufferMove(int proxyId)
 {
 	for (int i = 0; i < m_moveCount; ++i)
 	{
@@ -92,8 +92,8 @@ void b2BroadPhase::UnBufferMove(int proxyId)
 	}
 }
 
-// This is called from b2DynamicTree::Query when we are gathering pairs.
-bool b2BroadPhase::QueryCallback(int proxyId)
+// This is called from cb2DynamicTree::Query when we are gathering pairs.
+bool cb2BroadPhase::QueryCallback(int proxyId)
 {
 	// A proxy cannot form a pair with itself.
 	if (proxyId == m_queryProxyId)
@@ -104,15 +104,15 @@ bool b2BroadPhase::QueryCallback(int proxyId)
 	// Grow the pair buffer as needed.
 	if (m_pairCount == m_pairCapacity)
 	{
-		b2Pair* oldBuffer = m_pairBuffer;
+		cb2Pair* oldBuffer = m_pairBuffer;
 		m_pairCapacity *= 2;
-		m_pairBuffer = (b2Pair*)b2Alloc(m_pairCapacity * sizeof(b2Pair));
-		memcpy(m_pairBuffer, oldBuffer, m_pairCount * sizeof(b2Pair));
-		b2Free(oldBuffer);
+		m_pairBuffer = (cb2Pair*)cb2Alloc(m_pairCapacity * sizeof(cb2Pair));
+		memcpy(m_pairBuffer, oldBuffer, m_pairCount * sizeof(cb2Pair));
+		cb2Free(oldBuffer);
 	}
 
-	m_pairBuffer[m_pairCount].proxyIdA = b2Min(proxyId, m_queryProxyId);
-	m_pairBuffer[m_pairCount].proxyIdB = b2Max(proxyId, m_queryProxyId);
+	m_pairBuffer[m_pairCount].proxyIdA = cb2Min(proxyId, m_queryProxyId);
+	m_pairBuffer[m_pairCount].proxyIdB = cb2Max(proxyId, m_queryProxyId);
 	++m_pairCount;
 
 	return true;

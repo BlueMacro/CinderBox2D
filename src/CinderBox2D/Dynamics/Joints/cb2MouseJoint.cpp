@@ -28,16 +28,16 @@
 // Identity used:
 // w k % (rx i + ry j) = w * (-ry i + rx j)
 
-b2MouseJoint::b2MouseJoint(const b2MouseJointDef* def)
-: b2Joint(def)
+cb2MouseJoint::cb2MouseJoint(const cb2MouseJointDef* def)
+: cb2Joint(def)
 {
-	b2Assert(cb2::isValid(def->target));
-	b2Assert(cb2::isValid(def->maxForce) && def->maxForce >= 0.0f);
-	b2Assert(cb2::isValid(def->frequencyHz) && def->frequencyHz >= 0.0f);
-	b2Assert(cb2::isValid(def->dampingRatio) && def->dampingRatio >= 0.0f);
+	cb2Assert(cb2::isValid(def->target));
+	cb2Assert(cb2::isValid(def->maxForce) && def->maxForce >= 0.0f);
+	cb2Assert(cb2::isValid(def->frequencyHz) && def->frequencyHz >= 0.0f);
+	cb2Assert(cb2::isValid(def->dampingRatio) && def->dampingRatio >= 0.0f);
 
 	m_targetA = def->target;
-	m_localAnchorB = b2MulT(m_bodyB->GetTransform(), m_targetA);
+	m_localAnchorB = cb2MulT(m_bodyB->GetTransform(), m_targetA);
 
 	m_maxForce = def->maxForce;
 	cb2::setZero(m_impulse);
@@ -49,7 +49,7 @@ b2MouseJoint::b2MouseJoint(const b2MouseJointDef* def)
 	m_gamma = 0.0f;
 }
 
-void b2MouseJoint::SetTarget(const ci::Vec2f& target)
+void cb2MouseJoint::SetTarget(const ci::Vec2f& target)
 {
 	if (m_bodyB->IsAwake() == false)
 	{
@@ -58,42 +58,42 @@ void b2MouseJoint::SetTarget(const ci::Vec2f& target)
 	m_targetA = target;
 }
 
-const ci::Vec2f& b2MouseJoint::GetTarget() const
+const ci::Vec2f& cb2MouseJoint::GetTarget() const
 {
 	return m_targetA;
 }
 
-void b2MouseJoint::SetMaxForce(float force)
+void cb2MouseJoint::SetMaxForce(float force)
 {
 	m_maxForce = force;
 }
 
-float b2MouseJoint::GetMaxForce() const
+float cb2MouseJoint::GetMaxForce() const
 {
 	return m_maxForce;
 }
 
-void b2MouseJoint::SetFrequency(float hz)
+void cb2MouseJoint::SetFrequency(float hz)
 {
 	m_frequencyHz = hz;
 }
 
-float b2MouseJoint::GetFrequency() const
+float cb2MouseJoint::GetFrequency() const
 {
 	return m_frequencyHz;
 }
 
-void b2MouseJoint::SetDampingRatio(float ratio)
+void cb2MouseJoint::SetDampingRatio(float ratio)
 {
 	m_dampingRatio = ratio;
 }
 
-float b2MouseJoint::GetDampingRatio() const
+float cb2MouseJoint::GetDampingRatio() const
 {
 	return m_dampingRatio;
 }
 
-void b2MouseJoint::InitVelocityConstraints(const b2SolverData& data)
+void cb2MouseJoint::InitVelocityConstraints(const cb2SolverData& data)
 {
 	m_indexB = m_bodyB->m_islandIndex;
 	m_localCenterB = m_bodyB->m_sweep.localCenter;
@@ -105,12 +105,12 @@ void b2MouseJoint::InitVelocityConstraints(const b2SolverData& data)
 	ci::Vec2f vB = data.velocities[m_indexB].v;
 	float wB = data.velocities[m_indexB].w;
 
-	b2Rot qB(aB);
+	cb2Rot qB(aB);
 
 	float mass = m_bodyB->GetMass();
 
 	// Frequency
-	float omega = 2.0f * b2_pi * m_frequencyHz;
+	float omega = 2.0f * cb2_pi * m_frequencyHz;
 
 	// Damping coefficient
 	float d = 2.0f * mass * m_dampingRatio * omega;
@@ -122,7 +122,7 @@ void b2MouseJoint::InitVelocityConstraints(const b2SolverData& data)
 	// gamma has units of inverse mass.
 	// beta has units of inverse time.
 	float h = data.step.dt;
-	b2Assert(d + h * k > b2_epsilon);
+	cb2Assert(d + h * k > cb2_epsilon);
 	m_gamma = h * (d + h * k);
 	if (m_gamma != 0.0f)
 	{
@@ -131,7 +131,7 @@ void b2MouseJoint::InitVelocityConstraints(const b2SolverData& data)
 	m_beta = h * k * m_gamma;
 
 	// Compute the effective mass matrix.
-	m_rB = b2Mul(qB, m_localAnchorB - m_localCenterB);
+	m_rB = cb2Mul(qB, m_localAnchorB - m_localCenterB);
 
 	// K    = [(1/m1 + 1/m2) * eye(2) - skew(r1) * invI1 * skew(r1) - skew(r2) * invI2 * skew(r2)]
 	//      = [1/m1+1/m2     0    ] + invI1 * [r1.y*r1.y -r1.x*r1.y] + invI2 * [r1.y*r1.y -r1.x*r1.y]
@@ -154,7 +154,7 @@ void b2MouseJoint::InitVelocityConstraints(const b2SolverData& data)
 	{
 		m_impulse *= data.step.dtRatio;
 		vB += m_invMassB * m_impulse;
-		wB += m_invIB * b2Cross(m_rB, m_impulse);
+		wB += m_invIB * cb2Cross(m_rB, m_impulse);
 	}
 	else
 	{
@@ -165,14 +165,14 @@ void b2MouseJoint::InitVelocityConstraints(const b2SolverData& data)
 	data.velocities[m_indexB].w = wB;
 }
 
-void b2MouseJoint::SolveVelocityConstraints(const b2SolverData& data)
+void cb2MouseJoint::SolveVelocityConstraints(const cb2SolverData& data)
 {
 	ci::Vec2f vB = data.velocities[m_indexB].v;
 	float wB = data.velocities[m_indexB].w;
 
 	// Cdot = v + cross(w, r)
-	ci::Vec2f Cdot = vB + b2Cross(wB, m_rB);
-	ci::Vec2f impulse = b2Mul(m_mass, -(Cdot + m_C + m_gamma * m_impulse));
+	ci::Vec2f Cdot = vB + cb2Cross(wB, m_rB);
+	ci::Vec2f impulse = cb2Mul(m_mass, -(Cdot + m_C + m_gamma * m_impulse));
 
 	ci::Vec2f oldImpulse = m_impulse;
 	m_impulse += impulse;
@@ -184,39 +184,39 @@ void b2MouseJoint::SolveVelocityConstraints(const b2SolverData& data)
 	impulse = m_impulse - oldImpulse;
 
 	vB += m_invMassB * impulse;
-	wB += m_invIB * b2Cross(m_rB, impulse);
+	wB += m_invIB * cb2Cross(m_rB, impulse);
 
 	data.velocities[m_indexB].v = vB;
 	data.velocities[m_indexB].w = wB;
 }
 
-bool b2MouseJoint::SolvePositionConstraints(const b2SolverData& data)
+bool cb2MouseJoint::SolvePositionConstraints(const cb2SolverData& data)
 {
-	B2_NOT_USED(data);
+	CB2_NOT_USED(data);
 	return true;
 }
 
-ci::Vec2f b2MouseJoint::GetAnchorA() const
+ci::Vec2f cb2MouseJoint::GetAnchorA() const
 {
 	return m_targetA;
 }
 
-ci::Vec2f b2MouseJoint::GetAnchorB() const
+ci::Vec2f cb2MouseJoint::GetAnchorB() const
 {
 	return m_bodyB->GetWorldPoint(m_localAnchorB);
 }
 
-ci::Vec2f b2MouseJoint::GetReactionForce(float inv_dt) const
+ci::Vec2f cb2MouseJoint::GetReactionForce(float inv_dt) const
 {
 	return inv_dt * m_impulse;
 }
 
-float b2MouseJoint::GetReactionTorque(float inv_dt) const
+float cb2MouseJoint::GetReactionTorque(float inv_dt) const
 {
 	return inv_dt * 0.0f;
 }
 
-void b2MouseJoint::ShiftOrigin(const ci::Vec2f& newOrigin)
+void cb2MouseJoint::ShiftOrigin(const ci::Vec2f& newOrigin)
 {
 	m_targetA -= newOrigin;
 }

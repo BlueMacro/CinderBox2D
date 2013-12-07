@@ -16,24 +16,24 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_DYNAMIC_TREE_H
-#define B2_DYNAMIC_TREE_H
+#ifndef CB2_DYNAMIC_TREE_H
+#define CB2_DYNAMIC_TREE_H
 
 #include <CinderBox2D/Collision/cb2Collision.h>
 #include <CinderBox2D/Common/cb2GrowableStack.h>
 
-#define b2_nullNode (-1)
+#define cb2_nullNode (-1)
 
 /// A node in the dynamic tree. The client does not interact with this directly.
-struct b2TreeNode
+struct cb2TreeNode
 {
 	bool IsLeaf() const
 	{
-		return child1 == b2_nullNode;
+		return child1 == cb2_nullNode;
 	}
 
 	/// Enlarged AABB
-	b2AABB aabb;
+	cb2AABB aabb;
 
 	void* userData;
 
@@ -53,22 +53,22 @@ struct b2TreeNode
 /// A dynamic AABB tree broad-phase, inspired by Nathanael Presson's btDbvt.
 /// A dynamic tree arranges data in a binary tree to accelerate
 /// queries such as volume queries and ray casts. Leafs are proxies
-/// with an AABB. In the tree we expand the proxy AABB by b2_fatAABBFactor
+/// with an AABB. In the tree we expand the proxy AABB by cb2_fatAABBFactor
 /// so that the proxy AABB is bigger than the client object. This allows the client
 /// object to move by small amounts without triggering a tree update.
 ///
 /// Nodes are pooled and relocatable, so we use node indices rather than pointers.
-class b2DynamicTree
+class cb2DynamicTree
 {
 public:
 	/// Constructing the tree initializes the node pool.
-	b2DynamicTree();
+	cb2DynamicTree();
 
 	/// Destroy the tree, freeing the node pool.
-	~b2DynamicTree();
+	~cb2DynamicTree();
 
 	/// Create a proxy. Provide a tight fitting AABB and a userData pointer.
-	int CreateProxy(const b2AABB& aabb, void* userData);
+	int CreateProxy(const cb2AABB& aabb, void* userData);
 
 	/// Destroy a proxy. This asserts if the id is invalid.
 	void DestroyProxy(int proxyId);
@@ -77,19 +77,19 @@ public:
 	/// then the proxy is removed from the tree and re-inserted. Otherwise
 	/// the function returns immediately.
 	/// @return true if the proxy was re-inserted.
-	bool MoveProxy(int proxyId, const b2AABB& aabb1, const ci::Vec2f& displacement);
+	bool MoveProxy(int proxyId, const cb2AABB& aabb1, const ci::Vec2f& displacement);
 
 	/// Get proxy user data.
 	/// @return the proxy user data or 0 if the id is invalid.
 	void* GetUserData(int proxyId) const;
 
 	/// Get the fat AABB for a proxy.
-	const b2AABB& GetFatAABB(int proxyId) const;
+	const cb2AABB& GetFatAABB(int proxyId) const;
 
 	/// Query an AABB for overlapping proxies. The callback class
 	/// is called for each proxy that overlaps the supplied AABB.
 	template <typename T>
-	void Query(T* callback, const b2AABB& aabb) const;
+	void Query(T* callback, const cb2AABB& aabb) const;
 
 	/// Ray-cast against the proxies in the tree. This relies on the callback
 	/// to perform a exact ray-cast in the case were the proxy contains a shape.
@@ -99,7 +99,7 @@ public:
 	/// @param input the ray-cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1).
 	/// @param callback a callback class that is called for each proxy that is hit by the ray.
 	template <typename T>
-	void RayCast(T* callback, const b2RayCastInput& input) const;
+	void RayCast(T* callback, const cb2RayCastInput& input) const;
 
 	/// Validate this tree. For testing.
 	void Validate() const;
@@ -141,7 +141,7 @@ private:
 
 	int m_root;
 
-	b2TreeNode* m_nodes;
+	cb2TreeNode* m_nodes;
 	int m_nodeCount;
 	int m_nodeCapacity;
 
@@ -153,35 +153,35 @@ private:
 	int m_insertionCount;
 };
 
-inline void* b2DynamicTree::GetUserData(int proxyId) const
+inline void* cb2DynamicTree::GetUserData(int proxyId) const
 {
-	b2Assert(0 <= proxyId && proxyId < m_nodeCapacity);
+	cb2Assert(0 <= proxyId && proxyId < m_nodeCapacity);
 	return m_nodes[proxyId].userData;
 }
 
-inline const b2AABB& b2DynamicTree::GetFatAABB(int proxyId) const
+inline const cb2AABB& cb2DynamicTree::GetFatAABB(int proxyId) const
 {
-	b2Assert(0 <= proxyId && proxyId < m_nodeCapacity);
+	cb2Assert(0 <= proxyId && proxyId < m_nodeCapacity);
 	return m_nodes[proxyId].aabb;
 }
 
 template <typename T>
-inline void b2DynamicTree::Query(T* callback, const b2AABB& aabb) const
+inline void cb2DynamicTree::Query(T* callback, const cb2AABB& aabb) const
 {
-	b2GrowableStack<int, 256> stack;
+	cb2GrowableStack<int, 256> stack;
 	stack.Push(m_root);
 
 	while (stack.GetCount() > 0)
 	{
 		int nodeId = stack.Pop();
-		if (nodeId == b2_nullNode)
+		if (nodeId == cb2_nullNode)
 		{
 			continue;
 		}
 
-		const b2TreeNode* node = m_nodes + nodeId;
+		const cb2TreeNode* node = m_nodes + nodeId;
 
-		if (b2TestOverlap(node->aabb, aabb))
+		if (cb2TestOverlap(node->aabb, aabb))
 		{
 			if (node->IsLeaf())
 			{
@@ -201,17 +201,17 @@ inline void b2DynamicTree::Query(T* callback, const b2AABB& aabb) const
 }
 
 template <typename T>
-inline void b2DynamicTree::RayCast(T* callback, const b2RayCastInput& input) const
+inline void cb2DynamicTree::RayCast(T* callback, const cb2RayCastInput& input) const
 {
 	ci::Vec2f p1 = input.p1;
 	ci::Vec2f p2 = input.p2;
 	ci::Vec2f r = p2 - p1;
-	b2Assert(r.lengthSquared() > 0.0f);
+	cb2Assert(r.lengthSquared() > 0.0f);
 	r.normalize();
 
 	// v is perpendicular to the segment.
-	ci::Vec2f v = b2Cross(1.0f, r);
-	ci::Vec2f abs_v = b2Abs(v);
+	ci::Vec2f v = cb2Cross(1.0f, r);
+	ci::Vec2f abs_v = cb2Abs(v);
 
 	// Separating axis for segment (Gino, p80).
 	// |dot(v, p1 - c)| > dot(|v|, h)
@@ -219,27 +219,27 @@ inline void b2DynamicTree::RayCast(T* callback, const b2RayCastInput& input) con
 	float maxFraction = input.maxFraction;
 
 	// Build a bounding box for the segment.
-	b2AABB segmentAABB;
+	cb2AABB segmentAABB;
 	{
 		ci::Vec2f t = p1 + maxFraction * (p2 - p1);
-		segmentAABB.lowerBound = b2Min(p1, t);
-		segmentAABB.upperBound = b2Max(p1, t);
+		segmentAABB.lowerBound = cb2Min(p1, t);
+		segmentAABB.upperBound = cb2Max(p1, t);
 	}
 
-	b2GrowableStack<int, 256> stack;
+	cb2GrowableStack<int, 256> stack;
 	stack.Push(m_root);
 
 	while (stack.GetCount() > 0)
 	{
 		int nodeId = stack.Pop();
-		if (nodeId == b2_nullNode)
+		if (nodeId == cb2_nullNode)
 		{
 			continue;
 		}
 
-		const b2TreeNode* node = m_nodes + nodeId;
+		const cb2TreeNode* node = m_nodes + nodeId;
 
-		if (b2TestOverlap(node->aabb, segmentAABB) == false)
+		if (cb2TestOverlap(node->aabb, segmentAABB) == false)
 		{
 			continue;
 		}
@@ -248,7 +248,7 @@ inline void b2DynamicTree::RayCast(T* callback, const b2RayCastInput& input) con
 		// |dot(v, p1 - c)| > dot(|v|, h)
 		ci::Vec2f c = node->aabb.GetCenter();
 		ci::Vec2f h = node->aabb.GetExtents();
-		float separation = b2Abs(b2Dot(v, p1 - c)) - b2Dot(abs_v, h);
+		float separation = cb2Abs(cb2Dot(v, p1 - c)) - cb2Dot(abs_v, h);
 		if (separation > 0.0f)
 		{
 			continue;
@@ -256,7 +256,7 @@ inline void b2DynamicTree::RayCast(T* callback, const b2RayCastInput& input) con
 
 		if (node->IsLeaf())
 		{
-			b2RayCastInput subInput;
+			cb2RayCastInput subInput;
 			subInput.p1 = input.p1;
 			subInput.p2 = input.p2;
 			subInput.maxFraction = maxFraction;
@@ -274,8 +274,8 @@ inline void b2DynamicTree::RayCast(T* callback, const b2RayCastInput& input) con
 				// Update segment bounding box.
 				maxFraction = value;
 				ci::Vec2f t = p1 + maxFraction * (p2 - p1);
-				segmentAABB.lowerBound = b2Min(p1, t);
-				segmentAABB.upperBound = b2Max(p1, t);
+				segmentAABB.lowerBound = cb2Min(p1, t);
+				segmentAABB.upperBound = cb2Max(p1, t);
 			}
 		}
 		else

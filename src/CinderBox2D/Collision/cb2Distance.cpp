@@ -23,34 +23,34 @@
 #include <CinderBox2D/Collision/Shapes/cb2PolygonShape.h>
 
 // GJK using Voronoi regions (Christer Ericson) and Barycentric coordinates.
-int b2_gjkCalls, b2_gjkIters, b2_gjkMaxIters;
+int cb2_gjkCalls, cb2_gjkIters, cb2_gjkMaxIters;
 
-void b2DistanceProxy::set(const b2Shape* shape, int index)
+void cb2DistanceProxy::set(const cb2Shape* shape, int index)
 {
 	switch (shape->GetType())
 	{
-	case b2Shape::e_circle:
+	case cb2Shape::e_circle:
 		{
-			const b2CircleShape* circle = static_cast<const b2CircleShape*>(shape);
+			const cb2CircleShape* circle = static_cast<const cb2CircleShape*>(shape);
 			m_vertices = &circle->m_p;
 			m_count = 1;
 			m_radius = circle->m_radius;
 		}
 		break;
 
-	case b2Shape::e_polygon:
+	case cb2Shape::e_polygon:
 		{
-			const b2PolygonShape* polygon = static_cast<const b2PolygonShape*>(shape);
+			const cb2PolygonShape* polygon = static_cast<const cb2PolygonShape*>(shape);
 			m_vertices = polygon->m_vertices;
 			m_count = polygon->m_count;
 			m_radius = polygon->m_radius;
 		}
 		break;
 
-	case b2Shape::e_chain:
+	case cb2Shape::e_chain:
 		{
-			const b2ChainShape* chain = static_cast<const b2ChainShape*>(shape);
-			b2Assert(0 <= index && index < chain->m_count);
+			const cb2ChainShape* chain = static_cast<const cb2ChainShape*>(shape);
+			cb2Assert(0 <= index && index < chain->m_count);
 
 			m_buffer[0] = chain->m_vertices[index];
 			if (index + 1 < chain->m_count)
@@ -68,9 +68,9 @@ void b2DistanceProxy::set(const b2Shape* shape, int index)
 		}
 		break;
 
-	case b2Shape::e_edge:
+	case cb2Shape::e_edge:
 		{
-			const b2EdgeShape* edge = static_cast<const b2EdgeShape*>(shape);
+			const cb2EdgeShape* edge = static_cast<const cb2EdgeShape*>(shape);
 			m_vertices = &edge->m_vertex1;
 			m_count = 2;
 			m_radius = edge->m_radius;
@@ -78,12 +78,12 @@ void b2DistanceProxy::set(const b2Shape* shape, int index)
 		break;
 
 	default:
-		b2Assert(false);
+		cb2Assert(false);
 	}
 }
 
 
-struct b2SimplexVertex
+struct cb2SimplexVertex
 {
 	ci::Vec2f wA;		// support point in proxyA
 	ci::Vec2f wB;		// support point in proxyB
@@ -93,26 +93,26 @@ struct b2SimplexVertex
 	int indexB;	// wB index
 };
 
-struct b2Simplex
+struct cb2Simplex
 {
-	void ReadCache(	const b2SimplexCache* cache,
-					const b2DistanceProxy* proxyA, const b2Transform& transformA,
-					const b2DistanceProxy* proxyB, const b2Transform& transformB)
+	void ReadCache(	const cb2SimplexCache* cache,
+					const cb2DistanceProxy* proxyA, const cb2Transform& transformA,
+					const cb2DistanceProxy* proxyB, const cb2Transform& transformB)
 	{
-		b2Assert(cache->count <= 3);
+		cb2Assert(cache->count <= 3);
 		
 		// Copy data from cache.
 		m_count = cache->count;
-		b2SimplexVertex* vertices = &m_v1;
+		cb2SimplexVertex* vertices = &m_v1;
 		for (int i = 0; i < m_count; ++i)
 		{
-			b2SimplexVertex* v = vertices + i;
+			cb2SimplexVertex* v = vertices + i;
 			v->indexA = cache->indexA[i];
 			v->indexB = cache->indexB[i];
 			ci::Vec2f wALocal = proxyA->GetVertex(v->indexA);
 			ci::Vec2f wBLocal = proxyB->GetVertex(v->indexB);
-			v->wA = b2Mul(transformA, wALocal);
-			v->wB = b2Mul(transformB, wBLocal);
+			v->wA = cb2Mul(transformA, wALocal);
+			v->wB = cb2Mul(transformB, wBLocal);
 			v->w = v->wB - v->wA;
 			v->a = 0.0f;
 		}
@@ -123,7 +123,7 @@ struct b2Simplex
 		{
 			float metric1 = cache->metric;
 			float metric2 = GetMetric();
-			if (metric2 < 0.5f * metric1 || 2.0f * metric1 < metric2 || metric2 < b2_epsilon)
+			if (metric2 < 0.5f * metric1 || 2.0f * metric1 < metric2 || metric2 < cb2_epsilon)
 			{
 				// Reset the simplex.
 				m_count = 0;
@@ -133,24 +133,24 @@ struct b2Simplex
 		// If the cache is empty or invalid ...
 		if (m_count == 0)
 		{
-			b2SimplexVertex* v = vertices + 0;
+			cb2SimplexVertex* v = vertices + 0;
 			v->indexA = 0;
 			v->indexB = 0;
 			ci::Vec2f wALocal = proxyA->GetVertex(0);
 			ci::Vec2f wBLocal = proxyB->GetVertex(0);
-			v->wA = b2Mul(transformA, wALocal);
-			v->wB = b2Mul(transformB, wBLocal);
+			v->wA = cb2Mul(transformA, wALocal);
+			v->wB = cb2Mul(transformB, wBLocal);
 			v->w = v->wB - v->wA;
 			v->a = 1.0f;
 			m_count = 1;
 		}
 	}
 
-	void WriteCache(b2SimplexCache* cache) const
+	void WriteCache(cb2SimplexCache* cache) const
 	{
 		cache->metric = GetMetric();
 		cache->count = unsigned short(m_count);
-		const b2SimplexVertex* vertices = &m_v1;
+		const cb2SimplexVertex* vertices = &m_v1;
 		for (int i = 0; i < m_count; ++i)
 		{
 			cache->indexA[i] = unsigned char(vertices[i].indexA);
@@ -168,21 +168,21 @@ struct b2Simplex
 		case 2:
 			{
 				ci::Vec2f e12 = m_v2.w - m_v1.w;
-				float sgn = b2Cross(e12, -m_v1.w);
+				float sgn = cb2Cross(e12, -m_v1.w);
 				if (sgn > 0.0f)
 				{
 					// Origin is left of e12.
-					return b2Cross(1.0f, e12);
+					return cb2Cross(1.0f, e12);
 				}
 				else
 				{
 					// Origin is right of e12.
-					return b2Cross(e12, 1.0f);
+					return cb2Cross(e12, 1.0f);
 				}
 			}
 
 		default:
-			b2Assert(false);
+			cb2Assert(false);
       return ci::Vec2f::zero();
 		}
 	}
@@ -192,7 +192,7 @@ struct b2Simplex
 		switch (m_count)
 		{
 		case 0:
-			b2Assert(false);
+			cb2Assert(false);
 			return ci::Vec2f::zero();
 
 		case 1:
@@ -205,7 +205,7 @@ struct b2Simplex
 			return ci::Vec2f::zero();
 
 		default:
-			b2Assert(false);
+			cb2Assert(false);
 			return ci::Vec2f::zero();
 		}
 	}
@@ -215,7 +215,7 @@ struct b2Simplex
 		switch (m_count)
 		{
 		case 0:
-			b2Assert(false);
+			cb2Assert(false);
 			break;
 
 		case 1:
@@ -234,7 +234,7 @@ struct b2Simplex
 			break;
 
 		default:
-			b2Assert(false);
+			cb2Assert(false);
 			break;
 		}
 	}
@@ -244,20 +244,20 @@ struct b2Simplex
 		switch (m_count)
 		{
 		case 0:
-			b2Assert(false);
+			cb2Assert(false);
 			return 0.0f;
 
 		case 1:
 			return 0.0f;
 
 		case 2:
-			return b2Distance(m_v1.w, m_v2.w);
+			return cb2Distance(m_v1.w, m_v2.w);
 
 		case 3:
-			return b2Cross(m_v2.w - m_v1.w, m_v3.w - m_v1.w);
+			return cb2Cross(m_v2.w - m_v1.w, m_v3.w - m_v1.w);
 
 		default:
-			b2Assert(false);
+			cb2Assert(false);
 			return 0.0f;
 		}
 	}
@@ -265,7 +265,7 @@ struct b2Simplex
 	void Solve2();
 	void Solve3();
 
-	b2SimplexVertex m_v1, m_v2, m_v3;
+	cb2SimplexVertex m_v1, m_v2, m_v3;
 	int m_count;
 };
 
@@ -293,14 +293,14 @@ struct b2Simplex
 // Solution
 // a1 = d12_1 / d12
 // a2 = d12_2 / d12
-void b2Simplex::Solve2()
+void cb2Simplex::Solve2()
 {
 	ci::Vec2f w1 = m_v1.w;
 	ci::Vec2f w2 = m_v2.w;
 	ci::Vec2f e12 = w2 - w1;
 
 	// w1 region
-	float d12_2 = -b2Dot(w1, e12);
+	float d12_2 = -cb2Dot(w1, e12);
 	if (d12_2 <= 0.0f)
 	{
 		// a2 <= 0, so we clamp it to 0
@@ -310,7 +310,7 @@ void b2Simplex::Solve2()
 	}
 
 	// w2 region
-	float d12_1 = b2Dot(w2, e12);
+	float d12_1 = cb2Dot(w2, e12);
 	if (d12_1 <= 0.0f)
 	{
 		// a1 <= 0, so we clamp it to 0
@@ -332,7 +332,7 @@ void b2Simplex::Solve2()
 // - edge points[0]-points[2]
 // - edge points[1]-points[2]
 // - inside the triangle
-void b2Simplex::Solve3()
+void cb2Simplex::Solve3()
 {
 	ci::Vec2f w1 = m_v1.w;
 	ci::Vec2f w2 = m_v2.w;
@@ -343,8 +343,8 @@ void b2Simplex::Solve3()
 	// [w1.e12 w2.e12][a2] = [0]
 	// a3 = 0
 	ci::Vec2f e12 = w2 - w1;
-	float w1e12 = b2Dot(w1, e12);
-	float w2e12 = b2Dot(w2, e12);
+	float w1e12 = cb2Dot(w1, e12);
+	float w2e12 = cb2Dot(w2, e12);
 	float d12_1 = w2e12;
 	float d12_2 = -w1e12;
 
@@ -353,8 +353,8 @@ void b2Simplex::Solve3()
 	// [w1.e13 w3.e13][a3] = [0]
 	// a2 = 0
 	ci::Vec2f e13 = w3 - w1;
-	float w1e13 = b2Dot(w1, e13);
-	float w3e13 = b2Dot(w3, e13);
+	float w1e13 = cb2Dot(w1, e13);
+	float w3e13 = cb2Dot(w3, e13);
 	float d13_1 = w3e13;
 	float d13_2 = -w1e13;
 
@@ -363,17 +363,17 @@ void b2Simplex::Solve3()
 	// [w2.e23 w3.e23][a3] = [0]
 	// a1 = 0
 	ci::Vec2f e23 = w3 - w2;
-	float w2e23 = b2Dot(w2, e23);
-	float w3e23 = b2Dot(w3, e23);
+	float w2e23 = cb2Dot(w2, e23);
+	float w3e23 = cb2Dot(w3, e23);
 	float d23_1 = w3e23;
 	float d23_2 = -w2e23;
 	
 	// Triangle123
-	float n123 = b2Cross(e12, e13);
+	float n123 = cb2Cross(e12, e13);
 
-	float d123_1 = n123 * b2Cross(w2, w3);
-	float d123_2 = n123 * b2Cross(w3, w1);
-	float d123_3 = n123 * b2Cross(w1, w2);
+	float d123_1 = n123 * cb2Cross(w2, w3);
+	float d123_2 = n123 * cb2Cross(w3, w1);
+	float d123_3 = n123 * cb2Cross(w1, w2);
 
 	// w1 region
 	if (d12_2 <= 0.0f && d13_2 <= 0.0f)
@@ -441,24 +441,24 @@ void b2Simplex::Solve3()
 	m_count = 3;
 }
 
-void b2Distance(b2DistanceOutput* output,
-				b2SimplexCache* cache,
-				const b2DistanceInput* input)
+void cb2Distance(cb2DistanceOutput* output,
+				cb2SimplexCache* cache,
+				const cb2DistanceInput* input)
 {
-	++b2_gjkCalls;
+	++cb2_gjkCalls;
 
-	const b2DistanceProxy* proxyA = &input->proxyA;
-	const b2DistanceProxy* proxyB = &input->proxyB;
+	const cb2DistanceProxy* proxyA = &input->proxyA;
+	const cb2DistanceProxy* proxyB = &input->proxyB;
 
-	b2Transform transformA = input->transformA;
-	b2Transform transformB = input->transformB;
+	cb2Transform transformA = input->transformA;
+	cb2Transform transformB = input->transformB;
 
 	// Initialize the simplex.
-	b2Simplex simplex;
+	cb2Simplex simplex;
 	simplex.ReadCache(cache, proxyA, transformA, proxyB, transformB);
 
 	// Get simplex vertices as an array.
-	b2SimplexVertex* vertices = &simplex.m_v1;
+	cb2SimplexVertex* vertices = &simplex.m_v1;
 	const int k_maxIters = 20;
 
 	// These store the vertices of the last simplex so that we
@@ -466,7 +466,7 @@ void b2Distance(b2DistanceOutput* output,
 	int saveA[3], saveB[3];
 	int saveCount = 0;
 
-	float distanceSqr1 = b2_maxFloat;
+	float distanceSqr1 = cb2_maxFloat;
 	float distanceSqr2 = distanceSqr1;
 
 	// Main iteration loop.
@@ -495,7 +495,7 @@ void b2Distance(b2DistanceOutput* output,
 			break;
 
 		default:
-			b2Assert(false);
+			cb2Assert(false);
 		}
 
 		// If we have 3 points, then the origin is in the corresponding triangle.
@@ -519,7 +519,7 @@ void b2Distance(b2DistanceOutput* output,
 		ci::Vec2f d = simplex.GetSearchDirection();
 
 		// Ensure the search direction is numerically fit.
-		if (d.lengthSquared() < b2_epsilon * b2_epsilon)
+		if (d.lengthSquared() < cb2_epsilon * cb2_epsilon)
 		{
 			// The origin is probably contained by a line segment
 			// or triangle. Thus the shapes are overlapped.
@@ -531,17 +531,17 @@ void b2Distance(b2DistanceOutput* output,
 		}
 
 		// Compute a tentative new simplex vertex using support points.
-		b2SimplexVertex* vertex = vertices + simplex.m_count;
-		vertex->indexA = proxyA->GetSupport(b2MulT(transformA.q, -d));
-		vertex->wA = b2Mul(transformA, proxyA->GetVertex(vertex->indexA));
+		cb2SimplexVertex* vertex = vertices + simplex.m_count;
+		vertex->indexA = proxyA->GetSupport(cb2MulT(transformA.q, -d));
+		vertex->wA = cb2Mul(transformA, proxyA->GetVertex(vertex->indexA));
 		ci::Vec2f wBLocal;
-		vertex->indexB = proxyB->GetSupport(b2MulT(transformB.q, d));
-		vertex->wB = b2Mul(transformB, proxyB->GetVertex(vertex->indexB));
+		vertex->indexB = proxyB->GetSupport(cb2MulT(transformB.q, d));
+		vertex->wB = cb2Mul(transformB, proxyB->GetVertex(vertex->indexB));
 		vertex->w = vertex->wB - vertex->wA;
 
 		// Iteration count is equated to the number of support point calls.
 		++iter;
-		++b2_gjkIters;
+		++cb2_gjkIters;
 
 		// Check for duplicate support points. This is the main termination criteria.
 		bool duplicate = false;
@@ -564,11 +564,11 @@ void b2Distance(b2DistanceOutput* output,
 		++simplex.m_count;
 	}
 
-	b2_gjkMaxIters = b2Max(b2_gjkMaxIters, iter);
+	cb2_gjkMaxIters = cb2Max(cb2_gjkMaxIters, iter);
 
 	// Prepare output.
 	simplex.GetWitnessPoints(&output->pointA, &output->pointB);
-	output->distance = b2Distance(output->pointA, output->pointB);
+	output->distance = cb2Distance(output->pointA, output->pointB);
 	output->iterations = iter;
 
 	// Cache the simplex.
@@ -580,7 +580,7 @@ void b2Distance(b2DistanceOutput* output,
 		float rA = proxyA->m_radius;
 		float rB = proxyB->m_radius;
 
-		if (output->distance > rA + rB && output->distance > b2_epsilon)
+		if (output->distance > rA + rB && output->distance > cb2_epsilon)
 		{
 			// Shapes are still no overlapped.
 			// Move the witness points to the outer surface.

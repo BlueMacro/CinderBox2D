@@ -16,35 +16,35 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B2_CIRCLE_SHAPE_H
-#define B2_CIRCLE_SHAPE_H
+#ifndef CB2_CIRCLE_SHAPE_H
+#define CB2_CIRCLE_SHAPE_H
 
 #include <CinderBox2D/Collision/Shapes/cb2Shape.h>
 
 /// A circle shape.
-class b2CircleShape : public b2Shape
+class cb2CircleShape : public cb2Shape
 {
 public:
-	b2CircleShape();
+	cb2CircleShape();
 
-	/// Implement b2Shape.
-	b2Shape* Clone(b2BlockAllocator* allocator) const;
+	/// Implement cb2Shape.
+	cb2Shape* Clone(cb2BlockAllocator* allocator) const;
 
-	/// @see b2Shape::GetChildCount
+	/// @see cb2Shape::GetChildCount
 	int GetChildCount() const;
 
-	/// Implement b2Shape.
-	bool TestPoint(const b2Transform& transform, const ci::Vec2f& p) const;
+	/// Implement cb2Shape.
+	bool TestPoint(const cb2Transform& transform, const ci::Vec2f& p) const;
 
-	/// Implement b2Shape.
-	bool RayCast(b2RayCastOutput* output, const b2RayCastInput& input,
-				const b2Transform& transform, int childIndex) const;
+	/// Implement cb2Shape.
+	bool RayCast(cb2RayCastOutput* output, const cb2RayCastInput& input,
+				const cb2Transform& transform, int childIndex) const;
 
-	/// @see b2Shape::ComputeAABB
-	void ComputeAABB(b2AABB* aabb, const b2Transform& transform, int childIndex) const;
+	/// @see cb2Shape::ComputeAABB
+	void ComputeAABB(cb2AABB* aabb, const cb2Transform& transform, int childIndex) const;
 
-	/// @see b2Shape::ComputeMass
-	void ComputeMass(b2MassData* massData, float density) const;
+	/// @see cb2Shape::ComputeMass
+	void ComputeMass(cb2MassData* massData, float density) const;
 
 	/// Get the supporting vertex index in the given direction.
 	int GetSupport(const ci::Vec2f& d) const;
@@ -55,36 +55,36 @@ public:
 	/// Get the vertex count.
 	int GetVertexCount() const { return 1; }
 
-	/// Get a vertex by index. Used by b2Distance.
+	/// Get a vertex by index. Used by cb2Distance.
 	const ci::Vec2f& GetVertex(int index) const;
 
 	/// Position
 	ci::Vec2f m_p;
 };
 
-inline b2CircleShape::b2CircleShape()
+inline cb2CircleShape::cb2CircleShape()
 {
 	m_type = e_circle;
 	m_radius = 0.0f;
 	cb2::setZero(m_p);
 }
 
-inline int b2CircleShape::GetSupport(const ci::Vec2f &d) const
+inline int cb2CircleShape::GetSupport(const ci::Vec2f &d) const
 {
-	B2_NOT_USED(d);
+	CB2_NOT_USED(d);
 	return 0;
 }
 
-inline const ci::Vec2f& b2CircleShape::GetSupportVertex(const ci::Vec2f &d) const
+inline const ci::Vec2f& cb2CircleShape::GetSupportVertex(const ci::Vec2f &d) const
 {
-	B2_NOT_USED(d);
+	CB2_NOT_USED(d);
 	return m_p;
 }
 
-inline const ci::Vec2f& b2CircleShape::GetVertex(int index) const
+inline const ci::Vec2f& cb2CircleShape::GetVertex(int index) const
 {
-	B2_NOT_USED(index);
-	b2Assert(index == 0);
+	CB2_NOT_USED(index);
+	cb2Assert(index == 0);
 	return m_p;
 }
 
